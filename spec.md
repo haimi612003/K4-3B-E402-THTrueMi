@@ -48,19 +48,36 @@ Loại: [ ] Tối ưu tính năng có sẵn  [x] Tính năng mới
 - [Sản phẩm 2]: ...
 
 ## §4. Thiết kế
-- Lát cắt MỘT CÂU (1 user · 1 việc · 1 quyết định AI · 1 kết quả):
+- Lát cắt MỘT CÂU (1 user · 1 việc · 1 quyết định AI · 1 kết quả): Một Learner đang chuẩn bị tạo ticket trong #hỏi-đáp · nhập vấn đề cần hỗ trợ · AI quyết định SIMILAR / CLARIFY / NOT_FOUND dựa trên các ticket hiện có · nếu SIMILAR trả tối đa 3 ticket liên quan, nếu CLARIFY hỏi thêm thông tin, nếu NOT_FOUND tạo bản nháp ticket để Learner kiểm tra và xác nhận trước khi đăng. (Canvas mục 5)
 - Non-goals (≥3 thứ KHÔNG build):
-- Mức prototype nhắm tới: [ ] Sketch [ ] Mock [ ] Working — phần nào mock, phần nào thật:
-- Automation: [ ] augment [ ] conditional [ ] automate — lý do theo cost-of-error:
+  1. AI không tự đăng, sửa, xoá hoặc đóng ticket thay Learner/Lab Coach.
+  2. AI không tự trả lời câu hỏi kỹ thuật thay Lab Coach (không giải bài, không debug code hộ).
+  3. Không mining/so sánh với dữ liệu ngoài `discord-pack/` (không crawl Discord server khác, không dùng nguồn ngoài chương trình).
+  4. Không xây dashboard thống kê ticket cho Lab Coach ở lát cắt này (đó là ứng viên đã loại ở §2).
+- Mức prototype nhắm tới: [ ] Sketch [x] Mock [ ] Working
+  - **Hiện trạng (CP1–CP2):** bản mock bấm-được, dựng dưới dạng Claude Artifact (Design) — xem `codebase/Prototype design`. Đây là giao diện tĩnh mô phỏng luồng #hỏi-đáp trên Discord (khung nhập ticket, khung trả lời của bot).
+  - **Phần chạy giả lập (mock):** dữ liệu ticket cũ dùng để so khớp là dữ liệu mẫu hardcode trong prototype (chưa nối `discord-pack/` thật); kết quả SIMILAR / CLARIFY / NOT_FOUND hiện được set cứng theo từng kịch bản demo để người xem thấy đủ 3 nhánh; không có bot Discord thật đứng sau, không gọi API AI thật.
+  - **Phần sẽ chạy thật (trước CP3):** (1) retrieval/similarity so khớp ticket mới với ticket thật trong `discord-pack/` (phụ trách: Nguyễn Đức Tâm — canvas mục 7), (2) lệnh gọi AI thật để quyết định SIMILAR/CLARIFY/NOT_FOUND và soạn bản nháp ticket, (3) số liệu bằng chứng ở §1/§2 đã là số thật từ khảo sát (`dataset.md`, n=19) và sẽ bổ sung mining thật từ `discord-pack/`.
+- Automation: [ ] augment [x] conditional [ ] automate
+  - Lý do theo cost-of-error (Canvas mục 6): hai ticket "tương tự" chưa chắc là cùng một vấn đề — nếu AI tự động kết luận sai (báo SIMILAR nhầm hoặc tự đóng ticket), Learner có thể bỏ qua việc thực sự cần hỗ trợ, tốn thời gian sửa sai còn lớn hơn thời gian AI tiết kiệm được. Vì vậy AI chỉ **tự làm khi đủ căn cứ** (SIMILAR/NOT_FOUND rõ ràng), **hỏi lại khi chưa chắc** (CLARIFY), và luôn để Learner là người bấm nút cuối cùng (đăng/không đăng ticket) — không tự đăng, xoá, đóng ticket hay chặn Learner tạo ticket mới.
 - §4b. Nguyên tắc đã áp dụng (≥4 — HAX/PAIR, xem guide):
+
   | Nguyên tắc | Áp cụ thể vào đâu trong prototype |
   |---|---|
+  | **HAX G1 — Make clear what the system can do** | Tin nhắn mở đầu của bot khi Learner bắt đầu gõ ticket nêu rõ: "mình chỉ kiểm tra ticket trùng và giúp soạn ticket mới, không tự trả lời câu hỏi kỹ thuật" — khớp Non-goal #2. |
+  | **HAX G2 — Make clear how well the system can do what it can do** | Mỗi kết quả trả về gắn nhãn rõ SIMILAR / CLARIFY / NOT_FOUND thay vì chỉ đưa danh sách ticket mập mờ, để Learner biết AI tự tin đến đâu trước khi tin theo. |
+  | **HAX G9 — Support efficient correction** | Ở nhánh NOT_FOUND, bản nháp ticket (tiêu đề, mô tả, lỗi/bối cảnh, đã thử gì) hiển thị ở dạng có thể sửa trực tiếp trước khi đăng; ở nhánh SIMILAR có nút "không phải vấn đề này" để quay lại tìm/tạo ticket mới. |
+  | **HAX G10 — Scope services when in doubt** | Khi độ tin cậy chưa đủ để kết luận, AI đi vào nhánh CLARIFY (hỏi thêm thông tin) thay vì đoán liều SIMILAR/NOT_FOUND — đúng tinh thần "conditional" ở mục Automation trên. |
 
 ## §5. Kiểu lỗi — 4 lớp chỗ khó + kịch bản (≥8) [bảng theo guide §2.5]
 
 ## §6. Bốn đường đi của trải nghiệm
-- Happy path: · Low-confidence (②): · Failure/không căn cứ (①): · Correction (user sửa):
-- Khi bị đòi ngoài phạm vi (③): · Case đặc thù domain (④):
+- **Happy path (SIMILAR):** Learner gõ vấn đề cần hỗ trợ → AI tìm thấy ticket cũ đủ tương tự với độ tin cậy cao → trả về tối đa 3 ticket liên quan kèm trích đoạn ngắn → Learner đọc thấy vấn đề đã có câu trả lời, không cần tạo ticket mới.
+- **Low-confidence (②) (CLARIFY):** AI chưa đủ căn cứ để kết luận trùng hay không → hỏi lại Learner 1-2 câu làm rõ (ví dụ: lỗi cụ thể là gì, đã thử cách nào) trước khi quyết định SIMILAR hay NOT_FOUND — theo HAX G10 ở §4b.
+- **Failure/không căn cứ (①) (NOT_FOUND):** AI không tìm thấy ticket liên quan đủ tin cậy → chỉ soạn **bản nháp** ticket mới (tiêu đề, mô tả vấn đề, lỗi/bối cảnh, những gì Learner đã thử) — không tự đăng, Learner phải xem và xác nhận trước.
+- **Correction (user sửa):** Learner thấy bản nháp ticket (nhánh NOT_FOUND) mô tả chưa đúng ý → sửa trực tiếp nội dung trước khi đăng; hoặc ở nhánh SIMILAR, Learner bấm "không phải vấn đề này" để AI tìm lại/chuyển sang soạn ticket mới (HAX G9).
+- **Khi bị đòi ngoài phạm vi (③):** Learner yêu cầu AI trả lời luôn câu hỏi kỹ thuật/debug hộ (thay vì chỉ check trùng) → AI từ chối, nhắc lại phạm vi của mình (chỉ kiểm tra trùng + hỗ trợ soạn ticket) và gợi ý chờ Lab Coach xử lý — đúng Non-goal #2 ở §4.
+- **Case đặc thù domain (④):** Ticket liên quan đến lỗi trong mã nguồn/dự án riêng của từng nhóm (không có trong `discord-pack/`, AI không đủ ngữ cảnh so sánh) → AI không đoán bừa là SIMILAR, trả về CLARIFY hoặc NOT_FOUND kèm ghi chú "cần Lab Coach xem trực tiếp vì liên quan code riêng của nhóm bạn".
 
 ## §7. Kiểm thử
 - Chiều chất lượng + định nghĩa kiểm chứng được:
