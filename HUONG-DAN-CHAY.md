@@ -1,7 +1,7 @@
 # Hướng dẫn chạy Class Pulse
 
-Phần xử lý (đọc log, gọi AI, gom cụm, chấm bộ đo) chỉ cần **Python 3.8+**, thư viện chuẩn,
-**không `pip install`**.
+Phần xử lý cần **Python 3.10+**, Pydantic v2, Pydantic AI, FastAPI và Uvicorn.
+Cài đúng dependency trong `codebase/requirements.txt`; chỉ dùng extras `google,ag-ui` của `pydantic-ai-slim`.
 
 Giao diện có **hai bản**, chạy được cả khi máy không có Node:
 
@@ -16,6 +16,17 @@ HTML một file. Người chấm không có Node vẫn mở được sản phẩ
 ---
 
 ## 1. Chuẩn bị — làm một lần
+
+### 1.0 Môi trường Python
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate     # Windows PowerShell: .venv\Scripts\Activate.ps1
+python -m pip install -r codebase/requirements.txt
+```
+
+Các lệnh `python` bên dưới chạy sau khi kích hoạt môi trường này. Hợp đồng AG-UI cho frontend mới
+ở [codebase/AG-UI.md](codebase/AG-UI.md); giao diện hiện tại vẫn dùng JSON API.
 
 ### 1.1 Khoá API
 
@@ -150,7 +161,7 @@ python eval/run_eval.py --run 2 --note "sửa gì so với lượt trước"
 Quyết định AI thứ hai có bộ đo riêng. Nó **cần máy chủ đang chạy** vì gọi qua `/api/answer`:
 
 ```bash
-python codebase/serve.py            # cửa sổ 1
+python codebase/serve_eval.py       # cửa sổ 1: server urllib gốc cho eval
 python eval/run_eval_answer.py --run 1     # cửa sổ 2
 ```
 
@@ -410,7 +421,7 @@ python codebase/run_cluster.py --course K4P1 --lecture D08 --out codebase/ui/dat
 python codebase/run_cluster.py --course K4P1 --lecture D10 --out codebase/ui/data/session-K4P1-D10.json
 python eval/run_eval.py --run 1
 python eval/report.py
-python codebase/serve.py &            # cần cho bộ đo nội dung ôn
+python codebase/serve_eval.py &       # server urllib gốc cho bộ đo nội dung ôn
 python eval/run_eval_answer.py --run 1
 python eval/run_eval_answer.py --selftest
 python codebase/ui/build_data.py

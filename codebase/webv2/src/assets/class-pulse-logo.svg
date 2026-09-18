@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 140" role="img" aria-labelledby="title desc">
+  <title id="title">Class Pulse logo</title>
+  <desc id="desc">A monochrome abstract pulse mark next to the Class Pulse wordmark.</desc>
+  <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <!-- The open rings suggest a classroom gathering around a live signal. -->
+    <path d="M68 18a52 52 0 1 0 47.5 73" stroke-width="12"/>
+    <path d="M91 43a25 25 0 1 0 18 45" stroke-width="10"/>
+    <!-- A single continuous pulse breaks out of the group. -->
+    <path d="M42 70h24l12-19 18 40 16-27h30" stroke-width="10"/>
+  </g>
+  <text x="152" y="83" fill="currentColor" font-family="Inter, Arial, sans-serif" font-size="48" font-weight="650" letter-spacing="-2">Class<tspan font-weight="400"> Pulse</tspan></text>
+</svg>

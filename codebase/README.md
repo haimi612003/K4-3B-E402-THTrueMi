@@ -3,7 +3,15 @@
 Gom câu hỏi rời rạc của lớp thành **cụm vấn đề** để Lab Coach biết buổi sau ôn lại chỗ nào.
 Đây là phần CP3: lời gọi AI thật ở mắt xích quyết định trung tâm, cộng bộ đo trong [`eval/`](../eval).
 
-## Chạy thử trong 3 lệnh
+## Chuẩn bị và chạy thử
+
+Cần **Python 3.10+**. Cài dependency trong môi trường riêng trước:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate    # Windows PowerShell: .venv\Scripts\Activate.ps1
+python -m pip install -r codebase/requirements.txt
+```
 
 ```bash
 cp .env.example .env          # rồi điền GEMINI_API_KEY
@@ -35,7 +43,8 @@ xem *Đăng nhập* bên dưới. Bỏ trống thì chạy mở.
 
 Hoặc mở thẳng `codebase/ui/index.html` bằng trình duyệt — năm tab đầu chạy bình thường, riêng
 ba tính năng gọi AI (tab *Thử trực tiếp*, nút *Soạn nội dung ôn*, nút *Xuất hỏi đáp*) cần máy chủ.
-Không cần `pip install` gì cả: module chỉ dùng thư viện chuẩn của Python 3.8+.
+Backend dùng Pydantic v2, Pydantic AI, FastAPI và Uvicorn. Chỉ cài extras `google,ag-ui` của
+`pydantic-ai-slim`; không cài bản `pydantic-ai` đầy đủ.
 
 ## Cấu trúc
 
@@ -43,10 +52,14 @@ Không cần `pip install` gì cả: module chỉ dùng thư viện chuẩn củ
 |---|---|
 | `class_pulse/config.py` | Đọc `.env`; giữ mọi **ngưỡng** của hệ thống ở một chỗ |
 | `class_pulse/loader.py` | Đọc chatlog, tách theo buổi, loại câu mẫu, bóc tiền tố ngữ cảnh |
-| `class_pulse/gemini.py` | **Lời gọi Gemini thật** + ghi vết + thử lại + rơi sang model dự phòng |
+| `class_pulse/gemini.py` | Client Gemini gốc dùng urllib, giữ API `generate_json(prompt, response_schema, ...)` cho eval |
+| `class_pulse/pydantic_ai_client.py` | Client Pydantic AI cho backend/AG-UI và clustering hiện tại, native structured output, ghi vết, thử lại, model dự phòng |
+| `class_pulse/models.py` | Pydantic models cho lượt hỏi, kết quả, schema AI và HTTP |
+| `class_pulse/service.py` | Luồng async dùng chung cho JSON và AG-UI |
+| `class_pulse/ag_ui.py` | AG-UI SSE, tiến độ và huỷ khi client ngắt kết nối |
 | `class_pulse/cluster.py` | **Mắt xích quyết định trung tâm** — gom cụm |
 | `run_cluster.py` | CLI: chạy một buổi, in ra màn hình, ghi JSON |
-| `serve.py` | Máy chủ cục bộ cho tab "Thử trực tiếp" — giữ khoá API ở phía server |
+| `serve.py` | FastAPI + Uvicorn, JSON API và AG-UI — giữ khoá API ở server |
 | `ui/build_data.py` | Gom kết quả + kết quả eval + nhật ký thành `ui/data.js` |
 | `ui/index.html` | Dashboard 6 tab, **bản dự phòng** một file HTML thuần — không cần Node |
 | `web/` | Dashboard 6 tab, **bản chính**: Vite + React + MUI + Tailwind |
@@ -72,6 +85,7 @@ ai mở DevTools cũng lấy được. Máy chủ giữ khoá, trình duyệt ch
 | `POST /api/generate` | nhờ model sinh bộ câu hỏi giả lập theo chủ đề — dùng khi máy không có data pack |
 | `POST /api/cluster` | gom cụm thật, trả cụm + cờ + số đo + phần đã phải sửa chữa |
 | `POST /api/answer` | soạn nội dung ôn cho một cụm: nhận `turn_ids` rồi tra ngược cả cụm trong chatlog, không chỉ dựa vào vài ví dụ |
+| `POST /api/ag-ui/{operation}` | Stream AG-UI cho `cluster`, `generate`, `answer`, `faq`; xem [hợp đồng](AG-UI.md) |
 | `POST /api/faq` | soạn một mục hỏi đáp cho **học viên khoá sau**, hoặc **từ chối** nếu cụm không phải câu hỏi kiến thức (`publishable: false` kèm lý do) |
 
 Nội dung ôn là **quyết định AI thứ hai** của sản phẩm, tách hẳn khỏi việc gom cụm. Nó chỉ chạy khi
@@ -155,7 +169,7 @@ Khi chấm trực tiếp, mở file đó ra là thấy prompt và phản hồi t
 ## Xử lý khi model quá tải
 
 `gemini-3.6-flash` trả `503` liên tục trong lúc làm bài (và `gemini-2.5-flash` đã bị gỡ khỏi API),
-nên `gemini.py` có sẵn chuỗi dự phòng:
+nên cả `gemini.py` và `pydantic_ai_client.py` có sẵn chuỗi dự phòng:
 
 ```python
 FALLBACK_MODELS = ["gemini-3.1-flash-lite", "gemini-3.5-flash", "gemini-3-flash-preview"]
@@ -164,3 +178,15 @@ FALLBACK_MODELS = ["gemini-3.1-flash-lite", "gemini-3.5-flash", "gemini-3-flash-
 Thử lại 3 lần mỗi model với backoff tăng dần, chỉ với mã lỗi đáng thử lại (429/500/502/503/504);
 lỗi 4xx khác thì dừng ngay vì đổi model cũng vô ích. Mỗi lần rơi sang model dự phòng đều được ghi log
 và báo ra kết quả (`ai_call.fell_back`) — con số đo được ra từ model nào thì nói đúng model đó.
+
+## Kiểm backend
+
+```bash
+python -m unittest discover -s codebase -p test_backend.py -v
+python codebase/test_serve.py
+python eval/run_eval_answer.py --selftest
+```
+
+Bộ kiểm đầu dùng model thử và Google transport giả lập, không gọi API thật. Bộ kiểm thứ hai
+bật Uvicorn trên localhost và kiểm HTTP/SSE thật. Golden set đầy đủ cần data pack bên ngoài repo.
+Frontend hiện tại tiếp tục dùng JSON; AG-UI được chuẩn bị cho phiên bản frontend mới.

@@ -28,8 +28,8 @@ import urllib.request
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 sys.path.insert(0, os.path.join(ROOT, "codebase"))
-from class_pulse import config, loader  # noqa: E402
-from class_pulse.console import use_utf8  # noqa: E402
+from class_pulse_legacy import config, loader  # noqa: E402
+from class_pulse_legacy.console import use_utf8  # noqa: E402
 
 use_utf8()
 
@@ -251,7 +251,7 @@ def main():
     try:
         urllib.request.urlopen(BASE + "/api/health", timeout=10).read()
     except Exception:
-        raise SystemExit("Không thấy máy chủ ở %s. Chạy trước: python codebase/serve.py" % BASE)
+        raise SystemExit("Không thấy máy chủ ở %s. Chạy trước: python codebase/serve_eval.py" % BASE)
 
     print("Lượt đo %s · %d case · %s\n" % (a.run, len(cases), config.model_name()))
     results, errc = [], collections.Counter()
