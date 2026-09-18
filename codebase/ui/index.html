@@ -211,6 +211,70 @@ tbody tr:last-child td{border-bottom:0}
 .faqmeta{margin:7px 0 0 27px;font-size:12px;color:var(--muted)}
 .faqmeta b{color:var(--ink-2);font-weight:500}
 .faqfoot{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px;padding-top:13px;border-top:1px solid var(--line-2)}
+/* ba băng cụm + nhãn chung tách ra khỏi thẻ */
+p.common{font-size:12.5px;color:var(--ink-2);margin:0 0 12px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.band{margin-bottom:20px}
+.band>.bhd,.band>summary>.bhd{display:flex;gap:9px;align-items:baseline;flex-wrap:wrap;
+  padding:0 2px 8px;border-bottom:1px solid var(--line);margin-bottom:11px}
+.band>summary{list-style:none;cursor:pointer}
+.band>summary::-webkit-details-marker{display:none}
+.bnm{font-size:14px;font-weight:600;color:var(--ink)}
+.bct{font-size:12px;color:var(--ink-2);background:var(--surface-2);border:1px solid var(--line);
+  border-radius:99px;padding:1px 9px}
+.bsub{font-size:12.5px;color:var(--muted);margin-left:auto}
+details.band>summary .bnm::before{content:"b8 ";color:var(--muted)}
+details.band[open]>summary .bnm::before{content:"be "}
+/* Phân tầng thị giác giữa ba băng chỉ được chạm vào CHIỀU CAO thanh và cỡ chữ.
+   TUYỆT ĐỐI không thu chiều rộng track .bar: bề rộng thanh tính theo % của
+   container, thu track lại là cùng một giá trị 8 lượt hiện chênh nhau 4,5 lần
+   giữa hai băng — vô hiệu hoá việc maxT đã tính chung trên toàn danh sách. */
+.cl.b1 .bar{height:12px}
+.cl.b2 .bar{height:9px}
+.cl.b3 .bar{height:6px}
+.cl.b2 .cl-title .nm{font-size:14px}
+.cl.b3 .cl-title .nm{font-size:13.5px;color:var(--ink-2)}
+.cl.b3 .cl-main{padding-top:11px;padding-bottom:11px}
+
+/* hàng lọc gọn: một dòng tóm tắt luôn hiện + 4 pill + khối giải nghĩa */
+.filterbox>summary{list-style:none;cursor:pointer;display:flex;gap:8px;align-items:baseline;
+  font-size:13px;color:var(--ink-2);flex-wrap:wrap}
+.filterbox>summary::-webkit-details-marker{display:none}
+.filterbox>summary b{color:var(--ink);font-weight:600}
+.filterbox .more{margin-left:auto;color:var(--primary);font-weight:600;white-space:nowrap}
+.filterbox[open] .more{color:var(--muted)}
+.chips .row4{display:flex;gap:8px;flex-wrap:wrap;background:none;border:0;margin-top:11px}
+.chips .pill{background:var(--panel);border:1px solid var(--line);border-radius:99px;padding:6px 14px;
+  font-size:13px;color:var(--ink-2);display:inline-flex;gap:7px;align-items:center;
+  transition:background .15s var(--ease-out),border-color .15s var(--ease-out)}
+.chips .pill:hover{border-color:var(--muted)}
+.chips .pill[aria-pressed=true]{background:color-mix(in srgb,var(--primary) 12%,var(--panel));
+  border-color:color-mix(in srgb,var(--primary) 42%,transparent);color:var(--primary);font-weight:600}
+.chips .pill .n{color:var(--muted);font-weight:600}
+.chips .pill[aria-pressed=true] .n{color:var(--primary)}
+.gloss{margin-top:11px}
+.gloss>summary{font-size:12.5px;color:var(--primary);cursor:pointer}
+dl.gl{margin:8px 0 0;font-size:12.5px}
+dl.gl dt{font-weight:600;color:var(--ink);margin-top:7px}
+dl.gl dd{margin:1px 0 0;color:var(--ink-2)}
+
+/* nếp gấp mới của Tổng quan */
+p.trust{font-size:13px;color:var(--ink-2);margin:10px 0 4px;line-height:1.65}
+p.trust .num{color:var(--ink);font-weight:600}
+h3.sec2{font-size:15px;margin:18px 0 2px}
+.todo{list-style:none;margin:10px 0 16px;padding:0;display:flex;flex-direction:column;gap:8px}
+.todo li{display:flex;gap:13px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:13px 15px;box-shadow:var(--sh-1)}
+.todo .rk{font-size:22px;font-weight:600;color:var(--muted);min-width:22px;line-height:1.1}
+.todo .tdbody{flex:1;min-width:0}
+.todo .tt{font-weight:600;font-size:14.5px}
+.todo .mt{font-size:12.5px;color:var(--ink-2);margin-top:3px;display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.todo .toggle{margin-top:7px}
+details.proof{margin-top:18px;border-top:1px solid var(--line);padding-top:14px}
+details.proof>summary{font-size:13.5px;font-weight:600;color:var(--primary);cursor:pointer;list-style:none}
+details.proof>summary::-webkit-details-marker{display:none}
+details.proof>summary::before{content:"▸ ";display:inline-block;transition:transform .18s var(--ease-out)}
+details.proof[open]>summary::before{content:"▾ "}
+details.proof>*:not(summary){margin-top:14px}
+.enter .todo li{animation:riseIn .38s var(--ease-out) both;animation-delay:calc(var(--d,0) * 40ms)}
 .scatter{margin-top:10px;border:1px dashed var(--baseline);border-radius:10px;padding:13px 15px;background:var(--panel)}
 
 .meter{height:10px;border-radius:99px;background:color-mix(in srgb,var(--primary) 14%,var(--surface-2));overflow:hidden;margin-top:12px}
@@ -401,11 +465,151 @@ svg text{transition:opacity .4s var(--ease)}
 .main::-webkit-scrollbar-thumb:hover{background:color-mix(in srgb,var(--muted) 52%,transparent)}
 .main::-webkit-scrollbar-track{background:transparent}
 
+/* ══════════════════════════════════════════════════════════════════
+   NỀN MÔI TRƯỜNG — dán vào CUỐI <style>, NGAY TRƯỚC khối
+   @media (prefers-reduced-motion:reduce) hiện có ở dòng 404.
+   Toàn bộ là append-only, trừ 2 dòng ghi đè có chú thích bên dưới.
+   ══════════════════════════════════════════════════════════════════ */
+
+/* 1 ─ Token CHỈ dùng cho nền. Không đụng bảng màu dữ liệu --s1/--s2/--s3
+       (đã kiểm mù màu) và tuyệt đối không mượn --s2 (cam = chuỗi "Người hỏi")
+       hay --critical (đỏ = cụm hỏng) làm màu nền. */
+:root{
+  --dot:rgba(11,11,11,.055);
+  --glow-1:rgba(37,99,235,.07);
+  --glow-2:rgba(27,175,122,.05);
+  --floor:rgba(37,99,235,.05);
+}
+/* --page:#0d0d0d gần như đen tuyệt đối → cùng một cường độ sẽ biến mất.
+   Phải khai ở CẢ HAI khối tối, đúng selector sản phẩm đang dùng. */
+@media (prefers-color-scheme:dark){
+  :root:where(:not([data-theme="light"])){
+    --dot:rgba(255,255,255,.045);
+    --glow-1:rgba(57,135,229,.10);
+    --glow-2:rgba(25,158,112,.07);
+    --floor:rgba(57,135,229,.07);
+  }
+}
+:root[data-theme="dark"]{
+  --dot:rgba(255,255,255,.045);
+  --glow-1:rgba(57,135,229,.10);
+  --glow-2:rgba(25,158,112,.07);
+  --floor:rgba(57,135,229,.07);
+}
+
+/* 2 ─ CHỐT CHẶN. .main là hộp cuộn và đang sơn --page đục (dòng 73);
+       không cho nó trong suốt thì mọi thứ dưới đây vô hình. */
+.main{background:transparent}
+.app{position:relative;z-index:1}
+/* .app thành stacking context mới, nhưng .topbar(z:60) và .selbar(z:20) nằm
+   TRONG .app nên thứ tự nội bộ giữ nguyên; #tip(z:90) và #gate(z:200) là anh em
+   của .app ở cấp body với z lớn hơn 1 nên vẫn nằm trên. */
+
+/* 3 ─ Dải "chân trời" ở đáy khung hình. body KHÔNG cuộn (.app khoá 100vh)
+       nên background-position:bottom neo vĩnh viễn ở đáy viewport, raster
+       đúng MỘT lần, 0 repaint khi cuộn. Ghi đè phần background của dòng 50,
+       giữ nguyên margin/color/font ở đó. */
+body{
+  background-color:var(--page);
+  background-image:linear-gradient(0deg, var(--floor) 0, transparent 360px);
+  background-repeat:no-repeat;
+  background-position:left bottom;
+  background-size:100% 360px;
+}
+
+/* 4 ─ Hai lớp trang trí, cùng nằm dưới .app */
+body::before,body::after{
+  content:"";position:fixed;z-index:0;pointer-events:none;
+  background-repeat:no-repeat;
+}
+
+/* 4a ─ Lưới điểm TĨNH (giấy kẻ ô phòng lab). Mặt nạ MỘT trục, đối xứng hai mép:
+        không dùng mask-composite (Chrome 120+/Safari 15.4+) vì trên trình duyệt cũ
+        hai mặt nạ HỢP lại và hoạ tiết tràn vào giữa cột chữ. */
+body::before{
+  inset:0;
+  background-image:radial-gradient(circle at 1px 1px, var(--dot) 1px, transparent 1.6px);
+  background-size:24px 24px;
+  -webkit-mask-image:linear-gradient(90deg,#000 0,transparent 190px,
+                                     transparent calc(100% - 190px),#000 100%);
+          mask-image:linear-gradient(90deg,#000 0,transparent 190px,
+                                     transparent calc(100% - 190px),#000 100%);
+}
+
+/* 4b ─ Vệt sáng CHUYỂN ĐỘNG. Biên độ 2,6% trên lớp rộng ~1,28×viewport ≈ 38px,
+        đi hết trong 37s ≈ 1px/giây — dưới ngưỡng thị giác ngoại vi báo "có gì vừa
+        động", nên không bao giờ cướp mắt khỏi biểu đồ. 0% và 100% giống hệt nhau
+        → vòng lặp khép kín. Hai animation chạm hai thuộc tính KHÁC nhau nên cộng
+        chu kỳ: 74 × 113 = 8362s ≈ 2h20 mới lặp lại đúng trạng thái. */
+@keyframes ambDrift{
+  0%,100%{transform:translate3d(-1.2%,.8%,0) scale(1)}
+  50%    {transform:translate3d(1.4%,-1.1%,0) scale(1.055)}
+}
+@keyframes ambBreathe{
+  0%,100%{opacity:.62}
+  50%    {opacity:.92}
+}
+body::after{
+  inset:-14%;
+  background-image:
+    radial-gradient(760px 540px at 16% 4%,  var(--glow-1), transparent 62%),
+    radial-gradient(660px 480px at 90% 28%, var(--glow-2), transparent 60%);
+  animation:ambDrift 74s cubic-bezier(.45,0,.55,1) infinite,
+            ambBreathe 113s ease-in-out infinite;
+  will-change:transform,opacity;   /* ĐÚNG MỘT lần, chỉ ở lớp này */
+}
+
+/* 5 ─ RÀO CHẮN. Hoạ tiết SỐNG Ở TẦNG DƯỚI .app; thẻ luôn đục.
+       Không bao giờ thêm opacity/backdrop-filter cho các lớp dưới đây:
+       bảng màu CVD được kiểm trên nền --panel đặc, và backdrop-filter bên trong
+       .main = raster lại vùng phía sau mỗi khung hình khi cuộn. */
+.card,.kpi,.chips,.chips .cell,.hero,.cl,.ansbox,.scatter,.ctl,.seg,.step3,.prin,.evid div{
+  background-color:var(--panel);
+  backdrop-filter:none;
+}
+.kpis,.chips .row,.evid{background-color:var(--line-2)}  /* màu khe lưới, giữ nguyên */
+
+/* 6 ─ Vá tương phản đi kèm (độc lập với hoạ tiết): --muted trên --page chỉ đạt
+       2,96:1 ở nền sáng, dưới ngưỡng AA 4,5:1 cho chữ 13,5px. Đây là hai chỗ
+       DUY NHẤT có chữ nằm trực tiếp trên nền trang. --ink-2 cho 7,3:1. */
+.crumbs{color:var(--ink-2)}
+.landfoot{color:var(--ink-2)}
+
+/* 7 ─ In: nền trang trí không đi vào bản PDF nộp giám khảo */
+@media print{ body::before,body::after{display:none} body{background:#fff} }
+
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;
     transition-duration:.01ms!important;scroll-behavior:auto!important}
   .enter > *,.enter .kpi,.enter .clusters > li,.enter .chips .cell{animation:none}
 }
+
+@media (prefers-reduced-motion:reduce){
+  /* nền: GIỮ hoạ tiết, bỏ chuyển động, khoá về đúng trạng thái nghỉ.
+     Không khai gì thì luật *::after{animation-duration:.01ms} ở trên sẽ ném lớp
+     này tới keyframe cuối, tức đứng im ở scale(1.055) lệch tâm. */
+  body::before{animation:none!important}
+  body::after{
+    animation:none!important;
+    transform:none!important;
+    opacity:.7!important;
+    will-change:auto!important;   /* không giữ texture ~8MB nếu chẳng animate gì */
+  }
+  /* spinner: giành lại khỏi luật * ở trên (.spin có specificity 0,1,0 > 0,0,0).
+     Đây là tín hiệu "đang gọi AI thật" ở tab Thử trực tiếp — tắt nó đi là người
+     bật giảm chuyển động mất hoàn toàn phản hồi và sẽ bấm gọi lần hai. */
+  .spin{animation:sp 2.4s linear infinite!important}
+  /* các selector so le mới thêm ở kế hoạch thi công */
+  .enter .step3,.enter .prin,.enter .evid > div,.enter .todo li,
+  .enter .bandwrap .clusters > li{animation:none!important}
+}
+
+/* ══ CẤM DÙNG — ba bẫy đã bị loại, ghi lại để không ai thêm vào sau ══
+   ✗ .main{background-attachment:fixed}      → .main LÀ hộp cuộn, vẽ lại mỗi khung hình
+   ✗ @keyframes{to{background-position:…}}   → paint lại toàn lớp mỗi khung hình
+   ✗ @keyframes{to{filter:blur(…)}}          → raster lại lớp toàn khung hình
+   ✗ .card{backdrop-filter:blur(…)}          → raster lại vùng sau thẻ mỗi khung cuộn
+   ✗ will-change rải lên .card/.cl           → 19+ texture, hết bộ nhớ GPU máy yếu   ══ */
 
 </style>
 </head>
@@ -424,7 +628,7 @@ svg text{transition:opacity .4s var(--ease)}
    <div class="inner">
     <div class="crumbs" id="crumbs"></div>
     <div class="toolbar" id="toolbar"></div>
-    <div class="status" id="status"></div>
+    <div class="status" id="status" hidden></div>
     <div class="chips" id="chips" hidden></div>
     <div class="wrap">
       <section id="p-home" role="region" aria-label="Trang chủ"></section>
@@ -457,7 +661,7 @@ var TABS = [
   {k:"live", label:"Thử trực tiếp", rail:"Thử",        ic:'<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>'}
 ];
 
-var state = { sess:0, sort:"turns", filter:"all", evalKind:"cluster", open:{}, sel:{}, moved:{} };
+var state = { sess:0, sort:"turns", filter:"all", evalKind:"cluster", open:{}, sel:{}, moved:{}, det:{} };
 // Nội dung ôn do AI soạn, theo từng cụm. serverUp = có máy chủ cục bộ để gọi AI không.
 var answers = {}, serverUp = null;
 function lsGet(k,d){ try{ var v=localStorage.getItem(k); return v==null?d:JSON.parse(v); }catch(e){ return d; } }
@@ -490,7 +694,9 @@ function groupedBars(host, rows, opts){
   opts=opts||{};
   var single=!!opts.single, LW=opts.labelW||230, R=52, PT=8, ROW=single?30:44, BAR=13, GAP=2, W=800;
   var H=PT+rows.length*ROW+26;
-  var max=niceMax(Math.max.apply(null,rows.map(function(r){return single?(r.a||0):Math.max(r.a||0,r.b||0);})));
+  // opts.max: khi một bảng dữ liệu bị vẽ làm HAI biểu đồ (đầu + đuôi gập), cả hai
+  // bắt buộc dùng chung một thang. Không thì cụm 10 lượt ở đuôi sẽ vẽ dài ngang cụm 51 lượt.
+  var max=opts.max||niceMax(Math.max.apply(null,rows.map(function(r){return single?(r.a||0):Math.max(r.a||0,r.b||0);})));
   var svg=el("svg",{viewBox:"0 0 "+W+" "+H,role:"img","aria-label":opts.alt||""});
   var PW=W-LW-R, x=function(v){ return LW+(v/max)*PW; };
   ticks(max).forEach(function(f){
@@ -589,7 +795,7 @@ function playEnter(host){
   host.classList.add("enter");
   var i=0;
   Array.prototype.forEach.call(host.children, function(el){ el.style.setProperty("--d", i++); });
-  [".kpi",".clusters > li",".chips .cell"].forEach(function(sel){
+  [".kpi",".clusters > li",".chips .cell",".todo li"].forEach(function(sel){
     var j=0;
     Array.prototype.forEach.call(host.querySelectorAll(sel), function(el){ el.style.setProperty("--d", j++); });
   });
@@ -717,11 +923,14 @@ function renderShell(){
     document.getElementById("exp").addEventListener("click",exportSession);
   } else { tb.hidden=true; tb.innerHTML=""; }
 
+  /* Viên "đã phân loại 100%" đứng cách ô "RẢI RÁC 33%" đúng 40px: hai câu chọi nhau
+     trong một cái liếc, mà cái hiểu nhầm lại có lợi cho nhóm. Sự thật: 100% lượt đã được
+     XÉT, nhưng 33% trong đó không quy được vào cụm nào. Số 511 đã nằm ở dòng p.trust.
+     Nhánh cảnh báo tín hiệu thưa thì GIỮ — đó là chỗ sản phẩm tự nhận nó không kết luận được. */
   var st=document.getElementById("status");
-  st.hidden = !(needsSess && s);
-  if(needsSess && s) st.innerHTML = s.sparse
-    ? '<span class="warn">TÍN HIỆU QUÁ THƯA — HỆ THỐNG KHÔNG GOM CỤM</span>'
-    : '<span>'+fmt(s.real_turns)+" LƯỢT ĐÃ PHÂN LOẠI · 100%</span>";
+  st.hidden = !(needsSess && s && s.sparse);
+  if(needsSess && s && s.sparse)
+    st.innerHTML = '<span class="warn">TÍN HIỆU QUÁ THƯA — HỆ THỐNG KHÔNG GOM CỤM</span>';
   renderChips(!!(needsSess && s && !s.sparse));
 }
 
@@ -730,22 +939,41 @@ function renderChips(show){
   box.hidden=!show;
   if(!show) return;
   var all=sortedClusters();
-  var sum=function(a){ return a.reduce(function(x,c){return x+c.turns;},0); };
-  var tot=sum(all)+scatterCount();
+  /* Hàng cũ in phần trăm cho cả sáu ô, nhưng các ô chồng lấn nhau (một cụm mạnh
+     cũng có thể có tín hiệu lệch) nên tổng cộng ra 181% trong khi trình bày
+     như một dải chia 100%. Bỏ phần trăm ở đây là bỏ một CÁCH TRÌNH BÀY gây
+     hiểu sai — tỉ lệ đúng và cộng đủ 100% nằm ở card "Thành phần lượt hỏi",
+     card đó cố ý để lại ở tầng 1 của Tổng quan.  */
   var defs=[
-    {k:"all",   nm:"Tất cả",        n:all.length, v:sum(all)},
-    {k:"top",   nm:"Đông nhất",     n:all.length?1:0, v:all.length?all[0].turns:0},
-    {k:"strong",nm:"Cụm mạnh",      n:all.filter(function(c){return !c.weak;}).length, v:sum(all.filter(function(c){return !c.weak;}))},
-    {k:"weak",  nm:"Cụm yếu",       n:all.filter(function(c){return c.weak;}).length,  v:sum(all.filter(function(c){return c.weak;}))},
-    {k:"skew",  nm:"Tín hiệu lệch", n:all.filter(function(c){return c.skew;}).length,  v:sum(all.filter(function(c){return c.skew;}))},
-    {k:"scat",  nm:"Rải rác",       n:scatterCount(), v:scatterCount(), noclick:true}
+    {k:"all",   nm:"Tất cả",        n:all.length},
+    {k:"strong",nm:"Cụm mạnh",      n:all.filter(function(c){return !c.weak;}).length},
+    {k:"weak",  nm:"Cụm yếu",       n:all.filter(function(c){return c.weak;}).length},
+    {k:"skew",  nm:"Tín hiệu lệch", n:all.filter(function(c){return c.skew;}).length}
   ];
-  box.innerHTML='<p class="hd">Bộ lọc cụm — phần trăm là tỉ lệ lượt hỏi của buổi, số dưới là số cụm</p>'+
-    '<div class="row" style="grid-template-columns:repeat('+defs.length+',minmax(0,1fr))">'+
-    defs.map(function(d){
-      return '<button class="cell" type="button" data-filter="'+d.k+'" aria-pressed="'+(state.filter===d.k)+'"'+
-        (d.noclick?" disabled":"")+'><span class="pc">'+(tot?Math.round(d.v/tot*100):0)+"%</span>"+
-        '<span class="nm">'+esc(d.nm)+'</span><span class="ct">'+d.n+"</span></button>"; }).join("")+"</div>";
+  var nWeak=defs[2].n, nSkew=defs[3].n, wmax=TH.weak_max_people||2;
+  /* Dòng summary luôn hiện phải chở đủ ba con số bất lợi: cụm yếu, tín hiệu
+     lệch, lượt chưa quy được. Cờ tín hiệu lệch có đúng một nhiệm vụ — nói
+     "con số này trông to nhưng là của một người" — nên đẩy nó ra sau một cú
+     bấm là vô hiệu hoá chính nó. */
+  box.innerHTML='<details class="filterbox" data-det="chips.filter"'+
+    ((state.filter!=="all"||state.det["chips.filter"])?" open":"")+'>'+
+    '<summary><b>'+all.length+' cụm vấn đề</b>'+
+      (nWeak?' · '+nWeak+' cụm yếu':'')+
+      (nSkew?' · '+nSkew+' tín hiệu lệch':'')+
+      ' · '+fmt(scatterCount())+' lượt chưa quy được vào đâu'+
+      '<span class="more">Lọc ▾</span></summary>'+
+    '<div class="row4">'+defs.map(function(d){
+      return '<button class="pill" type="button" data-filter="'+d.k+'" aria-pressed="'+(state.filter===d.k)+'">'+
+        esc(d.nm)+' <span class="n num">'+d.n+'</span></button>'; }).join("")+'</div>'+
+    '<details class="tbl gloss" data-det="chips.gloss"'+(state.det["chips.gloss"]?" open":"")+'>'+
+     '<summary>Bốn chữ này nghĩa là gì?</summary><dl class="gl">'+
+     '<dt>Cụm mạnh</dt><dd>Từ '+(wmax+1)+' học viên khác nhau trở lên cùng hỏi một chỗ.</dd>'+
+     '<dt>Cụm yếu</dt><dd>Chỉ '+wmax+' người trở xuống, dù nhiều lượt. Chưa đủ để kết luận cả lớp kẹt.</dd>'+
+     '<dt>Tín hiệu lệch</dt><dd>Một học viên chiếm từ '+Math.round((TH.skew_ratio||.5)*100)+
+        '% lượt của cụm trở lên — con số trông to nhưng là của một người.</dd>'+
+     '<dt>Chưa quy được vào đâu</dt><dd>Câu quá ngắn, câu hành chính, câu lạc đề. '+
+        'Hệ thống <strong>không</strong> nhét chúng vào cụm gần nhất cho đẹp số.</dd>'+
+     '</dl></details></details>';
 }
 
 function exportSession(){
@@ -899,65 +1127,185 @@ function renderTong(){
   var cls=filtered(), all=sortedClusters(), h="";
 
   if(s.sparse){
-    h+='<div class="banner warn"><span class="bi">SPARSE</span><span>'+esc(s.sparse_reason)+"</span></div>"+
+    h+='<div class="banner warn"><span class="bi">QUÁ ÍT CÂU</span><span>'+esc(s.sparse_reason)+"</span></div>"+
        '<div class="hero"><div class="fig num">'+s.real_turns+'</div><div class="cap">lượt hỏi thật trong chu kỳ này — dưới ngưỡng '+
        (TH.sparse_min_turns||6)+' lượt nên hệ thống <strong>không gọi AI và không gom cụm</strong>. '+
        'Thà không trả lời còn hơn nặn ra một danh sách trông đáng tin.</div></div>';
-  } else {
-    var top=all[0];
-    h+='<div class="hero"><div class="fig num">'+(top?top.people:0)+"/"+s.students+'</div>'+
-       '<div class="cap">học viên của buổi cùng vướng <strong>'+esc(top?top.name:"—")+"</strong>"+
-       (top?" — "+top.turns+" lượt hỏi trong "+fmt(s.real_turns)+" lượt của cả buổi.":"")+
-       " Đọc log thô thì không thấy được điều này.</div></div>";
+    host.innerHTML=h; return;
   }
 
-  h+='<dl class="kpis">'+
-     kpi("Lượt hỏi thực",fmt(s.real_turns),"",sparkBars(all.slice(0,14).map(function(c){return c.turns;}),css("--s1")))+
-     kpi("Học viên đã hỏi",fmt(s.students),"","","trung vị "+((s.per_student&&s.per_student.median)||"—")+" lượt/người")+
-     kpi("Câu mẫu đã loại",fmt(s.preset_removed),"/ "+fmt(s.total_turns),"","loại trước khi đếm")+
-     kpi("Cụm tìm được",String(all.length),"","",all.filter(function(c){return c.weak;}).length+" cụm yếu")+
-     kpi("Rải rác",fmt(scatterCount()),"","","không quy được vào đâu")+
-     kpi("Thời gian gom", s.ai_call&&s.ai_call.called?(s.ai_call.latency_ms/1000).toFixed(1):"0","s","",
-         s.ai_call&&s.ai_call.called?s.ai_call.n_calls+" lời gọi AI":"không gọi AI")+
-     "</dl>";
+  var top=all[0];
+  h+='<div class="hero"><div class="fig num">'+(top?top.people:0)+"/"+s.students+'</div>'+
+     '<div class="cap">học viên của buổi cùng vướng <strong>'+esc(top?top.name:"—")+"</strong>"+
+     (top?" — "+top.turns+" lượt hỏi trong "+fmt(s.real_turns)+" lượt của cả buổi.":"")+
+     " Đọc log thô thì không thấy được điều này.</div></div>";
 
+  /* Dòng tin cậy — LUÔN hiện, và cố ý chứa cả những con số bất lợi cho nhóm:
+     cụm yếu, tín hiệu lệch, lượt chưa quy được, câu bấm nút có sẵn đã loại.
+     Vòng phản biện bắt đúng chỗ này: nếu mấy số đó rơi xuống sau một cú bấm
+     trong khi tin tốt nằm trên, đó là thiên vị chứ không phải gọn gàng. */
+  var nWeak=all.filter(function(c){return c.weak;}).length;
+  var nSkew=all.filter(function(c){return c.skew;}).length;
+  h+='<p class="trust"><span class="num">'+fmt(s.real_turns)+'</span> lượt hỏi thực · '+
+     '<span class="num">'+all.length+'</span> cụm'+
+     (nWeak?' (<span class="num">'+nWeak+'</span> cụm yếu)':'')+
+     (nSkew?' · <span class="num">'+nSkew+'</span> cụm có tín hiệu lệch':'')+
+     ' · <span class="num">'+fmt(scatterCount())+'</span> lượt chưa quy được vào đâu'+
+     ' · <span class="num">'+fmt(s.preset_removed)+'</span>/<span class="num">'+fmt(s.total_turns)+
+     '</span> câu bấm nút có sẵn đã loại trước khi đếm</p>';
+
+  /* Ba cụm đông nhất. Tiêu đề MÔ TẢ chứ không khuyên: sản phẩm đã hứa ở nguyên
+     tắc số 6 rằng nó đưa vật liệu, không khuyến nghị. "Ba cụm mạnh đông nhất"
+     là một sự thật đếm được; "Ba việc nên làm" là một lời khuyên. */
+  var base=(state.filter==="all")?all:cls;
+  var top3=base.filter(function(c){return !c.weak && c.turns>0;}).slice(0,3);
+  if(top3.length){
+    h+='<h3 class="sec2">Ba cụm mạnh đông nhất</h3>'+
+       '<p class="capt">Xếp theo '+(state.sort==="people"?"số người hỏi":"số lượt hỏi")+
+       (state.filter!=="all"?", trong bộ lọc đang bật":"")+
+       '. Cụm yếu và '+(all.length-top3.length)+' cụm còn lại nằm đầy đủ ở phần dưới.</p><ol class="todo">'+
+      top3.map(function(c,i){ var id=s.key+"#"+c._i;
+        return '<li><span class="rk num">'+(i+1)+'</span><div class="tdbody"><div class="tt">'+esc(c.name)+'</div>'+
+          '<div class="mt"><b class="num">'+c.people+'</b>/'+s.students+' học viên · <b class="num">'+c.turns+'</b> lượt'+
+          (c.skew?' <span class="chip skew">tín hiệu lệch</span>':'')+'</div>'+
+          '<button class="toggle" type="button" data-goto="'+esc(id)+'">Đọc câu nguyên văn →</button></div></li>'; }).join("")+
+      '</ol>';
+  }
+
+  /* Biểu đồ: đầu 6 dòng + đuôi gập. Hai chốt do vòng phản biện đặt ra —
+     (a) mẫu số tính trên LƯỢT CỦA BUỔI chứ không trên riêng phần đã gom, và nói
+         thêm cả phần rải rác, nếu không con số bị giấu trông nhỏ hơn sự thật;
+     (b) vẽ thêm một thanh gộp cho toàn bộ đuôi, để hình dạng phân bố — vốn
+         chính là luận điểm "hàng trăm câu hỏi, vài vấn đề" — không bị cắt mất. */
+  var HEAD=6;
   if(cls.length){
+    var head=cls.slice(0,HEAD), rest=cls.slice(HEAD);
+    var restTurns=rest.reduce(function(a,c){return a+c.turns;},0);
+    var outside=restTurns+scatterCount();
+    var MX=niceMax(Math.max.apply(null,cls.map(function(c){return Math.max(c.turns,c.people);})));
     h+='<div class="card"><h3>Cụm vấn đề theo số lượt và số người</h3>'+
        '<p class="capt">Hai con số này phải đọc cùng nhau: nhiều lượt mà ít người là một bạn hỏi đi hỏi lại, không phải cả lớp kẹt.</p>'+
        '<div class="legend"><span><i style="background:'+css("--s1")+'"></i>Lượt hỏi</span><span><i style="background:'+css("--s2")+'"></i>Người hỏi</span></div>'+
-       '<div id="ch-clusters"></div>'+
-       tableView([{t:"Cụm vấn đề"},{t:"Lượt",n:1},{t:"Người",n:1},{t:"Cờ"}],
+       '<div id="ch-clusters"></div>';
+    if(rest.length){
+      h+=det("tong.rest","tbl",
+        rest.length+' cụm nhỏ còn lại ('+fmt(restTurns)+' lượt · '+Math.round(restTurns/s.real_turns*100)+
+        '% lượt của buổi) — cùng với '+fmt(scatterCount())+' lượt rải rác, '+
+        Math.round(outside/s.real_turns*100)+'% lượt của buổi không nằm trong 6 thanh trên',
+        '<div id="ch-rest"></div>');
+    }
+    h+=tableView([{t:"Cụm vấn đề"},{t:"Lượt",n:1},{t:"Người",n:1},{t:"Cờ"}],
          cls.map(function(c){ return [c.name,c.turns,c.people,
            [c.weak?"cụm yếu":"",c.skew?"tín hiệu lệch":""].filter(Boolean).join(", ")||"—"]; }))+"</div>";
-  } else if(!s.sparse){
+  } else {
     h+='<div class="banner info"><span class="bi">LỌC</span><span>Bộ lọc hiện tại không khớp cụm nào. Bấm “Tất cả” ở hàng lọc phía trên.</span></div>';
   }
 
+  /* Card này ở lại TẦNG 1. Nó là chỗ duy nhất trên sản phẩm cộng đủ 100% lượt
+     của buổi, và hai thay đổi khác đã viện dẫn nó làm lý do bỏ phần trăm chỗ
+     khác — gập nó xuống là lý lẽ vòng tròn. Cao ~60px, rẻ nhất tab. */
   h+='<div class="card"><h3>Thành phần lượt hỏi của buổi</h3>'+
-     '<p class="capt">Câu mẫu bấm sẵn bị loại trước khi đếm bất cứ thứ gì — để lẫn vào sẽ ra cụm giả.</p>'+
+     '<p class="capt">Câu bấm nút có sẵn bị loại trước khi đếm bất cứ thứ gì — để lẫn vào sẽ ra cụm giả.</p>'+
      '<div id="ch-mix"></div></div>';
 
-  if(s.per_student){
-    var ps=s.per_student;
-    h+='<div class="card"><h3>Phân bố lượt hỏi trên mỗi học viên</h3>'+
+  /* Ba số kỹ thuật + phân bố: giám khảo cần, Lab Coach không. Nằm sau một cửa
+     nói thẳng bên trong là gì. */
+  var ps=s.per_student;
+  h+=det("tong.proof","proof","Vì sao tin được mấy con số trên",
+    '<dl class="kpis">'+
+      kpi("Học viên đã hỏi",fmt(s.students),"","","trung vị "+((ps&&ps.median)||"—")+" lượt/người")+
+      kpi("Thời gian gom", s.ai_call&&s.ai_call.called?(s.ai_call.latency_ms/1000).toFixed(1):"0","s","",
+          s.ai_call&&s.ai_call.called?s.ai_call.n_calls+" lời gọi AI":"không gọi AI")+
+      kpi("Cụm con trước khi gộp",
+          String((s.repairs&&s.repairs.protos_before_merge)||all.length),"→ "+all.length,"","AI gộp lại một lần nữa")+
+    '</dl>'+
+    (ps?'<div class="card"><h3>Phân bố lượt hỏi trên mỗi học viên</h3>'+
        '<p class="capt">Trung vị <strong>'+ps.median+' lượt</strong>/học viên, nhưng người hỏi nhiều nhất là <strong>'+ps.max+
        ' lượt</strong> ('+Math.round(ps.top_share*100)+'% cả buổi). Đó là lý do cần cờ “tín hiệu lệch”.</p>'+
        '<div id="ch-dist"></div>'+
-       tableView([{t:"Số lượt hỏi"},{t:"Số học viên",n:1}],ps.hist.map(function(b){return [b.label,b.count];}))+"</div>";
-  }
+       tableView([{t:"Số lượt hỏi"},{t:"Số học viên",n:1}],ps.hist.map(function(b){return [b.label,b.count];}))+"</div>":""));
+
   host.innerHTML=h;
 
-  if(cls.length) groupedBars(document.getElementById("ch-clusters"),
-    cls.map(function(c){ return {label:c.name,a:c.turns,b:c.people,extra:(c.parts||[]).join(", ")}; }),
-    {alt:"Cụm vấn đề theo số lượt và số người"});
+  if(cls.length){
+    var head2=cls.slice(0,HEAD), rest2=cls.slice(HEAD);
+    var MX2=niceMax(Math.max.apply(null,cls.map(function(c){return Math.max(c.turns,c.people);})));
+    groupedBars(document.getElementById("ch-clusters"),
+      head2.map(function(c){ return {label:c.name,a:c.turns,b:c.people,extra:(c.parts||[]).join(", ")}; }),
+      {alt:"Sáu cụm vấn đề lớn nhất theo số lượt và số người",max:MX2});
+    if(rest2.length) drawLazy("tong.rest", function(){
+      groupedBars(document.getElementById("ch-rest"),
+        rest2.map(function(c){ return {label:c.name,a:c.turns,b:c.people,extra:(c.parts||[]).join(", ")}; }),
+        {alt:"Các cụm nhỏ còn lại, cùng thang với biểu đồ trên",max:MX2});
+    });
+  }
   stackedBar(document.getElementById("ch-mix"),[
     {label:"Trong cụm",v:all.reduce(function(a,c){return a+c.turns;},0),c:css("--s1")},
     {label:"Rải rác",v:scatterCount(),c:css("--s3")},
-    {label:"Câu mẫu đã loại",v:s.preset_removed,c:css("--baseline")}]);
-  if(s.per_student) columns(document.getElementById("ch-dist"),s.per_student.hist,"Phân bố lượt hỏi trên mỗi học viên");
+    {label:"Câu bấm nút có sẵn đã loại",v:s.preset_removed,c:css("--baseline")}]);
+  if(ps) drawLazy("tong.proof", function(){
+    columns(document.getElementById("ch-dist"),ps.hist,"Phân bố lượt hỏi trên mỗi học viên");
+  });
+}
+
+/* SVG nằm trong <details> đóng đo được bề rộng 0 nên vẽ ra sẽ méo.
+   Vẽ lười: đang mở thì vẽ ngay, đang đóng thì đợi lần mở đầu tiên. */
+function drawLazy(detId, draw){
+  var d=document.querySelector('[data-det="'+detId+'"]');
+  if(!d) return;
+  if(d.open){ draw(); growBars(d); return; }
+  d.addEventListener("toggle", function once(){
+    if(!d.open) return;
+    d.removeEventListener("toggle", once);
+    draw(); growBars(d);
+  });
 }
 
 /* ══════════ CỤM VẤN ĐỀ ══════════ */
+/* Cùng một bài giảng xuất hiện hai kiểu trong dữ liệu: bản có dấu
+   "Day03: Từ chatbot đến agentic agent react (Mr. [HV])" và bản slug
+   "day03-tu-chatbot-den-agentic-agent-react". In cả hai lên cùng một thẻ là
+   nói một chuyện hai lần. Chuẩn hoá về cùng một khoá rồi giữ bản người đọc được. */
+function partKey(p){
+  return String(p||"").toLowerCase()
+    .normalize("NFD").replace(/[̀-ͯ]/g,"")
+    .replace(/đ/g,"d")
+    .replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+}
+function dedupeParts(parts){
+  var out=[];
+  (parts||[]).forEach(function(p){
+    var k=partKey(p);
+    if(!k) return;
+    for(var i=0;i<out.length;i++){
+      var ok=partKey(out[i]);
+      if(ok===k || (ok.length>=12 && k.length>=12 && (ok.indexOf(k)===0 || k.indexOf(ok)===0))){
+        /* giữ bản dễ đọc hơn: bản có khoảng trắng/chữ hoa, không phải slug */
+        if(/[ A-Z]/.test(p) && !/[ A-Z]/.test(out[i])) out[i]=p;
+        return;
+      }
+    }
+    out.push(p);
+  });
+  return out;
+}
+/* Nhãn nào có mặt ở quá nửa số cụm thì không phân biệt được gì giữa các cụm —
+   nói một lần ở đầu danh sách, đừng lặp 16 lần. */
+function commonParts(cls){
+  var n=cls.length; if(n<4) return {};
+  var cnt={}, label={};
+  cls.forEach(function(c){
+    var seen={};
+    dedupeParts(c.parts).forEach(function(p){
+      var k=partKey(p); if(seen[k]) return; seen[k]=1;
+      cnt[k]=(cnt[k]||0)+1; if(!label[k]||/[ A-Z]/.test(p)) label[k]=p;
+    });
+  });
+  var out={};
+  Object.keys(cnt).forEach(function(k){ if(cnt[k]/n>0.5) out[k]=label[k]; });
+  return out;
+}
+
 function renderCum(){
   var host=document.getElementById("p-cum"), s=cur();
   if(!s){ host.innerHTML=emptyState(); return; }
@@ -972,44 +1320,78 @@ function renderCum(){
      (nmoved?' · <b>'+nmoved+" câu đã sửa</b>":"")+"</span></div>";
 
   var maxT=Math.max.apply(null,cls.map(function(x){return x.turns;}).concat([1]));
-  h+='<ol class="clusters">';
-  cls.forEach(function(c,rank){
+  var common=commonParts(cls), commonKeys=Object.keys(common);
+  if(commonKeys.length){
+    h+='<p class="common">Mọi cụm dưới đây đều thuộc '+
+       commonKeys.map(function(k){return '<span class="chip part">'+esc(common[k])+"</span>";}).join(" ")+
+       ' — bên trong mỗi cụm chỉ còn nhãn khác nhau.</p>';
+  }
+
+  /* Ba băng theo SỐ NGƯỜI, vì đó là thứ quyết định "cả lớp kẹt" hay "một bạn
+     hỏi nhiều". Ngưỡng in thẳng lên màn hình để kiểm tay được bằng cột số
+     người, và đọc từ TH chứ không gõ cứng. Tên băng MÔ TẢ, không khuyên —
+     nguyên tắc số 6 của sản phẩm nói hệ thống đưa vật liệu, không khuyến nghị. */
+  var wmax=TH.weak_max_people||2;
+  var big=Math.max(wmax+1, Math.ceil((s.students||0)*0.1));
+  var bands=[
+    {k:"b1", nm:"Từ "+big+" học viên trở lên cùng hỏi",
+     sub:"Đủ đông để đáng dành thời gian trên lớp.",
+     rows:cls.filter(function(c){return !c.weak && c.people>=big;})},
+    {k:"b2", nm:"Từ "+(wmax+1)+" đến "+(big-1)+" học viên",
+     sub:"Có thật nhưng chưa phải cả lớp — cân nhắc gộp vào phần khác.",
+     rows:cls.filter(function(c){return !c.weak && c.people<big;})},
+    {k:"b3", nm:"Cụm yếu — "+wmax+" người trở xuống",
+     sub:"Chưa đủ căn cứ để kết luận cả lớp kẹt. Vẫn hiện đủ, không xoá.",
+     rows:cls.filter(function(c){return c.weak;})}
+  ];
+
+  function cardHtml(c, rank, band){
     var id=s.key+"#"+c._i, open=state.open[id], sel=state.sel[id];
-    var first=(rank===0&&!s.sparse&&state.filter==="all");
-    h+='<li class="cl'+(first?" rank1":"")+(sel?" on":"")+'"><div class="cl-main">'+
+    var first=(rank===0&&band==="b1"&&!s.sparse&&state.filter==="all");
+    var parts=dedupeParts(c.parts).filter(function(p){ return !common[partKey(p)]; });
+    var o='<li class="cl '+band+(first?" rank1":"")+(sel?" on":"")+'"><div class="cl-main">'+
        '<div class="cl-check"><input type="checkbox" data-sel="'+esc(id)+'"'+(sel?" checked":"")+
        ' aria-label="Chọn cụm '+esc(c.name)+'"></div><div class="cl-body">'+
        '<div class="cl-title"><span class="nm">'+esc(c.name)+"</span>"+
        (first?'<span class="chip top">đông nhất</span>':"")+
        (c.skew?'<span class="chip skew">tín hiệu lệch</span>':"")+
-       (c.weak?'<span class="chip weak">cụm yếu</span>':"")+"</div>"+
-       '<div class="cl-meta">'+((c.parts&&c.parts.length)
-         ? c.parts.map(function(p){return '<span class="chip part">'+esc(p)+"</span>";}).join("")
-         : '<span class="chip part">không gắn phần bài nào</span>')+"</div>"+
-       '<div class="barrow"><div class="bar"><i style="width:'+Math.max(3,Math.round(c.turns/maxT*100))+'%"></i></div>'+
+       (c.weak?'<span class="chip weak">cụm yếu</span>':"")+"</div>";
+    if(parts.length) o+='<div class="cl-meta">'+
+         parts.map(function(p){return '<span class="chip part">'+esc(p)+"</span>";}).join("")+"</div>";
+    o+='<div class="barrow"><div class="bar"><i style="width:'+Math.max(3,Math.round(c.turns/maxT*100))+'%"></i></div>'+
        '<div class="counts"><span><b>'+c.turns+"</b> lượt</span><span><b>"+c.people+"</b> người</span></div></div>";
-    if(c.why) h+='<p class="note">'+esc(c.why)+"</p>";
-    if(c.skew) h+='<p class="note">Một học viên chiếm '+Math.round(c.skew_top_share*100)+
+    if(c.why) o+='<p class="note">'+esc(c.why)+"</p>";
+    if(c.skew) o+='<p class="note">Một học viên chiếm '+Math.round(c.skew_top_share*100)+
       "% lượt của cụm — việc cần làm là nhắn riêng, không phải dành 15 phút của cả lớp.</p>";
-    if(c._removed) h+='<p class="note">Đã chuyển '+c._removed+" câu ra nhóm rải rác — số lượt"+
+    if(c._removed) o+='<p class="note">Đã chuyển '+c._removed+" câu ra nhóm rải rác — số lượt"+
       (c._approx?"":", số người và các cờ")+" đã tính lại."+(c.turns===0?" Cụm đã rỗng; mở ra bấm “Hoàn tác”.":"")+"</p>";
-    h+='<div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap">'+
+    o+='<div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap">'+
        '<button class="toggle" type="button" data-open="'+esc(id)+'" aria-expanded="'+(open?"true":"false")+'">'+
        (open?"Ẩn":"Đọc")+" "+(c.examples||[]).length+" câu nguyên văn</button>"+
        (c.turns?'<button class="toggle" type="button" data-answer="'+esc(id)+'">'+
          (answers[id]&&answers[id].data?"Ẩn nội dung ôn":"✨ Soạn nội dung ôn")+"</button>":"")+
        "</div>"+answerHtml(id)+"</div></div>";
     if(open){
-      h+='<div class="ex"><p class="lb">Câu nguyên văn, ID trỏ về dòng log — không viết lại, không tóm tắt</p><ul class="qs">';
+      o+='<div class="ex"><p class="lb">Câu nguyên văn, ID trỏ về dòng log — không viết lại, không tóm tắt</p><ul class="qs">';
       (c.examples||[]).forEach(function(e){
-        h+='<li class="q'+(mv[e.turn_id]?" moved":"")+'"><span class="qid">'+esc(e.turn_id)+'</span>'+
+        o+='<li class="q'+(mv[e.turn_id]?" moved":"")+'"><span class="qid">'+esc(e.turn_id)+'</span>'+
            '<span class="qt">“'+esc(e.q)+'”</span><button class="qa" type="button" data-move="'+esc(e.turn_id)+'">'+
            (mv[e.turn_id]?"Hoàn tác":"Không thuộc cụm")+"</button></li>"; });
-      h+="</ul></div>";
+      o+="</ul></div>";
     }
-    h+="</li>";
+    return o+"</li>";
+  }
+
+  bands.forEach(function(b){
+    if(!b.rows.length) return;
+    var list='<ol class="clusters">'+b.rows.map(function(c,r){return cardHtml(c,r,b.k);}).join("")+"</ol>";
+    var head='<span class="bnm">'+esc(b.nm)+'</span><span class="bct num">'+b.rows.length+' cụm</span>'+
+             '<span class="bsub">'+esc(b.sub)+'</span>';
+    /* Băng cụm yếu gập sẵn — nhưng đếm số vẫn nằm ngay trên nhãn, nên không có
+       chuyện con số bất lợi biến mất khỏi màn hình. */
+    if(b.k==="b3") h+=det("cum."+b.k,"band","<span class=\"bhd\">"+head+"</span>",list);
+    else h+='<div class="band open"><div class="bhd">'+head+"</div>"+list+"</div>";
   });
-  h+="</ol>";
 
   h+='<div class="scatter"><div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap">'+
      '<strong>Rải rác / không phân loại được</strong><span class="capt">'+scatterCount()+" lượt</span></div>"+
@@ -1601,14 +1983,30 @@ function animate(){
 }
 // renderAll dùng cho thay đổi nhỏ (tick, mở cụm) — không chạy lại hiệu ứng vào màn,
 // chỉ vẽ lại số và thanh để chúng khớp dữ liệu mới.
+/* ── gập/mở giữ được qua mỗi lần dựng lại ─────────────────────────────
+   renderAll() gán đè innerHTML nên trạng thái open của <details> nằm trong DOM
+   sẽ bị xoá sạch mỗi lần tick một cụm hay bấm đọc câu nguyên văn. Vì thế trạng
+   thái phải sống trong state.det, ngoài DOM. Sự kiện `toggle` KHÔNG nổi bọt nên
+   listener bắt buộc đặt ở pha capture.  */
+function det(id, cls, summaryHtml, bodyHtml){
+  return '<details class="'+cls+'" data-det="'+esc(id)+'"'+(state.det[id]?" open":"")+">"+
+         "<summary>"+summaryHtml+"</summary>"+bodyHtml+"</details>";
+}
+document.addEventListener("toggle", function(e){
+  var t=e.target, id=t && t.dataset && t.dataset.det;
+  if(!id) return;
+  if(t.open) state.det[id]=1; else delete state.det[id];
+}, true);
+
 function renderAll(){ renderShell(); renderers[active](); }
 function renderAllAnimated(){ renderAll(); animate(); }
 function setSort(v){ state.sort=v; lsSet("cp.sort",v); renderAllAnimated(); }
 
 document.addEventListener("click",function(e){
-  var t=e.target.closest ? e.target.closest("[data-tab],[data-open],[data-move],[data-filter],[data-answer],[data-lanswer],[data-evalkind]") : null;
+  var t=e.target.closest ? e.target.closest("[data-tab],[data-open],[data-move],[data-filter],[data-answer],[data-lanswer],[data-evalkind],[data-goto]") : null;
   if(!t) return;
   if(t.dataset.tab){ show(t.dataset.tab); return; }
+  if(t.dataset.goto!=null){ state.open[t.dataset.goto]=1; show("cum"); return; }
   if(t.dataset.filter){ state.filter=t.dataset.filter; lsSet("cp.filter",state.filter); renderAllAnimated(); return; }
   if(t.dataset.evalkind){ state.evalKind=t.dataset.evalkind; lsSet("cp.evalkind",state.evalKind); renderAllAnimated(); return; }
   if(t.dataset.open!=null){ var k=t.dataset.open;
@@ -1662,6 +2060,7 @@ api("/api/health").then(function(h){ serverUp=true; if(h.thresholds) Object.assi
   .catch(function(){ serverUp=false; });
 state.sort=lsGet("cp.sort","turns");
 state.filter=lsGet("cp.filter","all");
+if(state.filter==="top"||state.filter==="scat") state.filter="all";   // bộ lọc cũ đã bỏ
 state.evalKind=lsGet("cp.evalkind","cluster");
 var qs=new URLSearchParams(location.search);
 // ?filter=top|strong|weak|skew|all — mở thẳng một bộ lọc, tiện khi demo deep-link.
