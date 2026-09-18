@@ -20,8 +20,8 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 sys.path.insert(0, os.path.join(ROOT, "codebase"))
-from class_pulse import cluster, config, loader  # noqa: E402
-from class_pulse.console import use_utf8  # noqa: E402
+from class_pulse_legacy import cluster, config, loader  # noqa: E402
+from class_pulse_legacy.console import use_utf8  # noqa: E402
 
 use_utf8()
 

@@ -20,7 +20,7 @@ import sys
 import threading
 import urllib.error
 import urllib.request
-from http.server import ThreadingHTTPServer
+import uvicorn
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
@@ -64,8 +64,16 @@ def free_port():
 
 
 PORT = free_port()
-srv = ThreadingHTTPServer(("127.0.0.1", PORT), serve.Handler)
-threading.Thread(target=srv.serve_forever, daemon=True).start()
+srv = uvicorn.Server(uvicorn.Config(serve.app, host="127.0.0.1", port=PORT, log_level="error"))
+worker = threading.Thread(target=srv.run, daemon=True)
+worker.start()
+import time
+for _ in range(100):
+    if srv.started:
+        break
+    time.sleep(0.05)
+if not srv.started:
+    raise RuntimeError("Uvicorn did not start")
 
 # Tên file gói JS đổi mỗi lần build (có hash), nên phải đọc từ dist chứ không
 # viết cứng — viết cứng thì bài kiểm sẽ xanh giả sau lần build kế tiếp.
@@ -112,7 +120,30 @@ with op.open(req, timeout=5) as r:
 check("GET /data.js sau khi đăng nhập", status(op, "/data.js"), 200)
 check("GET /api/health sau khi đăng nhập", status(op, "/api/health"), 200)
 
-srv.shutdown()
+print("\nAG-UI — HTTP thật, không gọi model vì dưới ngưỡng SPARSE:")
+body = {"threadId": "http-test", "runId": "sparse-run", "messages": [],
+        "tools": [], "context": [], "state": {},
+        "forwardedProps": {"payload": {"questions": ["Agent là gì?"]}}}
+req = urllib.request.Request("http://127.0.0.1:%d/api/ag-ui/cluster" % PORT,
+                             data=json.dumps(body).encode("utf-8"),
+                             headers={"Content-Type": "application/json", "Accept": "text/event-stream"})
+with op.open(req, timeout=5) as r:
+    check("Content-Type SSE", r.headers.get_content_type(), "text/event-stream")
+    events = [json.loads(line[6:]) for line in r.read().decode().splitlines() if line.startswith("data: ")]
+    check("RUN_STARTED", events[0]["type"], "RUN_STARTED")
+    check("RUN_FINISHED", events[-1]["type"], "RUN_FINISHED")
+    check("runId", events[-1]["runId"], "sparse-run")
+    snapshot = next(e["snapshot"] for e in events if e["type"] == "STATE_SNAPSHOT")
+    check("SPARSE không gọi AI", snapshot["result"]["ai_call"]["called"], False)
+
+check("Cookie HttpOnly", jar._cookies["127.0.0.1"]["/"][serve.SESSION_COOKIE].has_nonstandard_attr("HttpOnly"), True)
+req = urllib.request.Request("http://127.0.0.1:%d/api/logout" % PORT, data=b"{}",
+                             headers={"Content-Type": "application/json"})
+op.open(req, timeout=5).close()
+check("Logout chặn dữ liệu", status(op, "/data.js"), 401)
+
+srv.should_exit = True
+worker.join(timeout=5)
 print()
 if fails:
     print("HỎNG %d chỗ:" % len(fails))

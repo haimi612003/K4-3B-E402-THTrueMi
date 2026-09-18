@@ -25,6 +25,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
 sys.path.insert(0, os.path.join(ROOT, "codebase"))
 from class_pulse import config, loader  # noqa: E402
+from class_pulse.models import DashboardSession, Example
 from class_pulse.console import use_utf8  # noqa: E402
 
 use_utf8()
@@ -55,13 +56,13 @@ def attach_questions(s, index):
     hình lần ngược được về đúng từng câu học viên đã gõ, ngay tại chỗ.
     """
     n = 0
-    for c in (s.get("clusters") or []):
+    for c in s.clusters:
         qs = []
-        for tid in (c.get("turn_ids") or []):
+        for tid in c.turn_ids:
             t = index.get(tid)
             if t:
-                qs.append({"turn_id": tid, "q": t["q"]})
-        c["questions"] = qs
+                qs.append(Example(turn_id=tid, q=t.q))
+        c.questions = qs
         n += len(qs)
     return n
 
@@ -79,27 +80,27 @@ def withhold_examples(s):
     trên màn hình sẽ lệch khỏi kết quả gom cụm thật.
     """
     n = 0
-    for c in (s.get("clusters") or []):
-        few = c.get("people", 0) < config.MIN_STUDENTS_FOR_EXAMPLES
+    for c in s.clusters:
+        few = c.people < config.MIN_STUDENTS_FOR_EXAMPLES
         if few:
             # Xoá CẢ HAI. Gắn đủ câu hỏi mà quên chỗ này là rò to hơn hẳn lúc
             # trước: không còn 3 câu mà là toàn bộ lượt hỏi của một học viên.
-            n += len(c.get("examples") or []) + len(c.get("questions") or [])
-            c["examples"] = []
-            c["questions"] = []
-        c["examples_withheld"] = few
-    sc = s.get("scatter") or {}
+            n += len(c.examples or []) + len(c.questions or [])
+            c.examples = []
+            c.questions = []
+        c.examples_withheld = few
+    sc = s.scatter
     # Nhóm rải rác: số học viên không có sẵn trong file, nên dùng chính cờ mà
     # cluster.py ghi. Thiếu cờ (file cũ) thì suy từ số lượt — một nhóm rải rác
     # dưới ngưỡng lượt thì không thể đủ ngưỡng người.
-    if sc.get("examples"):
-        few = sc.get("examples_withheld")
+    if sc.examples:
+        few = sc.examples_withheld if "examples_withheld" in sc.model_fields_set else None
         if few is None:
-            few = sc.get("turns", 0) < config.MIN_STUDENTS_FOR_EXAMPLES
+            few = sc.turns < config.MIN_STUDENTS_FOR_EXAMPLES
         if few:
-            n += len(sc["examples"])
-            sc["examples"] = []
-        sc["examples_withheld"] = bool(few)
+            n += len(sc.examples)
+            sc.examples = []
+        sc.examples_withheld = bool(few)
     return n
 
 
@@ -111,21 +112,21 @@ def main():
     except Exception as e:
         print("Không đọc được chatlog (%s) — bỏ qua phần phân bố." % e)
 
-    turn_index = {t["turn_id"]: t for t in (turns_all or [])}
+    turn_index = {t.turn_id: t for t in (turns_all or [])}
 
     for path in sorted(glob.glob(os.path.join(HERE, "data", "session-*.json"))):
         with open(path, encoding="utf-8") as f:
-            s = json.load(f)
+            s = DashboardSession.model_validate(json.load(f))
         key = os.path.basename(path)[len("session-"):-len(".json")]
-        s["key"] = key
+        s.key = key
 
         if turns_all and "-" in key:
             course, lecture = key.rsplit("-", 1)
             real = [t for t in turns_all
-                    if t["course_id"] == course and t["lecture_code"] == lecture and not t["preset"]]
-            per_student = collections.Counter(t["student"] for t in real)
+                    if t.course_id == course and t.lecture_code == lecture and not t.preset]
+            per_student = collections.Counter(t.student for t in real)
             vals = sorted(per_student.values(), reverse=True)
-            s["lecture_title"] = real[0]["lecture_title"] if real else key
+            s.lecture_title = real[0].lecture_title if real else key
             # Ngày thật của buổi, lấy từ cột asked_at_vn của chatlog.
             # Trước đây giao diện đoán "buổi gần nhất" bằng phần tử đầu mảng, nên
             # nói DAY03 là buổi gần nhất trong khi thực tế là Day06.
@@ -133,32 +134,32 @@ def main():
             # khi buổi mới đã dạy, nên câu hỏi CUỐI không phản ánh thứ tự dạy
             # (D04 và D08 cùng có câu hỏi tới 15/09). Câu hỏi ĐẦU tiên mới là
             # lúc buổi đó diễn ra: 11/09 → 13/09 → 14/09, khớp thứ tự DAY03/DAY04/Day06.
-            days = sorted({t["at"][:10] for t in real if t.get("at")})
+            days = sorted({t.at[:10] for t in real if t.at})
             if days:
-                s["days"] = days
-                s["first_day"] = days[0]    # ngày buổi được DẠY — dùng để sắp thứ tự buổi
-                s["last_day"] = days[-1]    # câu hỏi cuối cùng về buổi này
+                s.days = days
+                s.first_day = days[0]    # ngày buổi được DẠY — dùng để sắp thứ tự buổi
+                s.last_day = days[-1]    # câu hỏi cuối cùng về buổi này
 
             # Chuỗi thời gian theo NGÀY — nguồn cho line chart và cho bộ lọc
             # ngày/tháng. Đếm cả lượt thực, số học viên khác nhau, và số câu bấm
             # nút có sẵn đã loại, để biểu đồ nói được cả phần bị loại chứ không
             # chỉ phần còn lại.
             preset_here = [t for t in turns_all
-                           if t["course_id"] == course and t["lecture_code"] == lecture and t["preset"]]
+                           if t.course_id == course and t.lecture_code == lecture and t.preset]
             by_day = collections.defaultdict(lambda: {"turns": 0, "students": set(), "preset": 0})
             for t in real:
-                if t.get("at"):
-                    b = by_day[t["at"][:10]]
+                if t.at:
+                    b = by_day[t.at[:10]]
                     b["turns"] += 1
-                    b["students"].add(t["student"])
+                    b["students"].add(t.student)
             for t in preset_here:
-                if t.get("at"):
-                    by_day[t["at"][:10]]["preset"] += 1
-            s["per_day"] = [
+                if t.at:
+                    by_day[t.at[:10]]["preset"] += 1
+            s.per_day = [
                 {"day": d, "turns": v["turns"], "students": len(v["students"]), "preset": v["preset"]}
                 for d, v in sorted(by_day.items())
             ]
-            s["per_student"] = {
+            s.per_student = {
                 "median": vals[len(vals) // 2] if vals else 0,
                 "max": vals[0] if vals else 0,
                 "top_share": round(vals[0] / len(real), 3) if real else 0,
@@ -169,9 +170,9 @@ def main():
             }
         attach_questions(s, turn_index)
         held = withhold_examples(s)
-        sessions.append(s)
+        sessions.append(s.model_dump(mode="json", exclude_unset=True))
         print("nạp %-26s %d cụm · %d lượt thực%s"
-              % (key, len(s["clusters"]), s["real_turns"],
+              % (key, len(s.clusters), s.real_turns,
                  ("  · gỡ %d câu nguyên văn dưới ngưỡng %d học viên"
                   % (held, config.MIN_STUDENTS_FOR_EXAMPLES)) if held else ""))
 

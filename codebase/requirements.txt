@@ -1,2 +1,5 @@
-# Không cần cài gì cả — module chỉ dùng thư viện chuẩn của Python 3.8+
-# (csv, json, urllib, re, collections). Giữ file này để nói rõ điều đó.
+# Python 3.10+. Only Gemini and AG-UI integration extras are requested.
+pydantic==2.13.5
+pydantic-ai-slim[google,ag-ui]==2.45.0
+fastapi==0.141.1
+uvicorn==0.53.0

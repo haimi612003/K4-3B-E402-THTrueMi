@@ -36,8 +36,8 @@ def main():
         print("%-13s %-6s %-28s %6s %7s %6s %5s" % ("course_id", "lec", "tên buổi", "tổng", "câu mẫu", "thực", "HV"))
         for s in loader.sessions(turns):
             print("%-13s %-6s %-28s %6d %7d %6d %5d" % (
-                s["course_id"], s["lecture_code"], s["lecture_title"][:28],
-                s["total"], s["preset"], s["real"], s["students"]))
+                s.course_id, s.lecture_code, s.lecture_title[:28],
+                s.total, s.preset, s.real, s.students))
         if not (a.course and a.lecture):
             print("\nChọn một buổi:  --course K4P1 --lecture D04")
         return
@@ -49,8 +49,8 @@ def main():
 
     label = "%s/%s" % (a.course, a.lecture)
     print("Buổi %s — %d lượt thực, đã loại %d lượt câu mẫu, %d học viên"
-          % (label, len(real), len(preset), len({t["student"] for t in real})))
-    print("Model: %s  ·  khoá: %s" % (config.model_name(), config.mask(config.api_key())))
+          % (label, len(real), len(preset), len({t.student for t in real})))
+    print("Model: %s" % config.model_name())
     if len(real) < config.SPARSE_MIN_TURNS:
         print("Dưới ngưỡng SPARSE (%d lượt) — KHÔNG gọi AI." % config.SPARSE_MIN_TURNS)
     else:
@@ -60,27 +60,27 @@ def main():
 
     res = cluster.cluster_session(real, len(preset), label, call_id="run:%s" % label)
 
-    if res["sparse"]:
-        print("\nSPARSE — %s" % res["sparse_reason"])
+    if res.sparse:
+        print("\nSPARSE — %s" % res.sparse_reason)
     else:
-        ai = res["ai_call"]
+        ai = res.ai_call
         print("\n%d cụm · %d lượt rải rác · %dms · %s token vào / %s token ra"
-              % (len(res["clusters"]), res["scatter"]["turns"],
-                 ai["latency_ms"], ai["tokens_in"], ai["tokens_out"]))
-        for i, c in enumerate(res["clusters"], 1):
-            flags = "".join([" [yếu]" if c["weak"] else "", " [lệch]" if c["skew"] else ""])
-            print("\n%d. %s%s" % (i, c["name"], flags))
-            print("   %d lượt · %d người · %s" % (c["turns"], c["people"], ", ".join(c["parts"]) or "—"))
-            for e in c["examples"]:
-                print("   [%s] %s" % (e["turn_id"], e["q"][:90]))
-        r = res["repairs"]
+              % (len(res.clusters), res.scatter.turns,
+                 ai.latency_ms, ai.tokens_in, ai.tokens_out))
+        for i, c in enumerate(res.clusters, 1):
+            flags = "".join([" [yếu]" if c.weak else "", " [lệch]" if c.skew else ""])
+            print("\n%d. %s%s" % (i, c.name, flags))
+            print("   %d lượt · %d người · %s" % (c.turns, c.people, ", ".join(c.parts) or "—"))
+            for e in c.examples:
+                print("   [%s] %s" % (e.turn_id, e.q[:90]))
+        r = res.repairs
         print("\nSửa chữa: %d mã bịa · %d trùng · %d câu model bỏ quên"
-              % (len(r["invented_ids"]), len(r["duplicates"]), len(r["unplaced_added_to_scatter"])))
+              % (len(r.invented_ids), len(r.duplicates), len(r.unplaced_added_to_scatter)))
 
     if a.out:
-        os.makedirs(os.path.dirname(a.out), exist_ok=True)
+        os.makedirs(os.path.dirname(os.path.abspath(a.out)), exist_ok=True)
         with open(a.out, "w", encoding="utf-8") as f:
-            json.dump(res, f, ensure_ascii=False, indent=1)
+            json.dump(res.model_dump(mode="json", exclude_unset=True), f, ensure_ascii=False, indent=1)
         print("\nĐã ghi %s" % a.out)
 
 

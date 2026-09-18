@@ -14,7 +14,6 @@ import csv
 import re
 
 from . import config
-from .models import Turn, SessionSummary
 
 csv.field_size_limit(10 ** 9)
 
@@ -69,7 +68,7 @@ def split_context(question):
 
 
 def load_turns(path=None, cohort="K4"):
-    """Đọc toàn bộ chatlog, trả list Turn đã chuẩn hoá."""
+    """Đọc toàn bộ chatlog, trả list dict đã chuẩn hoá."""
     path = path or config.DEFAULT_CHATLOG
     out = []
     with open(path, encoding="utf-8", newline="") as f:
@@ -77,7 +76,7 @@ def load_turns(path=None, cohort="K4"):
             if cohort and r.get("cohort_hint") != cohort:
                 continue
             part, body = split_context(r["student_question"])
-            out.append(Turn.model_validate({
+            out.append({
                 "turn_id": r["turn_id"],
                 "student": r["student"],
                 "at": r["asked_at_vn"],
@@ -87,7 +86,7 @@ def load_turns(path=None, cohort="K4"):
                 "part": part,
                 "preset": _truthy(r["is_preset"]),
                 "q": redact(body),
-            }))
+            })
     return out
 
 
@@ -95,27 +94,27 @@ def sessions(turns):
     """Liệt kê các buổi có trong log, kèm số đếm — dùng cho bộ chọn của UI."""
     agg = {}
     for t in turns:
-        k = (t.course_id, t.lecture_code)
+        k = (t["course_id"], t["lecture_code"])
         s = agg.setdefault(k, {
-            "course_id": t.course_id, "lecture_code": t.lecture_code,
-            "lecture_title": t.lecture_title, "total": 0, "preset": 0,
+            "course_id": t["course_id"], "lecture_code": t["lecture_code"],
+            "lecture_title": t["lecture_title"], "total": 0, "preset": 0,
             "students": set(), "days": set(),
         })
         s["total"] += 1
-        s["preset"] += 1 if t.preset else 0
-        s["students"].add(t.student)
-        s["days"].add(t.at[:10])
+        s["preset"] += 1 if t["preset"] else 0
+        s["students"].add(t["student"])
+        s["days"].add(t["at"][:10])
     rows = []
     for s in agg.values():
-        rows.append(SessionSummary.model_validate({
+        rows.append({
             "course_id": s["course_id"], "lecture_code": s["lecture_code"],
             "lecture_title": s["lecture_title"],
             "total": s["total"], "preset": s["preset"],
             "real": s["total"] - s["preset"],
             "students": len(s["students"]),
             "days": sorted(s["days"]),
-        }))
-    rows.sort(key=lambda r: -r.real)
+        })
+    rows.sort(key=lambda r: -r["real"])
     return rows
 
 
@@ -125,14 +124,14 @@ def pick_session(turns, course_id, lecture_code, days=None):
     (None = lấy hết). Trả (lượt_thực, lượt_câu_mẫu_đã_loại).
     """
     sel = [t for t in turns
-           if t.course_id == course_id and t.lecture_code == lecture_code
-           and (days is None or t.at[:10] in days)]
-    real = [t for t in sel if not t.preset]
-    preset = [t for t in sel if t.preset]
+           if t["course_id"] == course_id and t["lecture_code"] == lecture_code
+           and (days is None or t["at"][:10] in days)]
+    real = [t for t in sel if not t["preset"]]
+    preset = [t for t in sel if t["preset"]]
     return real, preset
 
 
 def by_turn_ids(turns, turn_ids):
     """Lấy đúng các lượt theo danh sách turn_id, giữ nguyên thứ tự yêu cầu."""
-    idx = {t.turn_id: t for t in turns}
+    idx = {t["turn_id"]: t for t in turns}
     return [idx[i] for i in turn_ids if i in idx]
