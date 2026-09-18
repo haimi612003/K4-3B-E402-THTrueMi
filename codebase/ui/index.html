@@ -485,6 +485,9 @@ svg text{transition:opacity .4s var(--ease)}
   --dot:rgba(11,11,11,.055);
   --glow-1:rgba(37,99,235,.07);
   --glow-2:rgba(27,175,122,.05);
+  /* TRẦN CỨNG alpha: .185 nền sáng / .19 nền tối. Đã thử .22 → nền trộn ra
+     #c1c2c4, --ink-2 chỉ còn 4,25:1, TRƯỢT ngưỡng AA. Đừng nâng. */
+  --spec:rgba(11,11,11,.185);
   --floor:rgba(37,99,235,.05);
 }
 /* --page:#0d0d0d gần như đen tuyệt đối → cùng một cường độ sẽ biến mất.
@@ -494,6 +497,9 @@ svg text{transition:opacity .4s var(--ease)}
     --dot:rgba(255,255,255,.045);
     --glow-1:rgba(57,135,229,.10);
     --glow-2:rgba(25,158,112,.07);
+  /* TRẦN CỨNG alpha: .185 nền sáng / .19 nền tối. Đã thử .22 → nền trộn ra
+     #c1c2c4, --ink-2 chỉ còn 4,25:1, TRƯỢT ngưỡng AA. Đừng nâng. */
+    --spec:rgba(255,255,255,.19);
     --floor:rgba(57,135,229,.07);
   }
 }
@@ -501,6 +507,9 @@ svg text{transition:opacity .4s var(--ease)}
   --dot:rgba(255,255,255,.045);
   --glow-1:rgba(57,135,229,.10);
   --glow-2:rgba(25,158,112,.07);
+  /* TRẦN CỨNG alpha: .185 nền sáng / .19 nền tối. Đã thử .22 → nền trộn ra
+     #c1c2c4, --ink-2 chỉ còn 4,25:1, TRƯỢT ngưỡng AA. Đừng nâng. */
+  --spec:rgba(255,255,255,.19);
   --floor:rgba(57,135,229,.07);
 }
 
@@ -607,6 +616,55 @@ body{
 .crumbs{color:var(--ink-2)}
 .landfoot{color:var(--ink-2)}
 
+/* 4c ─ TỤ CỤM. 48 chấm rời dồn thành 4 cụm khi cuộn — CHỈ trang chủ.
+
+   Hình nói đúng câu tiêu đề "Hàng trăm câu hỏi. Vài vấn đề.": cuộn đầu trang là
+   một đám lộn xộn, cuộn xuống thì nó được xếp xong. Ba chấm CỐ Ý không vào cụm
+   nào và mờ đi — đó là nhóm "rải rác" có thật trong sản phẩm, hệ thống không ép
+   mọi câu hỏi vào một cụm.
+
+   Không @keyframes, không timer, không quán tính: vị trí mỗi chấm là hàm thuần
+   tuý của scrollTop. Dừng cuộn là đứng im tuyệt đối, cuộn ngược là tua lại đúng
+   đường cũ từng pixel.
+
+   Toàn bộ nội suy nằm trong calc(). JS mỗi khung hình ghi ĐÚNG MỘT custom
+   property --t lên phần tử CHA; 48 con tự tính lấy vị trí. Ghi 48 inline
+   transform thì vẫn tốn 48 lần tính lại style đó, cộng 48 lần dựng chuỗi.
+
+   left bám cột nội dung 960px canh giữa nên khoảng hở tới chữ hero không đổi
+   theo bề rộng màn; 100%-640px chặn trần để màn 4K không thành bức tường chấm.
+   top 104px = 52px thanh trên + 52px thở; height chặn 340px để đáy ô không
+   chạm hàng thẻ .evid (đo được: mép trên .evid ở y=499).                      */
+@property --t{syntax:"<number>";inherits:true;initial-value:0}
+#bgfx .l3{
+  top:104px;
+  height:min(42vh,340px);
+  left:max(50% + 150px, 100% - 640px);
+  right:16px;
+  display:none;                    /* mặc định TẮT — chỉ trang chủ mới bật */
+}
+#bgfx[data-page="home"] .l3{display:block}
+#bgfx .l3 span{
+  position:absolute;top:0;left:0;
+  width:var(--dd,4px);height:var(--dd,4px);
+  margin:calc(var(--dd,4px) / -2) 0 0 calc(var(--dd,4px) / -2);   /* tâm chấm = điểm dịch */
+  border-radius:50%;
+  background:var(--spec);
+  /* CHỈ translate. Cố ý KHÔNG có scale(): đổi hệ số scale trên một layer đã
+     promote là điều kiện kích hoạt raster lại. Độ nở được ghi thẳng vào --dd
+     lúc dựng, nên transform chỉ còn tịnh tiến — raster đúng một lần.
+     BẮT BUỘC có dấu cách quanh dấu +: viết var(--x0)+var(--dx) sẽ ra
+     "124px+-278px", sai cú pháp, cả 48 chấm rơi về transform:none. */
+  transform:translate3d(calc(var(--x0,0px) + (var(--dx,0px) * var(--t,0))),
+                        calc(var(--y0,0px) + (var(--dy,0px) * var(--t,0))),0);
+  opacity:calc(var(--a0,0) + (var(--ad,0) * var(--t,0)));
+}
+/* will-change CHỈ khi đang ở trang chủ — không giữ layer cho một tab đang ẩn. */
+#bgfx[data-page="home"] .l3 span{will-change:transform,opacity}
+/* Dưới 900px hero chiếm hết bề ngang, không còn ô trống. Thà biến mất hẳn
+   còn hơn chen vào chữ. */
+@media (max-width:900px){ #bgfx .l3{display:none!important} }
+
 /* 7 ─ In: nền trang trí không đi vào bản PDF nộp giám khảo */
 @media print{ #bgfx{display:none} body{background:#fff} }
 
@@ -624,6 +682,11 @@ body{
      gì thì luật *::before/after{animation-duration:.01ms} ở trên sẽ ném lớp này
      tới keyframe cuối, tức đứng im ở scale(1.055) lệch tâm. */
   #bgfx .l1{transform:none!important;will-change:auto!important}
+  /* ghim ở trạng thái ĐÃ TỤ: vẫn giữ được nghĩa "vài cụm, không đều",
+     không còn một pixel nào bám cuộn. !important trong stylesheet thắng
+     inline style không-important nên JS ghi gì cũng không đổi được. */
+  #bgfx .l3{--t:1!important}
+  #bgfx .l3 span{will-change:auto!important}
   #bgfx .l2{opacity:1!important;transform:none!important;will-change:auto!important}
   #bgfx .l2 > b{
     animation:none!important;transform:none!important;
@@ -643,6 +706,7 @@ body{
    ✗ @keyframes{to{background-position:…}}   → paint lại toàn lớp mỗi khung hình
    ✗ @keyframes{to{filter:blur(…)}}          → raster lại lớp toàn khung hình
    ✗ .card{backdrop-filter:blur(…)}          → raster lại vùng sau thẻ mỗi khung cuộn
+   ✓ NGOẠI LỆ: will-change trên 48 chấm 4–6px ≈ 0,2MB — KHÁC 19 thẻ 400×220 ≈ 6,7MB
    ✗ will-change rải lên .card/.cl           → 19+ texture, hết bộ nhớ GPU máy yếu   ══ */
 
 </style>
@@ -652,7 +716,9 @@ body{
      transform thẳng vào từng lớp mỗi khung hình cuộn. Ghi qua custom property
      trên :root thì mỗi khung hình sẽ bắt trình duyệt tính lại style cho cả tài
      liệu — 19 thẻ cụm kèm SVG và bảng 40 dòng — đắt hơn nhiều. -->
-<div id="bgfx" aria-hidden="true"><i class="l1"></i><i class="l2"><b></b></i></div>
+<!-- .l3 đứng SAU .l2: .l2 lên độ mờ 1,00 ở đáy trang, đảo thứ tự là chấm bị rửa mờ
+     đúng lúc nó vừa tụ xong. -->
+<div id="bgfx" aria-hidden="true"><i class="l1"></i><i class="l2"><b></b></i><i class="l3"></i></div>
 <div id="tip" role="status" aria-live="polite"></div>
 <div id="gate" hidden></div>
 
@@ -850,19 +916,102 @@ var MOTION_OK = !matchMedia("(prefers-reduced-motion: reduce)").matches;
    làm mượt chứ không phải của đổi chiều. */
 var bgScroll = (function(){
   var box=null, l1=null, l2=null, host=null, tick=false;
+
+  /* ── lớp 3: 48 chấm tụ thành 4 cụm, CHỈ trang chủ ──────────────────── */
+  var l3=null, dots=[], lw=0, lh=0, lastT=-1, onHome=false, built=false;
+  var N=48;
+  /* [tâm x, tâm y, số chấm, bán kính] — đều là tỉ lệ 0..1 của ô chứa, nên hình
+     giữ nguyên tỉ lệ ở mọi bề rộng màn. Bốn cụm CỐ Ý không đều (18/12/9/6):
+     bốn cụm bằng nhau đọc ra là trang trí, lệch nhau đọc ra là dữ liệu. */
+  var CL=[[0.735,0.150,18,0.108],[0.845,0.415,12,0.088],
+          [0.715,0.655, 9,0.077],[0.855,0.885, 6,0.063]];
+  var STRAY=[5,26,41];          // 3 chấm KHÔNG vào cụm nào — "rải rác" có thật
+  function lcg(s){ return function(){ s=(s*1664525+1013904223)%4294967296; return s/4294967296; }; }
+
+  function build(){
+    if(built||!l3) return; built=true;
+    var f=document.createDocumentFragment();
+    for(var i=0;i<N;i++){ var sp=document.createElement("span"); dots.push(sp); f.appendChild(sp); }
+    l3.appendChild(f);
+  }
+
+  /* Chạy MỘT LẦN lúc gắn và mỗi lần đổi cỡ cửa sổ — KHÔNG chạy mỗi khung hình. */
+  function layout(w,h){
+    if(!built||w<40||h<40) return;
+    var R=lcg(20260918), COLS=8, ROWS=6, cw=w/COLS, chh=h/ROWS, i, k, j;
+    var slot=[];
+    for(k=0;k<CL.length;k++) for(j=0;j<CL[k][2];j++) slot.push([k,j]);
+    /* Xáo bằng chính bộ sinh đã gieo hạt: không xáo thì cả băng trên cùng bay
+       về cụm 1, trông máy móc. Xáo rồi vẫn tất định tuyệt đối — hạt cố định nên
+       ảnh chụp nộp giám khảo tái lập được y hệt trên mọi máy. */
+    for(i=slot.length-1;i>0;i--){ j=(R()*(i+1))|0; var tmp=slot[i]; slot[i]=slot[j]; slot[j]=tmp; }
+    var si=0, D=[4.6,4.0,3.7,3.4];
+    for(i=0;i<N;i++){
+      var x0=((i%COLS)+0.5+(R()-0.5)*0.68)*cw;      // lưới so le, phủ đều
+      var y0=(((i/COLS)|0)+0.5+(R()-0.5)*0.68)*chh;
+      /* VẠT MÉP TRÁI — hàng rào tương phản thứ hai sau hàng rào hình học.
+         Chấm càng gần cột chữ càng mờ về 0. Là DỮ LIỆU nên không tốn gì lúc chạy. */
+      var fade=Math.min(1,x0/(w*0.20));
+      var ex,ey,a0,a1,d;
+      if(STRAY.indexOf(i)>=0){
+        ex=x0+(w*0.62-x0)*0.18; ey=y0+(h*0.50-y0)*0.18;   // chỉ đi 18% rồi mờ đi
+        a0=0.46*fade; a1=0.20; d=3.2;
+      }else{
+        var sl=slot[si++], c=CL[sl[0]];
+        var rr=c[3]*w*Math.sqrt((sl[1]+0.5)/c[2]), th=sl[1]*2.39996323;  // xoắn ốc góc vàng
+        ex=c[0]*w+rr*Math.cos(th); ey=c[1]*h+rr*Math.sin(th)*0.92;
+        a0=0.46*fade; a1=1; d=D[sl[0]];
+      }
+      ey-=24;                                       // cả đám nhích lên 24px khi tụ xong
+      /* --dd chứ không phải --d: playEnter() đã dùng --d làm chỉ số so le cho
+         .enter > *. Khác cây con nên hôm nay chưa hỏng, nhưng hai nghĩa cho một
+         tên trong cùng một file là bẫy đặt sẵn.
+         Đường kính ghi thẳng giá trị CUỐI vì transform không còn scale(). */
+      dots[i].style.cssText=
+        "--x0:"+x0.toFixed(1)+"px;--y0:"+y0.toFixed(1)+"px;--dx:"+(ex-x0).toFixed(1)+
+        "px;--dy:"+(ey-y0).toFixed(1)+"px;--a0:"+a0.toFixed(3)+";--ad:"+(a1-a0).toFixed(3)+";--dd:"+d+"px";
+    }
+  }
+
   var RATE=0.09;        // lưới điểm đi 90px khi nội dung đi 1000px
   var DEPTH_MIN=0.55;   // độ mờ lớp sáng ở đỉnh trang
   var DEPTH_MAX=1.00;   // ở đáy trang
 
   function frame(){
     tick=false;
-    if(!host) return;
-    // đọc — cả hai lần đọc nằm liền nhau, trước mọi lần ghi
-    var y=host.scrollTop, span=host.scrollHeight-host.clientHeight;
-    // ghi
-    l1.style.transform="translate3d(0,"+(-y*RATE).toFixed(1)+"px,0)";
-    var p=span>0 ? Math.min(1,y/span) : 0;
-    l2.style.opacity=(DEPTH_MIN+(DEPTH_MAX-DEPTH_MIN)*p).toFixed(3);
+    if(!box) return;
+    /* ── ĐỌC: mọi lần đọc layout nằm liền nhau, TRƯỚC mọi lần ghi ── */
+    var y=0,span=0,ch=0,w=0,h=0,relay=false;
+    if(host){ y=host.scrollTop; span=host.scrollHeight-host.clientHeight; ch=host.clientHeight; }
+    /* Chắn bằng innerWidth/innerHeight (không chạm layout) nên clientWidth của
+       .l3 chỉ bị đọc khi cửa sổ THỰC SỰ đổi cỡ, không phải mỗi khung hình. */
+    if(onHome && l3 && (innerWidth!==lw || innerHeight!==lh)){
+      lw=innerWidth; lh=innerHeight; w=l3.clientWidth; h=l3.clientHeight; relay=true;
+    }
+    /* ── GHI ── */
+    if(host){
+      l1.style.transform="translate3d(0,"+(-y*RATE).toFixed(1)+"px,0)";
+      var p=span>0 ? Math.min(1,y/span) : 0;
+      l2.style.opacity=(DEPTH_MIN+(DEPTH_MAX-DEPTH_MIN)*p).toFixed(3);
+    }
+    if(!onHome || !l3) return;      // tab khác: không ghi gì, không vô hiệu hoá style gì
+    if(relay) layout(w,h);
+    /* Giảm chuyển động: CSS đã ghim --t:1!important nên ghi thêm không đổi được
+       gì, chỉ làm bẩn style của 48 phần tử mỗi lần resync(). layout() vẫn phải
+       chạy TRƯỚC dòng này để bản tĩnh dựng đúng chỗ. */
+    if(!MOTION_OK) return;
+    /* span<=160 nghĩa là trang chủ vừa lọt khung hình, không có gì để cuộn →
+       hiện thẳng trạng thái đã tụ. Không có cung đường thì trạng thái nghỉ phải
+       là CÂU TRẢ LỜI, không phải đống lộn xộn. */
+    var t=1;
+    if(host && span>160){
+      t=Math.min(1, y/Math.max(240, Math.min(span, ch*0.95)));
+      t=t*t*(3-2*t);              // smoothstep — VẪN là hàm thuần tuý của scrollTop,
+    }                             // không làm mượt theo thời gian, không lerp, không trớn
+    /* Chặn ghi trùng: t chạm 1 trước khi cuộn hết trang, nên quãng cuối cùng sẽ
+       ghi lại đúng con số cũ mỗi khung hình — mỗi lần ghi làm bẩn style 48 con. */
+    var ts=t.toFixed(4);
+    if(ts!==lastT){ lastT=ts; l3.style.setProperty("--t", ts); }
   }
   function onScroll(){ if(tick) return; tick=true; requestAnimationFrame(frame); }
 
@@ -870,18 +1019,31 @@ var bgScroll = (function(){
     attach:function(){
       box=document.getElementById("bgfx");
       if(!box) return;
-      l1=box.querySelector(".l1"); l2=box.querySelector(".l2");
-      if(!MOTION_OK) return;          // giảm chuyển động: không gắn listener nào
+      l1=box.querySelector(".l1"); l2=box.querySelector(".l2"); l3=box.querySelector(".l3");
+      build();                        // dựng 48 span MỘT LẦN, kể cả khi giảm chuyển động
+      if(!MOTION_OK){ frame(); return; }   // không gắn listener nào; vẫn dựng bản tĩnh
       host=document.getElementById("main");
       if(!host) return;
       host.addEventListener("scroll", onScroll, {passive:true});
       addEventListener("resize", onScroll, {passive:true});
       frame();
     },
-    /* Đổi tab thì show() đã đặt scrollTop=0, nhưng nếu tab trước cũng đang ở
-       đỉnh thì KHÔNG có sự kiện scroll nào bắn ra — nền sẽ giữ độ sâu của
-       trang cũ. Phải đo lại tường minh. */
-    resync:function(){ if(host) onScroll(); }
+    /* show() ĐÃ gọi hàm này ở cuối mỗi lần đổi tab — đây là lý do không phải
+       sửa show(). Ngoài đo lại độ sâu, giờ nó bật/tắt luôn lớp chấm. */
+    resync:function(){
+      if(box){
+        var home=(active==="home");
+        if(home!==onHome){
+          onHome=home;
+          box.setAttribute("data-page", home?"home":"off");
+          /* lúc display:none thì clientWidth=0 → ép đo lại khi quay về.
+             lastT=-1 bắt buộc đi kèm: thiếu nó thì quay lại trang chủ sẽ không
+             ghi gì cả vì lastT vẫn giữ giá trị của lần rời đi — lỗi im lặng. */
+          if(home){ lw=0; lastT=-1; }
+        }
+      }
+      if(host) onScroll(); else frame();
+    }
   };
 })();
 function playEnter(host){
