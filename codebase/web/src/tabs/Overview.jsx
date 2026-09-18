@@ -429,15 +429,17 @@ export default function Overview({ sess, setSess, goTab }) {
           <div className="mt-3">
             <Legend items={legend} />
             <GroupedBars rows={rowsOf(head)} max={MX} alt="Sáu cụm vấn đề lớn nhất theo số lượt và số người" />
-            {/* Bảng khớp ĐÚNG số thanh của biểu đồ ngay trên nó. Trước đây bảng
-                này liệt kê cả những cụm không có trong biểu đồ, nên hai thứ nằm
-                cạnh nhau mà đếm ra hai con số khác nhau. Phần còn lại có bảng
-                riêng, nằm cùng biểu đồ của nó trong cửa gập bên dưới. */}
+            {/* Bảng liệt kê ĐỦ mọi cụm, không cắt theo số thanh của biểu đồ.
+                Biểu đồ cắt còn sáu thanh là để đọc được; bảng thì không có lý do
+                gì phải cắt, và đây là chỗ duy nhất còn đủ dòng. Cột "Trong biểu
+                đồ" nói rõ dòng nào đang được vẽ ở trên, dòng nào nằm ở đuôi gập
+                — nhìn là khớp được hai thứ mà không phải đếm. */}
             <TableView
-              label={`Xem dạng bảng (${head.length} cụm trong biểu đồ trên)`}
-              cols={[{ t: "Cụm vấn đề" }, { t: "Lượt", n: 1 }, { t: "Người", n: 1 }, { t: "Cờ" }]}
-              rows={head.map((c) => [c.name, turnsCell(c), fmt(c.people),
-                [c.weak ? "cụm yếu" : "", c.skew ? "tín hiệu lệch" : ""].filter(Boolean).join(", ") || "—"])} />
+              label={`Xem dạng bảng — đủ cả ${cls.length} cụm`}
+              cols={[{ t: "Cụm vấn đề" }, { t: "Lượt", n: 1 }, { t: "Người", n: 1 }, { t: "Cờ" }, { t: "Trong biểu đồ" }]}
+              rows={cls.map((c, i) => [c.name, turnsCell(c), fmt(c.people),
+                [c.weak ? "cụm yếu" : "", c.skew ? "tín hiệu lệch" : ""].filter(Boolean).join(", ") || "—",
+                i < HEAD ? "biểu đồ trên" : "đuôi gập"])} />
           </div>
           {rest.length > 0 && (
             /* Mẫu số tính trên LƯỢT CỦA BUỔI, không trên riêng phần đã gom, và
@@ -447,11 +449,6 @@ export default function Overview({ sess, setSess, goTab }) {
               summary={`${rest.length} cụm nhỏ còn lại (${fmt(restTurns)} lượt · ${Math.round(restTurns / s.real_turns * 100)}% lượt của buổi) — cùng với ${fmt(scatter)} lượt rải rác, ${Math.round(outside / s.real_turns * 100)}% lượt của buổi không nằm trong ${head.length} thanh trên`}>
               <Legend items={legend} />
               <GroupedBars rows={rowsOf(rest)} max={MX} alt="Các cụm nhỏ còn lại, cùng thang với biểu đồ trên" />
-              <TableView
-                label={`Xem dạng bảng (${rest.length} cụm còn lại)`}
-                cols={[{ t: "Cụm vấn đề" }, { t: "Lượt", n: 1 }, { t: "Người", n: 1 }, { t: "Cờ" }]}
-                rows={rest.map((c) => [c.name, turnsCell(c), fmt(c.people),
-                  [c.weak ? "cụm yếu" : "", c.skew ? "tín hiệu lệch" : ""].filter(Boolean).join(", ") || "—"])} />
             </Disclosure>
           )}
         </Card>
