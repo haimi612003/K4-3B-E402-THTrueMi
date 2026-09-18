@@ -136,6 +136,15 @@ LUẬT BẮT BUỘC:
 
 7. KHÔNG NHẮC TỚI HỌC VIÊN CỤ THỂ NÀO. Chỉ nói ở mức lớp.
 
+8. CAVEAT PHẢI NÓI ĐIỀU QUAN TRỌNG NHẤT TRƯỚC. Hai chuyện dưới đây, nếu có, phải là câu ĐẦU TIÊN
+   của caveat — trước mọi ghi chú về slide hay thuật ngữ:
+   a) TÍN HIỆU MỎNG: dưới 4 câu hỏi, hoặc các câu quá cụt/mơ hồ để chẩn đoán. Nói thẳng là chưa đủ
+      căn cứ và bản nháp này dựa trên rất ít dữ liệu. Lab Coach phải biết bản nào đáng tin tới đâu.
+   b) KHÔNG PHẢI CHỖ KẸT KIẾN THỨC: cụm gồm câu hành chính (hạn nộp, điểm danh, lịch học, quy chế),
+      câu hỏi về chính con bot, hoặc câu lạc đề. Nói thẳng đây không phải vấn đề của bài học và
+      nên chuyển sang kênh khác, đừng để Lab Coach mang 15 phút đầu buổi đi trả lời nó.
+   Trong cả hai trường hợp vẫn trả đủ năm phần, nhưng caveat phải cảnh báo trước.
+
 Trả JSON đúng schema. Viết tiếng Việt, gọn, không sáo rỗng."""
 
 GEN_PROMPT = """Bạn dựng dữ liệu thử cho một công cụ gom cụm câu hỏi của lớp học.

@@ -81,30 +81,43 @@ Loại: [ ] Tối ưu tính năng có sẵn [x] Tính năng mới
 
   > Một **Lab Coach** · sau một chu kỳ dạy tự chọn (1 buổi, 2 buổi…) · hệ thống **gom các câu hỏi rời rạc của lớp thành những cụm vấn đề** kèm số lượt, số người, phần bài liên quan và ví dụ nguyên văn có ID · Lab Coach **thấy vấn đề nào nhiều người vướng nhất và tick chỗ để ôn buổi sau**.
 
-  **Quyết định AI duy nhất là gom cụm.** Chọn bao nhiêu cụm, ôn cụm nào, ôn thế nào — đều là quyết định của Lab Coach.
+  **Hai quyết định AI, tách hẳn nhau, cost-of-error khác nhau.** Chọn bao nhiêu cụm, ôn cụm nào, có dùng bản nháp hay không — đều là quyết định của Lab Coach.
+
+  | | Quyết định 1 — **gom cụm** | Quyết định 2 — **soạn nội dung ôn** |
+  |---|---|---|
+  | Chạy khi nào | Tự động khi mở một buổi | **Chỉ khi Lab Coach bấm nút**, từng cụm một |
+  | Sai thì hậu quả gì | Lab Coach ôn nhầm chỗ, 101–127 học viên mất 15 phút đầu buổi | Lab Coach đọc một bản nháp sai và phải bỏ đi |
+  | Phát hiện sai dễ hay khó | **Dễ** — mở cụm ra, đọc 3 câu nguyên văn, 5 giây là biết | **Khó hơn** — nội dung sai mà nghe hợp lý thì phải có chuyên môn mới thấy |
+  | Ai chặn ở giữa | Lab Coach duyệt trước khi lên lớp | Lab Coach duyệt trước khi lên lớp |
+  | Đo bằng gì | 24 case, assertion máy kiểm được | 8 case, chỉ đo **tính kỷ luật** của output |
+  | **Không** đo được gì | — | Đúng-sai kiến thức, và "có thật sự khác slide không" — cần Lab Coach chấm |
+
+  **Vì sao quyết định 2 không phải là quay lại đề A1.** A1 là tối ưu tutor trả lời cho **học viên** — output đi thẳng tới người học, không ai chặn ở giữa, và toàn bộ chất lượng sản phẩm nằm ở phán đoán sư phạm mà nhóm không đo được. Ở đây output đi tới **Lab Coach**, người có chuyên môn, dưới nhãn *bản nháp*, và quyết định chính (gom cụm) đã có số đo độc lập. Học viên không bao giờ nhìn thấy nội dung này.
+
+  Quyết định 2 vốn đã nằm trong luồng chính của bài toán từ đầu ("sang màn kết quả: nội dung ôn cho từng cụm đã chọn"). Hai câu hỏi treo lúc đó là *template gồm những gì* và *Lab Coach có thật sự cần nội dung soạn sẵn không* — câu thứ nhất đã chốt bằng 5 mục dưới đây, câu thứ hai vẫn chờ phỏng vấn.
 
   **Chủ đích thiết kế — vì sao bỏ con số 5.** Lát cắt gợi ý của đề ghi "gom thành **5** chỗ khó nhất". Nhóm bỏ con số 5: nó là cảm quan, không có căn cứ. Buổi `K4P1/D04` có ít nhất 3 cụm đếm tay được; buổi `L2-L3-K4P1/D04` chỉ có **14 lượt thực** — ép về 5 thì hoặc **nặn ra vấn đề không tồn tại**, hoặc **cắt mất vấn đề có thật**. Thay vào đó: gom được bao nhiêu cụm thì hiện bấy nhiêu, xếp giảm dần, **ngưỡng xử lý do Lab Coach chọn**.
 
 - **Non-goals (≥3 thứ KHÔNG build):**
   1. **Không có bất kỳ view nào ở mức cá nhân học viên** — không xếp hạng, không "em nào yếu nhất", không hiện tên/ID người trên giao diện Lab Coach. Loại theo nguyên tắc an toàn, không phải vì thiếu thời gian.
-  2. **Không tự chốt số cụm và không tự quyết ôn gì.** Không có nút "áp dụng cho buổi sau". Hệ thống trình bày, không khuyến nghị.
+  2. **Không tự chốt số cụm và không tự quyết ôn gì.** Không có nút "áp dụng cho buổi sau". Nội dung ôn chỉ sinh ra khi Lab Coach bấm từng cụm, luôn mang nhãn `BẢN NHÁP`, và prompt cấm viết kiểu ra lệnh — có assertion `no_imperative` canh chỗ này. Hệ thống đưa vật liệu, không khuyến nghị.
   3. **Không đánh giá chất lượng câu trả lời của tutor** (đó là A1) và không đụng vào tutor đang chạy — chỉ đọc log.
   4. **Không theo dõi xuyên buổi** (vấn đề này buổi trước đã ôn chưa, ôn rồi mà vẫn hỏi lại không) — ghi nhận cho V1+.
   5. **Không đánh giá bối cảnh slide** (slide dạng keyword tóm tắt và slide giải thích chi tiết cần giảng lại theo kiểu khác nhau) — có giá trị thật nhưng không phải đường xương sống của MVP.
 
-- **Mức prototype nhắm tới:** [ ] Sketch [x] Mock _(hiện tại)_ → [x] Working _(đích trước CP3, ở đúng một chỗ)_
+- **Mức prototype nhắm tới:** [ ] Sketch [ ] Mock [x] **Working**
 
-  Prototype: [Claude Artifact](https://claude.ai/artifact/BHZpGwAdpKiAvULpymV8Xb) — 4 tab, trong đó tab "Bảng điều khiển" là sản phẩm, 3 tab còn lại là hồ sơ bài toán.
+  Dashboard chạy trên kết quả AI thật: `codebase/ui/index.html`, bật bằng `python codebase/serve.py`.
+  Bản mock của CP2 giữ lại để đối chiếu: [Claude Artifact](https://claude.ai/artifact/BHZpGwAdpKiAvULpymV8Xb).
 
-  |                         | Nội dung                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-  | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-  | **Thật, bấm được**      | Chọn buổi + chu kỳ (1 buổi / 2 buổi) · dải chỉ số (tổng lượt, số HV, số lượt câu mẫu đã loại, số cụm) · danh sách cụm xếp theo **lượt hỏi** hoặc **số người** (đổi được) · mở cụm đọc câu nguyên văn có ID · **sửa tay "Không thuộc cụm" / "Hoàn tác"** và số lượt trừ lại ngay · nhóm "rải rác / không phân loại được" luôn hiện · cờ `SPARSE`, chip "cụm yếu", chip "tín hiệu lệch" · tick cụm → thanh chọn hiện "tới N/M học viên trong lớp" → màn nội dung ôn |
-  | **Mock**                | **Kết quả gom cụm** (đang là data cứng trong prototype) · nội dung màn 2 (4 mục: Vấn đề / Giảng lại theo cách khác slide / Ví dụ / Câu kiểm tra nhanh) — template này **chưa chốt**, đang chờ phỏng vấn Lab Coach, và prototype nói rõ điều đó bằng banner `NHÁP`                                                                                                                                                                                                 |
-  | **Đường thành Working** | Thay khối data cứng bằng **một lời gọi AI thật** gom cụm trên 511 lượt của buổi `K4P1/D04` (Nguyễn Đức Tâm, trước CP3). Giao diện không phải sửa — nó đã đọc đúng cấu trúc `{tên cụm, lượt, người, phần bài, ví dụ có ID}`                                                                                                                                                                                                                                        |
+  | | Nội dung |
+  |---|---|
+  | **Thật, có số đo** | Gom cụm bằng lời gọi Gemini thật trên 3 buổi K4 (511 / 453 / 3 lượt) · soạn nội dung ôn bằng lời gọi thật, từng cụm · tab **Thử trực tiếp**: người dùng nhập câu hỏi (bộ mẫu thật / nhờ AI sinh / tự gõ) và nhận cụm trong 1–3 giây · mọi lời gọi ghi prompt và phản hồi thô vào `logs/gemini-calls.jsonl` |
+  | **Tính trong code, không do model quyết** | Số lượt, số người, cờ cụm yếu, cờ tín hiệu lệch, tên phần bài, cổng `SPARSE`, việc lọc câu mẫu — đều đếm tay kiểm lại được. Ngưỡng nằm ở `codebase/class_pulse/config.py` |
+  | **Còn mock** | Không còn gì. Toàn bộ số trên giao diện sinh từ dữ liệu thật |
+  | **Giới hạn đã biết** | Một số cụm là *yêu cầu thao tác* ("tóm tắt bài học", "trích xuất slide") chứ không phải chỗ kẹt kiến thức — sản phẩm chưa phân biệt được hai loại. Ghi nhận cho vòng sau |
 
-  **Hai chỗ prototype phải sửa, phát hiện từ mining (xem `evidence/mining-log.md`):**
-  - **Chip ngữ cảnh đang sai kiểu.** Prototype hiện chip `tr. 4–6`. Thực tế **99,6%** câu hỏi neo theo **tên phần** (`Đang học phần "day03-tu-chatbot-den-agentic-agent-react"`), chỉ **5,9%** có số trang. Phải đổi sang chip tên phần; số trang là thông tin phụ khi có.
-  - **Nhãn "mẫu từ chatlog K4" đang nói quá.** Cụm trong prototype (supervised/unsupervised, overfitting, train/test split) là chủ đề ML nhập môn — **không phải** chủ đề K4 thật, vốn là agentic AI (ReAct, MCP, function calling). Trước CP3 phải thay bằng cụm thật lấy từ `K4P1/D04`, hoặc hạ nhãn từ "mẫu từ chatlog K4" xuống "minh hoạ". Giữ nguyên là tự bịa bằng chứng.
+  **Hai chỗ mining chỉ ra và đã sửa:** chip ngữ cảnh đổi từ số trang sang **tên phần** (99,6% câu neo theo tên phần, chỉ 5,9% có số trang); và mọi cụm trên giao diện giờ là cụm thật từ `K4P1/D04` chứ không phải ví dụ ML nhập môn dựng tay.
 
 - **Automation:** [x] augment [ ] conditional [ ] automate
 
@@ -114,6 +127,11 @@ Loại: [ ] Tối ưu tính năng có sẵn [x] Tính năng mới
   - **AI luôn phải** đưa kèm mỗi cụm **≥2 câu nguyên văn có ID trỏ về dòng log**, và **cả hai** con số lượt/người.
   - **AI không được** đặt tên cụm bằng thứ không suy ra được từ các câu trong cụm, không được nhét câu lạc đề vào cụm gần nhất, và **không được xếp hạng hay hiển thị bất cứ gì ở mức cá nhân học viên** — kể cả khi Lab Coach yêu cầu.
   - **Nếu AI gom yếu**, Lab Coach không phiền **kéo vài câu ra khỏi cụm bằng tay**, miễn là nhìn thấy đủ câu nguyên văn để biết câu nào sai chỗ.
+
+  Ba câu tương đương cho **quyết định 2 (soạn nội dung ôn)**:
+  - **AI luôn phải** nói ra giới hạn của chính bản nháp: tín hiệu mỏng, hoặc cụm không phải chỗ kẹt kiến thức, phải là câu đầu tiên của phần *chỗ cần tự kiểm*.
+  - **AI không được** viết kiểu ra lệnh cho Lab Coach, không được nhắc tới học viên cụ thể, và không được kéo vào khái niệm mà **không câu hỏi nào trong cụm nhắc tới**.
+  - **Nếu AI soạn dở**, Lab Coach không phiền bỏ cả bản nháp — vì nó tốn một cú bấm và 2,5 giây, không phải một buổi soạn bài.
 
 - **§4b. Nguyên tắc đã áp dụng (6 — HAX/PAIR):**
 
@@ -205,10 +223,56 @@ Loại: [ ] Tối ưu tính năng có sẵn [x] Tính năng mới
 
 ## §7. Kiểm thử
 
-- Chiều chất lượng + định nghĩa kiểm chứng được:
-- Golden set (≥20 case theo cơ cấu trong guide §2.6, file trong eval/):
-- Quality bar (chốt từ hạn chốt spec của khoá, giữ nguyên sau đó): "Đạt khi ≥ **_% qua bộ, và _**"
-- Kết quả các lượt chạy (bảng % — cập nhật đến trước CP6):
+- **Chiều chất lượng + định nghĩa kiểm chứng được:**
+
+  Hai quyết định AI, hai bộ đo riêng, và **hai mức tham vọng khác nhau** — nói rõ để không ai đọc nhầm.
+
+  | Quyết định | Chiều đo | Định nghĩa "đạt" |
+  |---|---|---|
+  | 1 · Gom cụm | **Factuality** | Mọi câu trong đầu ra phải có trong đầu vào (`no_invented_ids`), không câu nào bị xếp hai chỗ (`no_duplicate_ids`), tổng lượt cộng lại bằng số câu thực (`counts_reconcile`) |
+  | 1 · Gom cụm | **Relevance** | Câu cùng một chỗ kẹt phải chung cụm; hai chỗ kẹt khác nhau dùng chung từ khoá phải tách; câu lạc đề phải do **model tự khai** là rải rác, không tính công bước dọn dẹp của code |
+  | 1 · Gom cụm | **Sensitivity** | Tín hiệu thưa → `SPARSE`, không gom. Một người chiếm phần lớn lượt → cờ tín hiệu lệch. Cụm ít người → cờ cụm yếu |
+  | 2 · Soạn nội dung ôn | **Tính kỷ luật của output** | Chẩn đoán bám vào chữ học viên viết · không kéo vào khái niệm không ai hỏi · giữ mức lớp · không ra lệnh cho Lab Coach · câu kiểm tra không phải dạng chép định nghĩa · tự khai đúng mức tin cậy |
+  | 2 · Soạn nội dung ôn | **Biết nói "không chắc"** | Cụm mỏng hoặc không phải chỗ kẹt kiến thức → phần *chỗ cần tự kiểm* phải cảnh báo trước mọi ghi chú khác |
+
+  **Thứ nhóm CỐ Ý KHÔNG đo, và vì sao.** Với quyết định 2: **đúng-sai kiến thức** và **"có thật sự khác slide không"**. Hai thứ đó là phán đoán sư phạm; nhóm 4 người tự chấm thì kết quả là ý kiến nhóm, không phải bằng chứng — đúng lý do nhóm loại đề A1 ở §2. Người chấm hai thứ đó là Lab Coach, khi đọc bản nháp. Giao diện vì thế gắn nhãn `BẢN NHÁP` và không bao giờ đưa nội dung này tới học viên.
+
+- **Golden set:**
+
+  | Bộ | File | Số case | Cơ cấu |
+  |---|---|---|---|
+  | Gom cụm | `eval/golden_set.json` | 24 | lop1 3 · lop2 3 · lop3 3 · lop4 3 · thuong 8 · hiem 4 · toàn bộ turn_id đối chiếu chatlog K4 thật |
+  | Soạn nội dung ôn | `eval/golden_set_answer.json` | 8 | cụm rõ · cụm mỏng · có injection · toàn câu hành chính · khái niệm hẹp · trộn Anh-Việt · một người hỏi dồn · toàn câu cụt |
+
+  Bộ thứ hai có **kiểm ngược**: `python eval/run_eval_answer.py --selftest` chạy 11 output cố tình hỏng qua bộ chấm và xác nhận từng assertion vẫn bắt được lỗi, cộng một output tốt không bị bắt nhầm. Cần cái này vì lượt đo 3 đạt 8/8 ngay sau khi nới cách chấm caveat — con số đó chỉ đáng tin nếu chứng minh được thước đo chưa bị nới tới mức vô dụng.
+
+- **Quality bar (chốt tại hạn chốt spec, giữ nguyên sau đó):**
+
+  > **Gom cụm — đạt khi ≥ 85% qua bộ, VÀ không case nào trượt `no_invented_ids` hoặc `must_not_group_together`.**
+  > Hai assertion đó là hai kiểu sai làm Lab Coach dạy nhầm chỗ cho cả lớp: bịa ra câu hỏi không ai hỏi, và gộp hai vấn đề khác nhau thành một cụm to giả.
+
+  > **Soạn nội dung ôn — đạt khi ≥ 75% qua bộ, VÀ bộ chấm phải qua `--selftest` 11/11.**
+  > Bar thấp hơn vì đây là bản nháp có người duyệt, không phải thứ đi thẳng tới học viên. Điều kiện cứng nằm ở chỗ khác: thước đo phải chứng minh được là còn bắt được lỗi.
+
+- **Kết quả các lượt chạy:**
+
+  **Quyết định 1 — gom cụm** (gemini-3.1-flash-lite, gemini-3.5-flash-lite)
+
+  | Lượt | Đạt | Nhóm lỗi còn lại | Đổi gì so với lượt trước |
+  |---|---|---|---|
+  | 1 | 18/24 = 75,0% | 5× nhét câu lạc vào cụm · 4× tách nhầm · 3× **model bịa mã** | gốc |
+  | 2 | 23/24 = 95,8% | 1× tách nhầm | Prompt cho model chép **số thứ tự 1..n** thay vì mã `T#####` — lượt 1 nó trả `T1085` thay cho `T11085`. Bịa mã về **0**. Đồng thời siết thước đo |
+  | 3 | **23/24 = 95,8%** | 2× gop-nham | Siết tiếp: `must_not_group_together` chỉ đạt khi **cả hai** turn nằm trong cụm — vứt một vế vào rải rác không còn tính là "đã tách" |
+
+  **Quyết định 2 — soạn nội dung ôn** (gemini-3.5-flash-lite)
+
+  | Lượt | Đạt | Nhóm lỗi còn lại | Đổi gì so với lượt trước |
+  |---|---|---|---|
+  | 1 | 6/8 = 75,0% | 2× caveat rỗng | gốc |
+  | 2 | 6/8 = 75,0% | 2× caveat rỗng (khác case) | **Sửa sản phẩm**: prompt thêm luật 8 — caveat phải cảnh báo tín hiệu mỏng / cụm không phải kiến thức trước mọi ghi chú khác |
+  | 3 | **8/8 = 100,0%** | không còn lỗi nào | **Sửa bộ đo, không sửa sản phẩm**: lượt 1–2 chấm caveat bằng từ khoá viết riêng từng case nên A-07/A-08 trượt oan khi model dùng chữ khác. Chuyển sang ngân hàng từ khoá theo **loại cảnh báo**. Thêm `confidence_valid` — lượt 2 model trả mức `"vấp"` |
+
+  **Ba lượt không so trực tiếp được với nhau** vì thước đo thay đổi giữa các lượt. Mỗi lượt ghi rõ đổi gì trong trường `note` của `eval/results-*.json` và hiện luôn trên dashboard tab *Chất lượng*.
 
 ## §8. Phân công & kế hoạch
 

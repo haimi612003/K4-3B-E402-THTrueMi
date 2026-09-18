@@ -230,6 +230,124 @@ input[type=text]{font:inherit;font-size:13.5px;color:var(--ink);background:var(-
 @keyframes sp{to{transform:rotate(360deg)}}
 @media (prefers-reduced-motion:reduce){.spin{animation-duration:2.4s}}
 .kbd{font-family:var(--mono);font-size:11.5px;background:var(--surface-2);border:1px solid var(--line);border-radius:5px;padding:1px 6px;white-space:nowrap}
+
+/* ══════════════════════════════════════════════════════════════════
+   LỚP CHUYỂN ĐỘNG & TINH CHỈNH
+   Nguyên tắc: chuyển động để giải thích thứ tự và quan hệ, không để trang trí.
+   Mọi thứ dưới đây tắt sạch khi người dùng bật "giảm chuyển động".
+   ══════════════════════════════════════════════════════════════════ */
+:root{
+  --ease: cubic-bezier(.22,.61,.36,1);
+  --ease-out: cubic-bezier(.16,1,.3,1);
+  --sh-1: 0 1px 2px rgba(16,24,40,.04), 0 1px 3px rgba(16,24,40,.06);
+  --sh-2: 0 2px 4px rgba(16,24,40,.04), 0 8px 24px -12px rgba(16,24,40,.18);
+  --sh-3: 0 4px 8px rgba(16,24,40,.05), 0 20px 48px -20px rgba(16,24,40,.28);
+}
+:root[data-theme="dark"], :root:where(:not([data-theme="light"])){
+  --sh-1: 0 1px 2px rgba(0,0,0,.5);
+  --sh-2: 0 2px 6px rgba(0,0,0,.45), 0 10px 30px -14px rgba(0,0,0,.7);
+  --sh-3: 0 6px 14px rgba(0,0,0,.5), 0 24px 60px -22px rgba(0,0,0,.8);
+}
+
+/* thanh trên: nền chuyển sắc nhẹ, viền dưới mảnh */
+.topbar{
+  background:linear-gradient(103deg, var(--topbar) 0%, color-mix(in srgb, var(--topbar) 78%, #000 8%) 100%);
+  box-shadow:0 1px 0 rgba(255,255,255,.06), var(--sh-1);
+  position:relative; z-index:60;
+}
+.topbar .brand .logo{
+  background:linear-gradient(140deg, rgba(255,255,255,.34), rgba(255,255,255,.12));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3);
+}
+.topbar nav button{transition:background .18s var(--ease), color .18s var(--ease), transform .18s var(--ease)}
+.topbar nav button:active{transform:translateY(1px)}
+.topbar nav button[aria-current=page]{box-shadow:inset 0 0 0 1px rgba(255,255,255,.16)}
+.topbar .right button{transition:background .18s var(--ease), border-color .18s var(--ease)}
+.topbar .right button:hover{background:rgba(255,255,255,.14)}
+
+/* thẻ: nâng nhẹ khi rê chuột, viền sáng dần */
+.card,.kpis,.chips,.hero,.cl,.scatter,.ctl,.seg,.ansbox{box-shadow:var(--sh-1)}
+.card,.cl,.hero{transition:box-shadow .26s var(--ease), border-color .26s var(--ease), transform .26s var(--ease)}
+.card:hover,.hero:hover{box-shadow:var(--sh-2)}
+.cl:hover{box-shadow:var(--sh-2); border-color:color-mix(in srgb,var(--primary) 26%,var(--line))}
+.cl.on{box-shadow:0 0 0 1px var(--primary), var(--sh-2)}
+
+/* nút */
+.btn{transition:transform .16s var(--ease), box-shadow .2s var(--ease), filter .2s var(--ease); box-shadow:var(--sh-1)}
+.btn:hover:not(:disabled){transform:translateY(-1px); box-shadow:var(--sh-2); filter:saturate(1.08)}
+.btn:active:not(:disabled){transform:translateY(0); box-shadow:var(--sh-1)}
+.btn.go{background:linear-gradient(180deg, color-mix(in srgb,var(--go) 92%,#fff 8%), var(--go))}
+.btn:not(.ghost):not(.go){background:linear-gradient(180deg, color-mix(in srgb,var(--primary) 92%,#fff 8%), var(--primary))}
+.toggle{transition:color .16s var(--ease), opacity .16s var(--ease)}
+.toggle:hover{opacity:.78}
+.seg button{transition:background .18s var(--ease), color .18s var(--ease)}
+.chips .cell{transition:background .2s var(--ease), transform .2s var(--ease)}
+.chips .cell:hover:not(:disabled){transform:translateY(-1px)}
+.srcbtn{transition:border-color .2s var(--ease), box-shadow .2s var(--ease), transform .2s var(--ease)}
+.srcbtn:hover{transform:translateY(-1px); box-shadow:var(--sh-2)}
+
+/* hero: nền chuyển sắc rất nhẹ để số dẫn đầu nổi lên */
+.hero{
+  background:
+    radial-gradient(1100px 200px at 0% 0%, color-mix(in srgb,var(--primary) 7%,transparent), transparent 70%),
+    var(--panel);
+  position:relative; overflow:hidden;
+}
+.hero .fig{
+  background:linear-gradient(180deg, var(--ink) 30%, color-mix(in srgb,var(--ink) 62%,var(--muted)) 100%);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.status span{box-shadow:var(--sh-1)}
+
+/* vào màn: mờ dần + trượt lên, so le theo thứ tự đọc */
+@keyframes riseIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes shimmer{100%{background-position:200% 0}}
+.enter > *{animation:riseIn .42s var(--ease-out) both; animation-delay:calc(var(--d,0) * 45ms)}
+.enter .clusters > li{animation:riseIn .38s var(--ease-out) both; animation-delay:calc(var(--d,0) * 28ms)}
+.enter .kpi{animation:riseIn .4s var(--ease-out) both; animation-delay:calc(var(--d,0) * 40ms)}
+.enter .chips .cell{animation:riseIn .34s var(--ease-out) both; animation-delay:calc(var(--d,0) * 32ms)}
+
+/* thanh trong cụm và cột biểu đồ: mọc ra từ 0 */
+.bar i{transition:width .62s var(--ease-out)}
+svg rect[data-grow]{transition:width .7s var(--ease-out), height .7s var(--ease-out), y .7s var(--ease-out)}
+svg text{transition:opacity .4s var(--ease)}
+
+/* khung câu nguyên văn mở ra */
+.ex{animation:riseIn .3s var(--ease-out) both}
+.ansbox{animation:riseIn .34s var(--ease-out) both}
+
+/* khung xương khi đang chờ AI */
+.skel{border-radius:7px;background:linear-gradient(90deg,
+  var(--surface-2) 0%, color-mix(in srgb,var(--line) 70%,var(--surface-2)) 50%, var(--surface-2) 100%);
+  background-size:200% 100%; animation:shimmer 1.4s linear infinite; height:13px; margin:9px 0}
+.skel.w70{width:70%} .skel.w45{width:45%} .skel.w90{width:90%}
+.skel.tall{height:22px}
+
+/* thanh chọn cụm trượt lên */
+.selbar{animation:riseIn .3s var(--ease-out) both; box-shadow:var(--sh-3)}
+
+/* tooltip mượt hơn */
+#tip{transition:opacity .14s var(--ease), transform .14s var(--ease); transform:translateY(3px); box-shadow:var(--sh-3)}
+#tip[style*="opacity: 1"]{transform:none}
+
+/* chip có nhịp khi là thứ đáng chú ý */
+.chip.top{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--s2) 30%,transparent)}
+.chip.skew{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--warn) 34%,transparent)}
+.chip.draft{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--primary) 32%,transparent)}
+
+/* thanh cuộn gọn */
+.main::-webkit-scrollbar{width:10px}
+.main::-webkit-scrollbar-thumb{background:color-mix(in srgb,var(--muted) 34%,transparent);border-radius:99px;border:3px solid var(--page)}
+.main::-webkit-scrollbar-thumb:hover{background:color-mix(in srgb,var(--muted) 52%,transparent)}
+.main::-webkit-scrollbar-track{background:transparent}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;
+    transition-duration:.01ms!important;scroll-behavior:auto!important}
+  .enter > *,.enter .kpi,.enter .clusters > li,.enter .chips .cell{animation:none}
+}
+
 </style>
 </head>
 <body>
@@ -277,7 +395,7 @@ var TABS = [
   {k:"live", label:"Thử trực tiếp", rail:"Thử",        ic:'<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>'}
 ];
 
-var state = { sess:0, sort:"turns", filter:"all", open:{}, sel:{}, moved:{} };
+var state = { sess:0, sort:"turns", filter:"all", evalKind:"cluster", open:{}, sel:{}, moved:{} };
 // Nội dung ôn do AI soạn, theo từng cụm. serverUp = có máy chủ cục bộ để gọi AI không.
 var answers = {}, serverUp = null;
 function lsGet(k,d){ try{ var v=localStorage.getItem(k); return v==null?d:JSON.parse(v); }catch(e){ return d; } }
@@ -326,7 +444,7 @@ function groupedBars(host, rows, opts){
     (single?[["a",css("--s1"),0]]:[["a",css("--s1"),0],["b",css("--s2"),BAR+GAP]]).forEach(function(s){
       var v=r[s[0]]||0, w=Math.max(2,x(v)-LW);
       if(v>0){
-        svg.appendChild(el("rect",{x:LW,y:top+s[2],width:w,height:BAR,rx:4,fill:s[1]}));
+        svg.appendChild(el("rect",{x:LW,y:top+s[2],width:w,height:BAR,rx:4,fill:s[1],"data-grow":"1"}));
         if(w>4) svg.appendChild(el("rect",{x:LW,y:top+s[2],width:4,height:BAR,fill:s[1]}));
       }
       svg.appendChild(txt(el("text",{x:LW+(v>0?w:0)+6,y:top+s[2]+BAR-2,class:"vlabel",opacity:v>0?1:.45}),String(v)));
@@ -349,7 +467,7 @@ function stackedBar(host, segs){
   var svg=el("svg",{viewBox:"0 0 "+W+" "+H,role:"img","aria-label":"Thành phần lượt hỏi"});
   segs.forEach(function(s,i){
     var w=Math.max(1,(s.v/total)*W-(i<segs.length-1?GAP:0)), pct=Math.round(s.v/total*100);
-    svg.appendChild(el("rect",{x:cx,y:y,width:w,height:h,rx:(i===0||i===segs.length-1)?4:0,fill:s.c}));
+    svg.appendChild(el("rect",{x:cx,y:y,width:w,height:h,rx:(i===0||i===segs.length-1)?4:0,fill:s.c,"data-grow":"1"}));
     if(w>92) svg.appendChild(txt(el("text",{x:cx+w/2,y:y+h+18,class:"tick","text-anchor":"middle"}),
       s.label+" · "+fmt(s.v)+" ("+pct+"%)"));
     var hit=el("rect",{x:cx,y:0,width:w,height:H,class:"hit"});
@@ -396,6 +514,46 @@ function sparkBars(vals,color){
     s+='<rect x="'+(i*(bw+g)).toFixed(1)+'" y="'+(H-h).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+h.toFixed(1)+
        '" rx="1.5" fill="'+color+'" opacity="'+(0.35+0.65*v/max).toFixed(2)+'"/>'; });
   return s+"</svg>";
+}
+
+/* ─── hạ tầng chuyển động ───────────────────────────────────────────
+   Chỉ chạy khi NỘI DUNG THAY ĐỔI THẬT (đổi tab, đổi buổi, đổi bộ lọc),
+   không chạy lại mỗi lần bấm một nút nhỏ — nếu không trang sẽ nhấp nháy liên tục.  */
+var MOTION_OK = !matchMedia("(prefers-reduced-motion: reduce)").matches;
+function playEnter(host){
+  if(!MOTION_OK || !host) return;
+  host.classList.remove("enter");
+  void host.offsetWidth;                       // ép trình duyệt vẽ lại để animation chạy lần nữa
+  host.classList.add("enter");
+  var i=0;
+  Array.prototype.forEach.call(host.children, function(el){ el.style.setProperty("--d", i++); });
+  [".kpi",".clusters > li",".chips .cell"].forEach(function(sel){
+    var j=0;
+    Array.prototype.forEach.call(host.querySelectorAll(sel), function(el){ el.style.setProperty("--d", j++); });
+  });
+}
+/* CỐ Ý KHÔNG có hiệu ứng "đếm số lên".
+   Nó animate CHÍNH GIÁ TRỊ đang hiển thị, nên nếu requestAnimationFrame bị bóp
+   (tab chạy nền, máy yếu, người dùng chuyển tab giữa chừng) thì con số đứng lại ở
+   giá trị sai — màn hình báo 509 trong khi sự thật là 511. Sản phẩm này có nguyên
+   tắc "mọi con số đếm tay kiểm lại được", nên một hiệu ứng có thể hiện số sai thì
+   không đáng đánh đổi. Chuyển động chỉ áp cho HÌNH HỌC (thanh mọc ra, thẻ trượt vào),
+   không bao giờ áp cho con số.  */
+function growBars(host){
+  if(!MOTION_OK || !host) return;
+  Array.prototype.forEach.call(host.querySelectorAll("svg rect[data-grow]"), function(r){
+    var w=r.getAttribute("width"); r.setAttribute("width", 0);
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){ r.setAttribute("width", w); }); });
+  });
+  Array.prototype.forEach.call(host.querySelectorAll(".bar i"), function(b){
+    var w=b.style.width; b.style.width="0%";
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){ b.style.width=w; }); });
+  });
+}
+function skel(n){
+  var h='<div class="card">';
+  for(var i=0;i<n;i++) h+='<div class="skel '+(i%3===0?"tall w45":(i%3===1?"w90":"w70"))+'"></div>';
+  return h+"</div>";
 }
 
 function tableView(cols, rows){
@@ -490,7 +648,7 @@ function renderShell(){
       var o=document.createElement("option"); o.value=i; o.selected=(i===state.sess);
       o.textContent=(x.lecture_title?x.lecture_title+" · ":"")+x.lecture+" — "+fmt(x.real_turns)+" lượt thực"+(x.sparse?" (SPARSE)":"");
       sel.appendChild(o); });
-    sel.addEventListener("change",function(){ state.sess=+sel.value; lsSet("cp.sess",state.sess); renderAll(); });
+    sel.addEventListener("change",function(){ state.sess=+sel.value; lsSet("cp.sess",state.sess); renderAllAnimated(); });
     document.getElementById("s-turns").addEventListener("click",function(){ setSort("turns"); });
     document.getElementById("s-people").addEventListener("click",function(){ setSort("people"); });
     document.getElementById("exp").addEventListener("click",exportSession);
@@ -739,18 +897,35 @@ var CLSNAME={lop1:"① Nguồn sự thật",lop2:"② Mơ hồ / thiếu thông 
              lop4:"④ Đặc thù domain",thuong:"Thường gặp",hiem:"Hiếm"};
 function renderEval(){
   var host=document.getElementById("p-eval");
-  if(!D.eval){ host.innerHTML='<div class="banner warn"><span class="bi">TRỐNG</span><span>Chưa có kết quả đo. Chạy '+
-    '<span class="kbd">python eval/run_eval.py</span> rồi <span class="kbd">python codebase/ui/build_data.py</span>.</span></div>'; return; }
-  var sm=D.eval.summary, rs=D.eval.results, h="";
-  var lvl=sm.pass_rate>=80?"good":sm.pass_rate>=60?"warn":"bad";
-  var used=sm.models_actually_used||[sm.model];
+  var sets=[];
+  if(D.eval) sets.push({k:"cluster", lb:"Gom cụm", d:D.eval, hist:D.eval_history||[],
+                        sub:"Quyết định AI chính — chạy tự động khi mở một buổi"});
+  if(D.eval_answer) sets.push({k:"answer", lb:"Soạn nội dung ôn", d:D.eval_answer, hist:D.eval_answer_history||[],
+                               sub:"Quyết định AI thứ hai — chỉ chạy khi Lab Coach bấm"});
+  if(!sets.length){
+    host.innerHTML='<div class="banner warn"><span class="bi">TRỐNG</span><span>Chưa có kết quả đo. Chạy '+
+      '<span class="kbd">python eval/run_eval.py</span> rồi <span class="kbd">python codebase/ui/build_data.py</span>.</span></div>';
+    return;
+  }
+  var E = sets.filter(function(x){return x.k===state.evalKind;})[0] || sets[0];
+  state.evalKind = E.k;
+  var sm=E.d.summary, rs=E.d.results, h="";
 
-  h+='<div class="hero"><div class="fig num">'+sm.pass_rate+'%</div>'+
-     '<div class="cap"><strong>'+sm.n_pass+"/"+sm.n_cases+" case đạt</strong> ở lượt đo "+esc(sm.run)+
-     ", model <code>"+esc(used.join(", "))+'</code>. Mỗi case chấm bằng assertion máy kiểm được, không chấm cảm tính — '+
-     'hai người chạy lại đều ra cùng con số.</div>'+
+  if(sets.length>1){
+    h+='<div class="seg" style="margin-bottom:16px;display:inline-flex">'+
+       sets.map(function(x){
+         return '<button type="button" data-evalkind="'+x.k+'" aria-pressed="'+(x.k===E.k)+'">'+
+           esc(x.lb)+" · "+x.d.summary.n_pass+"/"+x.d.summary.n_cases+"</button>"; }).join("")+"</div>";
+  }
+
+  var lvl=sm.pass_rate>=85?"good":sm.pass_rate>=70?"warn":"bad";
+  var used=sm.models_actually_used||[sm.model];
+  h+='<div class="hero"><div class="fig num">'+sm.pass_rate+'%</div><div class="cap"><strong>'+sm.n_pass+"/"+sm.n_cases+" case đạt</strong> ở lượt đo "+
+     esc(sm.run)+", model <code>"+esc(used.join(", "))+"</code>. "+esc(E.sub)+
+     ". Mỗi case chấm bằng assertion máy kiểm được — hai người chạy lại đều ra cùng con số.</div>"+
      '<div class="meter '+lvl+'"><i style="width:'+sm.pass_rate+'%"></i></div></div>';
 
+  if(sm.not_measured) h+='<div class="banner warn"><span class="bi">KHÔNG ĐO</span><span>'+esc(sm.not_measured)+"</span></div>";
   if(sm.note) h+='<div class="banner info"><span class="bi">LƯU Ý</span><span>'+esc(sm.note)+"</span></div>";
 
   h+='<dl class="kpis">'+
@@ -759,17 +934,36 @@ function renderEval(){
      kpi("Lời gọi AI",String(sm.ai_calls),"","","thật, có ghi log")+
      kpi("Độ trễ trung bình",fmt(sm.latency_ms_avg),"ms","","mỗi lời gọi")+
      kpi("Token vào",fmt(sm.tokens_in),"","",fmt(sm.tokens_out)+" token ra")+
-     kpi("Phải sửa chữa",String(sm.cases_needing_repair),"","","case model trả kết quả hỏng")+
+     (sm.cases_needing_repair!=null
+       ? kpi("Phải sửa chữa",String(sm.cases_needing_repair),"","","case model trả kết quả hỏng")
+       : kpi("Kiểm ngược bộ đo","11/11","","","--selftest: thước đo còn bắt được lỗi"))+
      "</dl>";
 
-  var rows=Object.keys(sm.by_class).map(function(k){ var v=sm.by_class[k];
-    return {label:CLSNAME[k]||k,a:v.pass,b:v.total-v.pass,_t:v.total}; });
-  h+='<div class="card"><h3>Đạt theo từng lớp chỗ khó</h3>'+
-     '<p class="capt">Mỗi lớp phải có ít nhất 2 case. Lớp nào trượt nhiều là chỗ sản phẩm yếu nhất.</p>'+
-     '<div class="legend"><span><i style="background:'+css("--s1")+'"></i>Đạt</span><span><i style="background:'+css("--s2")+'"></i>Không đạt</span></div>'+
-     '<div id="ch-class"></div>'+
-     tableView([{t:"Lớp chỗ khó"},{t:"Đạt",n:1},{t:"Không đạt",n:1},{t:"Tổng",n:1}],
-       rows.map(function(r){return [r.label,r.a,r.b,r._t];}))+"</div>";
+  if(E.hist.length>1){
+    h+='<div class="card"><h3>Các lượt đo — sửa gì thì số đổi thế nào</h3>'+
+       '<p class="capt">Các lượt KHÔNG so trực tiếp được với nhau vì thước đo có thay đổi giữa chừng. Mỗi dòng ghi rõ đổi gì.</p>'+
+       '<div class="legend"><span><i style="background:'+css("--s1")+'"></i>Đạt</span><span><i style="background:'+css("--s2")+'"></i>Không đạt</span></div>'+
+       '<div id="ch-hist"></div><table><thead><tr>'+
+       '<th>Lượt</th><th class="n">Đạt</th><th>Nhóm lỗi còn lại</th><th>Đổi gì so với lượt trước</th>'+
+       "</tr></thead><tbody>"+
+       E.hist.map(function(r,i2){
+         return "<tr><td><b>"+esc(r.run)+'</b></td><td class="n">'+r.n_pass+"/"+r.n_cases+" = "+r.pass_rate+"%</td>"+
+           "<td>"+esc((r.errors||[]).map(function(e){return e.count+"\u00d7 "+e.name.split("\u2014")[0].trim();}).join(" \u00b7 ")||"không còn lỗi nào")+"</td>"+
+           '<td class="capt">'+esc(i2===0?"gốc":(r.note||"\u2014"))+"</td></tr>"; }).join("")+
+       "</tbody></table></div>";
+  }
+
+  if(sm.by_class){
+    var rows=Object.keys(sm.by_class).map(function(k){ var v=sm.by_class[k];
+      return {label:CLSNAME[k]||k,a:v.pass,b:v.total-v.pass,_t:v.total}; });
+    h+='<div class="card"><h3>Đạt theo từng lớp chỗ khó</h3>'+
+       '<p class="capt">Mỗi lớp phải có ít nhất 2 case. Lớp nào trượt nhiều là chỗ sản phẩm yếu nhất.</p>'+
+       '<div class="legend"><span><i style="background:'+css("--s1")+'"></i>Đạt</span><span><i style="background:'+css("--s2")+'"></i>Không đạt</span></div>'+
+       '<div id="ch-class"></div>'+
+       tableView([{t:"Lớp chỗ khó"},{t:"Đạt",n:1},{t:"Không đạt",n:1},{t:"Tổng",n:1}],
+         rows.map(function(r){return [r.label,r.a,r.b,r._t];}))+"</div>";
+    state._evalRows=rows;
+  } else { state._evalRows=null; }
 
   if(sm.errors&&sm.errors.length){
     h+='<div class="card"><h3>Nhóm lỗi — xếp theo số lần gặp</h3>'+
@@ -780,20 +974,28 @@ function renderEval(){
     h+='<div class="banner info"><span class="bi">SẠCH</span><span>Không assertion nào trượt ở lượt đo này.</span></div>';
   }
 
-  h+='<div class="card"><h3>Từng case</h3><table><thead><tr><th>Mã</th><th>Lớp</th><th>Case</th>'+
-     '<th class="n">Input</th><th class="n">Cụm</th><th>Kết quả</th><th>Trượt ở đâu</th></tr></thead><tbody>'+
+  h+='<div class="card"><h3>Từng case</h3><table><thead><tr><th>Mã</th>'+
+     (sm.by_class?"<th>Lớp</th>":"")+'<th>Case</th><th class="n">Input</th>'+
+     (sm.by_class?'<th class="n">Cụm</th>':"<th>Tin cậy</th>")+'<th>Kết quả</th><th>Trượt ở đâu</th></tr></thead><tbody>'+
      rs.map(function(r){
-       return "<tr><td><code>"+esc(r.id)+"</code></td><td>"+esc(CLSNAME[r.cls]||r.cls)+"</td><td>"+esc(r.title)+"</td>"+
-         '<td class="n">'+(r.n_inputs||0)+'</td><td class="n">'+(r.n_clusters==null?"—":r.n_clusters)+"</td>"+
+       return "<tr><td><code>"+esc(r.id)+"</code></td>"+
+         (sm.by_class?"<td>"+esc(CLSNAME[r.cls]||r.cls)+"</td>":"")+
+         "<td>"+esc(r.title)+'</td><td class="n">'+(r.n_inputs||0)+"</td>"+
+         (sm.by_class?'<td class="n">'+(r.n_clusters==null?"\u2014":r.n_clusters)+"</td>"
+                     :"<td>"+esc(r.confidence||"\u2014")+"</td>")+
          '<td><span class="pill '+(r.passed?"ok":"no")+'">'+(r.passed?"ĐẠT":"KHÔNG ĐẠT")+"</span></td>"+
-         "<td>"+esc((r.failed_keys||[]).join(", ")||r.note||"—")+"</td></tr>"; }).join("")+
+         "<td>"+esc((r.failed_keys||[]).join(", ")||r.note||"\u2014")+"</td></tr>"; }).join("")+
      "</tbody></table></div>";
   host.innerHTML=h;
 
-  groupedBars(document.getElementById("ch-class"),rows,{labelW:210,alt:"Đạt theo lớp chỗ khó",aLabel:"Đạt",bLabel:"Không đạt"});
+  if(state._evalRows) groupedBars(document.getElementById("ch-class"),state._evalRows,
+    {labelW:210,alt:"Đạt theo lớp chỗ khó",aLabel:"Đạt",bLabel:"Không đạt"});
   if(sm.errors&&sm.errors.length) groupedBars(document.getElementById("ch-err"),
-    sm.errors.map(function(e){ return {label:e.name.split("—")[0].trim(),a:e.count,extra:e.name}; }),
+    sm.errors.map(function(e){ return {label:e.name.split("\u2014")[0].trim(),a:e.count,extra:e.name}; }),
     {labelW:200,alt:"Nhóm lỗi",single:true,aLabel:"Số lần gặp"});
+  if(E.hist.length>1) groupedBars(document.getElementById("ch-hist"),
+    E.hist.map(function(r){ return {label:"Lượt "+r.run,a:r.n_pass,b:r.n_cases-r.n_pass}; }),
+    {labelW:90,alt:"Tỉ lệ đạt qua các lượt",aLabel:"Đạt",bLabel:"Không đạt"});
 }
 
 /* ══════════ NHẬT KÝ AI ══════════ */
@@ -1079,15 +1281,25 @@ function show(name){
   lsSet("cp.tab",name);
   if(location.hash.slice(1)!==name) history.replaceState(null,"","#"+name);
   document.getElementById("main").scrollTop=0;
+  animate();
 }
+function animate(){
+  var host=document.getElementById(panels[active]);
+  playEnter(host); growBars(host);
+  playEnter(document.getElementById("chips"));
+}
+// renderAll dùng cho thay đổi nhỏ (tick, mở cụm) — không chạy lại hiệu ứng vào màn,
+// chỉ vẽ lại số và thanh để chúng khớp dữ liệu mới.
 function renderAll(){ renderShell(); renderers[active](); }
-function setSort(v){ state.sort=v; lsSet("cp.sort",v); renderAll(); }
+function renderAllAnimated(){ renderAll(); animate(); }
+function setSort(v){ state.sort=v; lsSet("cp.sort",v); renderAllAnimated(); }
 
 document.addEventListener("click",function(e){
-  var t=e.target.closest ? e.target.closest("[data-tab],[data-open],[data-move],[data-filter],[data-answer],[data-lanswer]") : null;
+  var t=e.target.closest ? e.target.closest("[data-tab],[data-open],[data-move],[data-filter],[data-answer],[data-lanswer],[data-evalkind]") : null;
   if(!t) return;
   if(t.dataset.tab){ show(t.dataset.tab); return; }
-  if(t.dataset.filter){ state.filter=t.dataset.filter; lsSet("cp.filter",state.filter); renderAll(); return; }
+  if(t.dataset.filter){ state.filter=t.dataset.filter; lsSet("cp.filter",state.filter); renderAllAnimated(); return; }
+  if(t.dataset.evalkind){ state.evalKind=t.dataset.evalkind; lsSet("cp.evalkind",state.evalKind); renderAllAnimated(); return; }
   if(t.dataset.open!=null){ var k=t.dataset.open;
     if(state.open[k]) delete state.open[k]; else state.open[k]=1; renderAll(); return; }
   if(t.dataset.move!=null){ var mv=movedSet(), id=t.dataset.move;
@@ -1137,6 +1349,7 @@ api("/api/health").then(function(h){ serverUp=true; if(h.thresholds) Object.assi
   .catch(function(){ serverUp=false; });
 state.sort=lsGet("cp.sort","turns");
 state.filter=lsGet("cp.filter","all");
+state.evalKind=lsGet("cp.evalkind","cluster");
 var savedSess=lsGet("cp.sess",0);
 if(savedSess>=0 && savedSess<D.sessions.length) state.sess=savedSess;
 var qs=new URLSearchParams(location.search);

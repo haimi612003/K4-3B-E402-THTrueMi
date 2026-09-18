@@ -71,17 +71,32 @@ def main():
         sessions.append(s)
         print("nạp %-26s %d cụm · %d lượt thực" % (key, len(s["clusters"]), s["real_turns"]))
 
-    ev = None
     # Sắp theo SỐ lượt đo, không theo thứ tự chữ cái: "run10" phải sau "run9".
     def _run_no(pth):
-        m = re.search(r"results-run(\d+)", os.path.basename(pth))
+        m = re.search(r"run(\d+)\.json$", os.path.basename(pth))
         return (int(m.group(1)) if m else -1, pth)
-    runs = sorted(glob.glob(os.path.join(ROOT, "eval", "results-run*.json")), key=_run_no)
-    if runs:
+
+    def _latest(pattern):
+        runs = sorted(glob.glob(os.path.join(ROOT, "eval", pattern)), key=_run_no)
+        if not runs:
+            return None, []
         with open(runs[-1], encoding="utf-8") as f:
-            ev = json.load(f)
+            latest = json.load(f)
         print("nạp %-26s %d/%d đạt" % (os.path.basename(runs[-1]),
-                                       ev["summary"]["n_pass"], ev["summary"]["n_cases"]))
+                                       latest["summary"]["n_pass"], latest["summary"]["n_cases"]))
+        # Lịch sử các lượt: để dashboard kể được câu chuyện sửa rồi đo lại.
+        hist = []
+        for r in runs:
+            with open(r, encoding="utf-8") as f:
+                sm = json.load(f)["summary"]
+            hist.append({"run": sm["run"], "n_pass": sm["n_pass"], "n_cases": sm["n_cases"],
+                         "pass_rate": sm["pass_rate"], "note": sm.get("note", ""),
+                         "errors": sm.get("errors", [])})
+        return latest, hist
+
+    # Hai quyết định AI, hai bộ đo riêng.
+    ev, ev_hist = _latest("results-run*.json")
+    ev_answer, ev_answer_hist = _latest("results-answer-run*.json")
 
     calls = []
     logp = os.path.join(config.LOG_DIR, "gemini-calls.jsonl")
@@ -109,6 +124,9 @@ def main():
     payload = {
         "sessions": sessions,
         "eval": ev,
+        "eval_history": ev_hist,
+        "eval_answer": ev_answer,
+        "eval_answer_history": ev_answer_hist,
         "calls": calls,
         "thresholds": {
             "sparse_min_turns": config.SPARSE_MIN_TURNS,

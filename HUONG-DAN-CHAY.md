@@ -110,8 +110,28 @@ python eval/run_eval.py --run 1 --only C1-01 C4-02
 Sau khi sửa prompt hoặc đổi model, chạy lượt đo mới để so sánh — **đừng ghi đè lượt cũ**:
 
 ```bash
-python eval/run_eval.py --run 2
+python eval/run_eval.py --run 2 --note "sửa gì so với lượt trước"
 ```
+
+### 3b · Bộ đo cho "Soạn nội dung ôn"
+
+Quyết định AI thứ hai có bộ đo riêng. Nó **cần máy chủ đang chạy** vì gọi qua `/api/answer`:
+
+```bash
+python codebase/serve.py            # cửa sổ 1
+python eval/run_eval_answer.py --run 1     # cửa sổ 2
+```
+
+Bộ này chỉ đo **tính kỷ luật** của output, không đo đúng-sai kiến thức — lý do ghi ở `spec.md` §7.
+
+Kiểm ngược bộ đo (không gọi model, chạy trong một giây):
+
+```bash
+python eval/run_eval_answer.py --selftest
+```
+
+Nó cho 11 output cố tình hỏng chạy qua bộ chấm và xác nhận từng assertion vẫn bắt được lỗi.
+Cần cái này vì nới thước đo rồi báo điểm cao là chuyện quá dễ.
 
 ---
 
@@ -203,8 +223,10 @@ python codebase/run_cluster.py --course K4P1 --lecture D08 --out codebase/ui/dat
 python codebase/run_cluster.py --course K4P1 --lecture D10 --out codebase/ui/data/session-K4P1-D10.json
 python eval/run_eval.py --run 1
 python eval/report.py
+python codebase/serve.py &            # cần cho bộ đo nội dung ôn
+python eval/run_eval_answer.py --run 1
+python eval/run_eval_answer.py --selftest
 python codebase/ui/build_data.py
-python codebase/serve.py
 ```
 
 ---
@@ -252,6 +274,7 @@ Khi nộp form CP3 nhớ kèm: đường dẫn video, **con số đo được** 
 
 | Muốn đổi | Sửa file |
 |---|---|
+| Nội dung ôn gồm những mục gì | `codebase/serve.py` — `ANSWER_SCHEMA` và `ANSWER_PROMPT` |
 | Ngưỡng SPARSE, kích thước phần, ngưỡng cụm yếu / tín hiệu lệch | `codebase/class_pulse/config.py` |
 | Luật gom cụm (cái model được dặn) | `codebase/class_pulse/cluster.py` — biến `PROMPT` và `MERGE_PROMPT` |
 | Model và chuỗi dự phòng | `.env` và `codebase/class_pulse/gemini.py` — `FALLBACK_MODELS` |
