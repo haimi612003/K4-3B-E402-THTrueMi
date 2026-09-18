@@ -141,7 +141,7 @@ Dashboard có 5 tab:
 | Tab | Nội dung |
 |---|---|
 | **Tổng quan** | Số dẫn đầu, dải chỉ số, biểu đồ cụm theo lượt/người, thành phần lượt hỏi, phân bố lượt/học viên. Hàng chip phía trên lọc nhanh: tất cả / đông nhất / cụm mạnh / cụm yếu / tín hiệu lệch |
-| **Cụm vấn đề** | Danh sách cụm, mở ra đọc câu nguyên văn có ID, tick chọn cụm, bấm "Không thuộc cụm" để sửa tay (lưu lại giữa các lần mở trang) |
+| **Cụm vấn đề** | Danh sách cụm, mở ra đọc câu nguyên văn có ID, tick chọn cụm, bấm "Không thuộc cụm" để sửa tay (lưu lại giữa các lần mở trang), và **"✨ Soạn nội dung ôn"** để AI soạn vật liệu giảng lại — xem mục 4c |
 | **Chất lượng** | Kết quả bộ kiểm thử: tỉ lệ đạt, đạt theo từng lớp chỗ khó, nhóm lỗi, từng case |
 | **Nhật ký AI** | Bằng chứng AI chạy thật: model, số lời gọi, token, độ trễ, số lần model bịa mã / bỏ sót câu |
 | **Thử trực tiếp** | **Gọi AI thật ngay trên trang.** Xem mục 4b |
@@ -169,6 +169,29 @@ http://127.0.0.1:8765/?sample=skew&run=1#live
 ```
 
 `sample` nhận: `agent` · `skew` · `inject` · `admin` · `sparse`. Thêm `run=1` để chạy luôn.
+
+### 4c · "Soạn nội dung ôn" — AI trả lời hộ, Lab Coach khỏi phải nhớ
+
+Mỗi cụm có nút **✨ Soạn nội dung ôn**. Bấm là AI đọc **toàn bộ câu hỏi trong cụm** (không phải chỉ
+2–3 ví dụ đang hiện) rồi soạn ra năm phần:
+
+| Phần | Nội dung |
+|---|---|
+| **Học viên đang hiểu sai ở đâu** | Chẩn đoán suy từ chính chữ học viên viết, chỉ được ra chỗ hổng nằm ở câu nào |
+| **Giảng lại theo cách KHÁC slide** | Phần quan trọng nhất. Học viên đã đọc slide rồi mà vẫn hỏi, nên lặp lại cách cũ là vô ích — AI bị buộc đổi thứ tự, đổi chất liệu, hoặc đổi câu hỏi mở đầu |
+| **Ví dụ cụ thể** | Có con số, có tình huống, nói ra miệng được trong 30 giây |
+| **Câu kiểm tra nhanh** | Phải phân biệt được hiểu thật với thuộc lòng |
+| **Chỗ cần tự kiểm** | Model tự khai chỗ nào Lab Coach phải kiểm lại trước khi dùng |
+
+Kèm theo là độ chắc chắn model tự khai và ước lượng số phút trên lớp.
+
+Nút này cũng có trong tab **Thử trực tiếp**, cho từng cụm model vừa trả về.
+
+**Đây là bản nháp, không phải chỉ thị.** Giao diện gắn nhãn `BẢN NHÁP` và ghi rõ Lab Coach là người
+quyết định cuối cùng — hệ thống đưa vật liệu, không bảo phải dạy gì. Nút cần máy chủ (`serve.py`);
+mở bằng `file://` thì nút sẽ nói rõ lý do.
+
+Demo nhanh: `http://127.0.0.1:8765/?answer=1#cum` — soạn luôn cho cụm đông nhất.
 
 ---
 
@@ -201,7 +224,10 @@ CP3 cần hai bằng chứng: **AI chạy thật** và **có số đo**. Trình 
 5. **Tab Tổng quan** — chỉ vào số dẫn đầu: bao nhiêu học viên cùng vướng một chỗ trên buổi 511 lượt thật.
 6. **Tab Cụm vấn đề** — mở một cụm, đọc câu nguyên văn, bấm "Không thuộc cụm": số lượt, số người và các cờ
    tính lại ngay.
-7. **Tab Chất lượng** — tỉ lệ đạt, và **một nhóm lỗi sẽ ưu tiên sửa** kèm lý do.
+7. **Bấm "✨ Soạn nội dung ôn" trên cụm đông nhất** — AI đọc cả cụm rồi soạn vật liệu giảng lại,
+   trong đó phần *"giảng lại theo cách KHÁC slide"* là chỗ đáng chỉ vào: học viên đã đọc slide rồi
+   mà vẫn hỏi, nên nội dung ôn phải đi một đường khác.
+8. **Tab Chất lượng** — tỉ lệ đạt, và **một nhóm lỗi sẽ ưu tiên sửa** kèm lý do.
 
 Khi nộp form CP3 nhớ kèm: đường dẫn video, **con số đo được** và **số case đã đo** (lấy ở `eval/README.md`).
 

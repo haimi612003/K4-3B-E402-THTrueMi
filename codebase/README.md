@@ -13,8 +13,15 @@ python codebase/run_cluster.py --course K4P1 --lecture D04 \
 python codebase/ui/build_data.py                             # dựng dữ liệu cho dashboard
 ```
 
-Rồi mở `codebase/ui/index.html` bằng trình duyệt. Không cần server, không cần `pip install` —
-module chỉ dùng thư viện chuẩn của Python 3.8+.
+Rồi bật dashboard:
+
+```bash
+python codebase/serve.py          # mở http://127.0.0.1:8765, có đủ 5 tab
+```
+
+Hoặc mở thẳng `codebase/ui/index.html` bằng trình duyệt — bốn tab đầu chạy bình thường, riêng
+hai tính năng gọi AI (tab *Thử trực tiếp* và nút *Soạn nội dung ôn*) cần máy chủ.
+Không cần `pip install` gì cả: module chỉ dùng thư viện chuẩn của Python 3.8+.
 
 ## Cấu trúc
 
@@ -44,11 +51,16 @@ ai mở DevTools cũng lấy được. Máy chủ giữ khoá, trình duyệt ch
 | `GET /api/samples` | năm bộ câu hỏi thật, mỗi bộ lộ một hành vi (cụm lớn, tín hiệu lệch, injection, câu hành chính, SPARSE) |
 | `POST /api/generate` | nhờ model sinh bộ câu hỏi giả lập theo chủ đề — dùng khi máy không có data pack |
 | `POST /api/cluster` | gom cụm thật, trả cụm + cờ + số đo + phần đã phải sửa chữa |
+| `POST /api/answer` | soạn nội dung ôn cho một cụm: nhận `turn_ids` rồi tra ngược cả cụm trong chatlog, không chỉ dựa vào vài ví dụ |
+
+Nội dung ôn là **quyết định AI thứ hai** của sản phẩm, tách hẳn khỏi việc gom cụm. Nó chỉ chạy khi
+Lab Coach bấm, luôn được gắn nhãn *bản nháp*, và prompt buộc model đi một đường khác slide — vì học
+viên đã đọc slide rồi mà vẫn hỏi, nên nhắc lại cách cũ là vô ích.
 
 ## Bốn chủ đích thiết kế
 
 **1. Model không bao giờ nhìn thấy mã học viên.**
-`build_prompt()` chỉ đưa vào `[turn_id]` và câu hỏi. Số người, cờ tín hiệu lệch được tính
+`build_prompt()` chỉ đưa vào số thứ tự `[1..n]` và câu hỏi. Số người, cờ tín hiệu lệch được tính
 **trong code** sau khi model trả về danh sách thành viên cụm. Nhờ vậy "output không lộ mã học viên"
 là bảo đảm bằng cấu trúc, không phải bằng cách dặn model đừng làm — và không có prompt injection nào
 lấy ra được thứ chưa từng đưa vào.
@@ -64,6 +76,11 @@ cờ cụm yếu, cờ tín hiệu lệch đều do code tính từ chính danh 
 | `CHUNK_SIZE` | 90 | Số lượt tối đa trong một lời gọi |
 | `WEAK_MAX_PEOPLE` | 2 | Cụm ≤ ngần này người thì gắn cờ *cụm yếu* |
 | `SKEW_RATIO` / `SKEW_MIN_TURNS` | 0,5 / 4 | Một người chiếm ≥ 50% lượt của cụm ≥ 4 lượt thì gắn cờ *tín hiệu lệch* |
+
+**2b. Model chép SỐ THỨ TỰ, không chép mã dài.**
+Lượt đo 1 cho thấy model chép hỏng `turn_id`: trả `T1085` thay cho `T11085`, `T12626` thay cho
+`T12826`. Ba case trượt vì lỗi cơ học đó chứ không phải vì gom sai. Prompt giờ đánh số `1..n` và
+code ánh xạ ngược — số ngoài khoảng `1..n` bị phát hiện ngay là bịa. Lượt đo 2 có 0 mã bịa.
 
 **3. Buổi lớn thì chia phần rồi gộp lại.**
 Thử nhét cả 511 lượt của buổi `K4P1/D04` vào một prompt: model trả `503 high demand` cả ba lần.
@@ -93,10 +110,11 @@ Khi chấm trực tiếp, mở file đó ra là thấy prompt và phản hồi t
 
 ## Xử lý khi model quá tải
 
-`gemini-3.6-flash` trả `503` liên tục trong lúc làm bài, nên `gemini.py` có sẵn chuỗi dự phòng:
+`gemini-3.6-flash` trả `503` liên tục trong lúc làm bài (và `gemini-2.5-flash` đã bị gỡ khỏi API),
+nên `gemini.py` có sẵn chuỗi dự phòng:
 
 ```python
-FALLBACK_MODELS = ["gemini-3.5-flash", "gemini-3-flash-preview", "gemini-3.1-flash-lite"]
+FALLBACK_MODELS = ["gemini-3.1-flash-lite", "gemini-3.5-flash", "gemini-3-flash-preview"]
 ```
 
 Thử lại 3 lần mỗi model với backoff tăng dần, chỉ với mã lỗi đáng thử lại (429/500/502/503/504);

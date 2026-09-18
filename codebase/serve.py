@@ -85,6 +85,59 @@ GEN_SCHEMA = {
     "required": ["questions"],
 }
 
+# ── Soạn nội dung ôn cho một cụm ─────────────────────────────────────────
+ANSWER_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "misread": {"type": "string",
+                    "description": "Học viên đang hiểu sai ở chỗ nào, suy từ chính chữ họ viết"},
+        "different": {"type": "string",
+                      "description": "Giảng lại theo đường KHÁC slide: đổi thứ tự, đổi chất liệu, hoặc đổi câu hỏi mở đầu"},
+        "example": {"type": "string", "description": "Một ví dụ cụ thể, có con số hoặc tình huống"},
+        "check": {"type": "string", "description": "Một câu kiểm tra phân biệt được hiểu thật với thuộc lòng"},
+        "minutes": {"type": "integer", "description": "Ước lượng số phút cần trên lớp"},
+        "confidence": {"type": "string", "description": "cao | vừa | thấp"},
+        "caveat": {"type": "string", "description": "Chỗ nào Lab Coach phải tự kiểm lại trước khi dùng"},
+    },
+    "required": ["misread", "different", "example", "check", "confidence", "caveat"],
+}
+
+ANSWER_PROMPT = """Bạn soạn VẬT LIỆU ÔN TẬP cho một giảng viên (Lab Coach), dựa trên một cụm câu hỏi
+mà nhiều học viên trong lớp cùng vướng. Người đọc là người có chuyên môn, không phải người học.
+
+BUỔI HỌC: {lecture}
+CỤM VẤN ĐỀ: {name}
+{why}
+
+{n} CÂU HỎI NGUYÊN VĂN CỦA HỌC VIÊN — {people} người khác nhau:
+{questions}
+
+LUẬT BẮT BUỘC:
+
+1. HỌC VIÊN ĐÃ ĐỌC SLIDE RỒI MÀ VẪN HỎI. Nghĩa là cách trình bày cũ không ăn với họ. Phần "giảng lại"
+   phải đi một đường KHÁC: đổi thứ tự (đưa ví dụ/dữ liệu trước, khái niệm sau), đổi chất liệu (bảng số
+   thật thay cho định nghĩa), hoặc mở đầu bằng một câu hỏi khiến họ tự thấy chỗ hổng. Nếu chỉ diễn đạt
+   lại cùng một cách thì phần này vô dụng và Lab Coach sẽ bỏ đi.
+
+2. CHẨN ĐOÁN TỪ CHÍNH CHỮ HỌC VIÊN VIẾT. Phần "hiểu sai ở đâu" phải chỉ được ra chỗ hổng nằm trong câu
+   nào. Không viết chẩn đoán chung chung áp cho mọi lớp.
+
+3. VÍ DỤ PHẢI CỤ THỂ — có con số, có tình huống, có thể nói ra miệng trong 30 giây.
+   Không viết kiểu "ví dụ như trong thực tế thì...".
+
+4. CÂU KIỂM TRA PHẢI PHÂN BIỆT HIỂU THẬT VỚI THUỘC LÒNG. Câu mà học viên chép lại định nghĩa là trả
+   lời được thì không đạt.
+
+5. KHÔNG CHẮC THÌ NÓI KHÔNG CHẮC. Nếu các câu hỏi quá mơ hồ hoặc quá tản mạn để chẩn đoán, đặt
+   confidence = "thấp" và ghi rõ vào caveat chỗ nào Lab Coach phải tự kiểm.
+
+6. ĐÂY LÀ BẢN NHÁP, KHÔNG PHẢI CHỈ THỊ. Lab Coach là người quyết định cuối cùng dạy gì. Đừng viết kiểu
+   ra lệnh ("hãy giảng…", "bạn nên…"). Viết kiểu đưa vật liệu để họ chọn dùng hay bỏ.
+
+7. KHÔNG NHẮC TỚI HỌC VIÊN CỤ THỂ NÀO. Chỉ nói ở mức lớp.
+
+Trả JSON đúng schema. Viết tiếng Việt, gọn, không sáo rỗng."""
+
 GEN_PROMPT = """Bạn dựng dữ liệu thử cho một công cụ gom cụm câu hỏi của lớp học.
 
 Sinh đúng {n} câu hỏi mà học viên Việt Nam có thể hỏi trợ giảng AI trong buổi học về "{topic}".
@@ -193,6 +246,33 @@ class Handler(SimpleHTTPRequestHandler):
                 return self._send({"questions": qs, "topic": topic, "ai": {
                     "model": meta["model"], "latency_ms": meta["latency_ms"],
                     "tokens_in": meta["tokens_in"], "tokens_out": meta["tokens_out"]}})
+
+            if self.path.startswith("/api/answer"):
+                b = self._body()
+                # Ưu tiên tra ngược từ turn_id: cụm 50 câu thì soạn trên cả 50 câu,
+                # chứ không chỉ trên 3 ví dụ mà giao diện đang hiện.
+                qs = []
+                ids = b.get("turn_ids") or []
+                if ids:
+                    idx = {t["turn_id"]: t for t in turns()}
+                    qs = [idx[i]["q"] for i in ids if i in idx][:24]
+                if not qs:
+                    qs = [loader.redact(str(q).strip()) for q in (b.get("questions") or []) if str(q).strip()][:24]
+                if not qs:
+                    return self._send({"error": "Cụm này không có câu hỏi nào để soạn."}, 400)
+                name = (b.get("name") or "Cụm chưa đặt tên").strip()[:200]
+                raw, meta = gemini.generate_json(
+                    ANSWER_PROMPT.format(
+                        lecture=(b.get("lecture") or "buổi này")[:120],
+                        name=name,
+                        why=("Ghi chú khi gom cụm: " + b["why"][:300]) if b.get("why") else "",
+                        n=len(qs), people=b.get("people") or "?",
+                        questions="\n".join("- " + q[:300] for q in qs)),
+                    ANSWER_SCHEMA, call_id="live:answer", temperature=0.4)
+                raw["ai"] = {"model": meta["model"], "latency_ms": meta["latency_ms"],
+                             "tokens_in": meta["tokens_in"], "tokens_out": meta["tokens_out"]}
+                raw["cluster"] = name
+                return self._send(raw)
 
             if self.path.startswith("/api/cluster"):
                 b = self._body()
