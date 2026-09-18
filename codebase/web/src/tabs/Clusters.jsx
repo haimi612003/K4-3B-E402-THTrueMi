@@ -140,6 +140,7 @@ export default function Clusters({ sess, setSess }) {
   const [sel, setSel] = useState({});
   const [movedMap, setMovedMap] = useState({});
   const [bandOpen, setBandOpen] = useState({});
+  const [showAllParts, setShowAllParts] = useState({});
   const [answers, setAnswers] = useState({});
   const [faq, setFaq] = useState({ running: false, items: null, err: null });
 
@@ -397,13 +398,30 @@ export default function Clusters({ sess, setSess }) {
               {c.weak && <Chip tone="n">cụm yếu</Chip>}
             </div>
 
+            {/* Nhãn phần bài: hiện 2 cái, phần dư thu lại sau một chip "+N" bấm mở.
+                Vì sao cần: hàm gộp biến thể chỉ gộp được khi tên này là tiền tố của
+                tên kia, và hàm tách nhãn chung chỉ tách khi nhãn có mặt ở QUÁ NỬA số
+                cụm. Trên buổi DAY04 nhãn phổ biến nhất chỉ đạt 45% nên không nhãn nào
+                bị tách, và mỗi thẻ in ba dòng gần giống nhau.
+
+                CỐ Ý không hạ ngưỡng 50% và không nới luật gộp: gộp nhầm hai bài giảng
+                khác nhau thì Lab Coach ôn sai chỗ, tệ hơn nhiều so với nhìn dư một
+                nhãn. Đây là thu gọn cách TRÌNH BÀY, không bỏ dữ liệu — bấm là thấy đủ. */}
             {parts.length > 0 && (
-              <div className="mt-2 flex flex-wrap gap-1.5">
-                {parts.map((p, i) => (
+              <div className="mt-2 flex flex-wrap gap-1.5 items-center">
+                {(showAllParts[id] ? parts : parts.slice(0, 2)).map((p, i) => (
                   <span key={i} className="rounded-full bg-[color:var(--surface-2)] px-2.5 py-0.5 text-[11.5px] text-[color:var(--ink-2)]">
                     {p}
                   </span>
                 ))}
+                {parts.length > 2 && (
+                  <button type="button"
+                    onClick={() => setShowAllParts((m) => ({ ...m, [id]: !m[id] }))}
+                    aria-expanded={!!showAllParts[id]}
+                    className="rounded-full border border-[color:var(--line)] px-2.5 py-0.5 text-[11.5px] font-semibold text-[color:var(--primary)] hover:bg-[color:var(--surface-2)]">
+                    {showAllParts[id] ? "thu gọn" : "+" + (parts.length - 2) + " nhãn"}
+                  </button>
+                )}
               </div>
             )}
 

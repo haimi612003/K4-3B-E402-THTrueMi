@@ -109,7 +109,7 @@ SAMPLES = [
      "ids": ["T10692", "T10713", "T11354", "T11408", "T11650", "T12540", "T12877",
              "T11666", "T11708", "T11715"]},
     {"id": "sparse", "title": "Quá ít câu để kết luận",
-     "hint": "Dưới ngưỡng %d lượt — hệ thống phải báo SPARSE, không gọi AI" % config.SPARSE_MIN_TURNS,
+     "hint": "Dưới ngưỡng %d lượt — hệ thống phải báo quá ít câu để kết luận, không gọi AI" % config.SPARSE_MIN_TURNS,
      "ids": ["T11666", "T11824", "T10303"]},
 ]
 

@@ -1,7 +1,17 @@
 # Hướng dẫn chạy Class Pulse
 
-Không cần cài gì ngoài **Python 3.8+**. Module chỉ dùng thư viện chuẩn (`csv`, `json`, `urllib`) —
-`pip install` không cần chạy.
+Phần xử lý (đọc log, gọi AI, gom cụm, chấm bộ đo) chỉ cần **Python 3.8+**, thư viện chuẩn,
+**không `pip install`**.
+
+Giao diện có **hai bản**, chạy được cả khi máy không có Node:
+
+| Bản | Cần gì | Khi nào dùng |
+|---|---|---|
+| **React** (`codebase/web`) — giao diện chính | Node 18+, chạy `npm install` và `npm run build` một lần | Bản đầy đủ, giao diện mới |
+| **HTML một file** (`codebase/ui/index.html`) — bản dự phòng | không cần gì | Máy không có Node, hoặc bản React lỗi |
+
+`serve.py` **tự chọn**: thấy `codebase/web/dist` thì phục vụ bản React, không thấy thì rơi về bản
+HTML một file. Người chấm không có Node vẫn mở được sản phẩm.
 
 ---
 
@@ -30,7 +40,25 @@ CLASS_PULSE_PASSCODE=<mã nhóm tự đặt>
 git check-ignore -v .env        # phải in ra dòng .gitignore khớp
 ```
 
-### 1.2 Data pack
+### 1.2 Dựng giao diện React (bỏ qua được nếu máy không có Node)
+
+```bash
+cd codebase/web
+npm install          # một lần, khoảng 120 gói
+npm run build        # sinh codebase/web/dist
+cd ../..
+```
+
+Sau bước này `python codebase/serve.py` sẽ tự phục vụ bản React. **Không chạy bước này cũng không
+sao** — máy chủ rơi về bản HTML một file, đủ mọi tính năng, chỉ khác giao diện.
+
+Khi sửa giao diện thì chạy `npm run dev` ở `codebase/web` (cổng 5173, tự nạp lại khi lưu file).
+Nó proxy `/api/*` sang `serve.py` ở cổng 8765, nên **vẫn phải bật `serve.py` song song** thì các
+nút gọi AI mới chạy.
+
+`node_modules/`, `dist/` và `public/data.js` đều đã bị `.gitignore` chặn — đừng commit chúng.
+
+### 1.3 Data pack
 
 Data pack của khoá **không nằm trong repo** (luật `data/README.md` §4: không commit pack vào repo nộp bài).
 Chép thư mục `data/` của khoá vào gốc repo, để thành:
@@ -145,7 +173,11 @@ Cần cái này vì nới thước đo rồi báo điểm cao là chuyện quá 
 python codebase/ui/build_data.py
 ```
 
-Nó gom kết quả gom cụm + kết quả eval + nhật ký gọi model thành `codebase/ui/data.js`.
+Nó gom kết quả gom cụm + kết quả eval + nhật ký gọi model thành `data.js`, ghi cho **cả hai**
+giao diện (`codebase/ui/data.js` và `codebase/web/public/data.js`). Cả hai đọc cùng một
+`window.CP_DATA` nên không có hai định dạng dữ liệu phải đồng bộ bằng tay.
+
+Đổi dữ liệu thì **không cần** `npm run build` lại — `data.js` nằm ngoài gói build.
 
 **Cách chạy được khuyên dùng — có đủ 6 tab, kể cả tab gọi AI thật:**
 

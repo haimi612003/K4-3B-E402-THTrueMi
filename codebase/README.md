@@ -19,6 +19,17 @@ Rồi bật dashboard:
 python codebase/serve.py          # mở http://127.0.0.1:8765, có đủ 6 tab
 ```
 
+`serve.py` phục vụ bản React nếu `codebase/web/dist` tồn tại, không thì rơi về bản HTML một file.
+Dựng bản React: `cd codebase/web && npm install && npm run build`.
+
+**MUI và Tailwind sống chung cần đủ hai nửa**, thiếu một nửa là utility của Tailwind im lặng không
+có tác dụng (không báo lỗi, chỉ là không chạy):
+1. `important: "#root"` trong `web/tailwind.config.js` — nâng đặc hiệu của utility Tailwind.
+2. `<StyledEngineProvider injectFirst>` trong `web/src/main.jsx` — đẩy style Emotion của MUI lên
+   trước thẻ `<style>` của Tailwind trong `<head>`.
+
+Kèm `corePlugins.preflight: false`, vì preflight reset lại baseline mà `CssBaseline` của MUI đã đặt.
+
 Đặt `CLASS_PULSE_PASSCODE` trong `.env` thì trang hỏi mã trước khi cho xem bất cứ dữ liệu nào —
 xem *Đăng nhập* bên dưới. Bỏ trống thì chạy mở.
 
@@ -37,7 +48,11 @@ Không cần `pip install` gì cả: module chỉ dùng thư viện chuẩn củ
 | `run_cluster.py` | CLI: chạy một buổi, in ra màn hình, ghi JSON |
 | `serve.py` | Máy chủ cục bộ cho tab "Thử trực tiếp" — giữ khoá API ở phía server |
 | `ui/build_data.py` | Gom kết quả + kết quả eval + nhật ký thành `ui/data.js` |
-| `ui/index.html` | Dashboard 6 tab: Trang chủ · Tổng quan · Cụm vấn đề · Chất lượng · Nhật ký AI · Thử trực tiếp |
+| `ui/index.html` | Dashboard 6 tab, **bản dự phòng** một file HTML thuần — không cần Node |
+| `web/` | Dashboard 6 tab, **bản chính**: Vite + React + MUI + Tailwind |
+| `web/src/tabs/*.jsx` | Một file cho mỗi tab |
+| `web/src/ui/Charts.jsx` | Biểu đồ vẽ tay bằng SVG, mang theo luật dataviz |
+| `web/src/lib/api.js` | Gọi `/api/*`; trình duyệt **không bao giờ** cầm khoá Gemini |
 
 ## Tab "Thử trực tiếp"
 

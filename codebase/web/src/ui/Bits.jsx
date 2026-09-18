@@ -10,14 +10,32 @@ export function useReveal(rootRef) {
     const host = rootRef?.current || document.body;
     if (!("IntersectionObserver" in window)) return;
     if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const els = [...host.querySelectorAll(".reveal")];
+    if (!els.length) return;
     host.classList.add("js-reveal");
-    const els = host.querySelectorAll(".reveal");
+
+    const showAll = () => els.forEach((el) => el.classList.add("in"));
+
     const io = new IntersectionObserver(
       (es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }),
       { root: host.closest("[data-scroll]") || null, rootMargin: "0px 0px -8% 0px", threshold: 0.08 }
     );
     els.forEach((el, i) => { el.style.transitionDelay = `${Math.min(i, 6) * 55}ms`; io.observe(el); });
-    return () => { io.disconnect(); host.classList.remove("js-reveal"); };
+
+    /* LƯỚI AN TOÀN — bắt buộc phải có.
+       Vừa thêm .js-reveal là mọi .reveal về opacity 0, và từ đó nội dung CHỈ hiện
+       lại nếu IntersectionObserver gọi callback. Nếu IO không gọi (trình duyệt cũ,
+       tiện ích chặn, tab nền, hoặc chỉ là một trường hợp tôi chưa lường), nội dung
+       bị giấu VĨNH VIỄN. Đã xảy ra thật: cả cột trái và tiêu đề tab Thử trực tiếp
+       biến mất trắng trơn.
+
+       Giao diện này chở số liệu cho người ra quyết định dạy học — thà hiện không
+       có hiệu ứng còn hơn không hiện. Sau 1,2 giây thì hiện hết, bất kể IO có
+       chạy hay không. */
+    const t = setTimeout(showAll, 1200);
+
+    return () => { clearTimeout(t); io.disconnect(); host.classList.remove("js-reveal"); };
   }, [rootRef]);
 }
 
