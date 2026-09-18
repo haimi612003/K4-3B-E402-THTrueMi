@@ -1,0 +1,20 @@
+# ── Data pack của khoá ────────────────────────────────────────────
+# Luật data/README.md §4: không commit nguyên pack vào repo nộp bài.
+# Trong repo chỉ dẫn mã (turn_id) và trích ngắn.
+/data/
+
+# ── Bí mật ────────────────────────────────────────────────────────
+.env
+.env.local
+!.env.example
+
+# ── Nhật ký gọi model ─────────────────────────────────────────────
+# Chứa prompt đầy đủ = nguyên văn hàng trăm câu hỏi học viên.
+# Giữ ở máy để xác minh kỹ thuật, không đẩy lên repo công khai.
+logs/
+
+# ── Python ────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+.venv/
+venv/

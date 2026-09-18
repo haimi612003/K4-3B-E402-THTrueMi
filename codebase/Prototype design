@@ -1,1 +1,12 @@
+# Prototype
+
+CP2 — bản mock bấm được (luồng, các trạng thái, chưa nối AI):
 Claude Artifact: https://claude.ai/artifact/BHZpGwAdpKiAvULpymV8Xb
+
+CP3 — dashboard chạy trên kết quả AI thật:
+codebase/ui/index.html   (mở thẳng bằng trình duyệt, không cần server)
+
+Dựng lại dữ liệu cho dashboard:
+  python codebase/run_cluster.py --course K4P1 --lecture D04 --out codebase/ui/data/session-K4P1-D04.json
+  python eval/run_eval.py --run 1
+  python codebase/ui/build_data.py

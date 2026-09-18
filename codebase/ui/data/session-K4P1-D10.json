@@ -1,0 +1,30 @@
+{
+ "sparse": true,
+ "sparse_reason": "Chu kỳ này chỉ còn 3 lượt hỏi thật sau khi loại 0 lượt câu mẫu. Tín hiệu quá thưa để gom thành vấn đề của lớp — dưới đây là câu nguyên văn.",
+ "lecture": "K4P1/D10",
+ "total_turns": 3,
+ "real_turns": 3,
+ "preset_removed": 0,
+ "students": 1,
+ "clusters": [],
+ "scatter": {
+  "turn_ids": [
+   "T12765",
+   "T12766",
+   "T12767"
+  ],
+  "turns": 3,
+  "examples_withheld": true,
+  "from_model": [],
+  "examples": []
+ },
+ "repairs": {
+  "invented_ids": [],
+  "duplicates": [],
+  "unplaced_added_to_scatter": []
+ },
+ "ai_call": {
+  "called": false,
+  "reason": "dưới ngưỡng SPARSE_MIN_TURNS"
+ }
+}

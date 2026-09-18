@@ -1,0 +1,1689 @@
+{
+ "sparse": false,
+ "sparse_reason": "",
+ "lecture": "K4P1/D04",
+ "total_turns": 630,
+ "real_turns": 511,
+ "preset_removed": 119,
+ "students": 127,
+ "clusters": [
+  {
+   "name": "Cách chấm điểm và tiêu chí trong Agentic Fit Framework",
+   "why": "Cùng bàn về cách cho điểm và tiêu chí đánh giá trong ma trận Agentic Fit.",
+   "turn_ids": [
+    "T11779",
+    "T11780",
+    "T11783",
+    "T11785",
+    "T11787",
+    "T11789",
+    "T11794",
+    "T11799",
+    "T11800",
+    "T11806",
+    "T11807",
+    "T11810",
+    "T11811",
+    "T11812",
+    "T11813",
+    "T11814",
+    "T11815",
+    "T11816",
+    "T11817",
+    "T11818",
+    "T12098",
+    "T12099",
+    "T12100",
+    "T12101",
+    "T12102",
+    "T12109",
+    "T12112",
+    "T12115",
+    "T12145",
+    "T12149",
+    "T12151",
+    "T12154",
+    "T12155",
+    "T12156",
+    "T12158",
+    "T12160",
+    "T12165",
+    "T12167",
+    "T12168",
+    "T12171",
+    "T12178",
+    "T12181",
+    "T12183",
+    "T12189",
+    "T12190",
+    "T12192",
+    "T12198",
+    "T12204",
+    "T12205",
+    "T12208",
+    "T12210"
+   ],
+   "people_key": [
+    0,
+    0,
+    1,
+    0,
+    2,
+    0,
+    3,
+    3,
+    3,
+    3,
+    4,
+    5,
+    6,
+    3,
+    4,
+    6,
+    3,
+    4,
+    7,
+    3,
+    8,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    17,
+    20,
+    21,
+    22,
+    23,
+    23,
+    24,
+    25,
+    17,
+    21,
+    26,
+    26,
+    27,
+    28,
+    29,
+    26,
+    30,
+    31
+   ],
+   "turns": 51,
+   "people": 32,
+   "parts": [
+    "Day03: Từ chatbot đến agentic agent react (Mr. [HV])",
+    "TASK 1.1 — ĐÁNH GIÁ 4 TIÊU CHÍ AGENTIC FIT",
+    "day03-tu-chatbot-den-agentic-agent-react"
+   ],
+   "weak": false,
+   "skew": false,
+   "skew_top_share": 0.14,
+   "examples": [
+    {
+     "turn_id": "T11780",
+     "q": "ý tôi là làm sao biết chấm 1, 3 hay 5 điểm"
+    },
+    {
+     "turn_id": "T11783",
+     "q": "tiêu chí agentic fit"
+    },
+    {
+     "turn_id": "T11817",
+     "q": "Giải thích giúp mình vùng vừa khoanh trên trang 12. Đoạn đang hỏi: “Use case Reasoning Tool use Dynamic deci- Tổng sion FAQ nội bộ HR 1 1 1 3 Tóm tắt hợp đồng và 3 2 2 7 highlight risk Booking assistant du 4 5 4 13 lịch Research agent tìm đối 4 4 4 12 thủ cạnh tranh Code assistant có test 5 5 4 14 & fix loop Gợi ý đọc điểm: 0–5 = chatbot/rule đủ 6–10 = augmented chatbot 11+ = agent đáng thử Chấm nhanh theo thang 1–5 cho từng tiêu chí AICB · Ngày 3”"
+    }
+   ]
+  },
+  {
+   "name": "Phân biệt Chatbot và Agent",
+   "why": "Cùng chung thắc mắc về sự khác biệt giữa Chatbot (rule-based/LLM) và các loại Agent (ReAct, Autonomous, Reactive).",
+   "turn_ids": [
+    "T11666",
+    "T11701",
+    "T11704",
+    "T11706",
+    "T11708",
+    "T11711",
+    "T11715",
+    "T11727",
+    "T11729",
+    "T11731",
+    "T11735",
+    "T11736",
+    "T11737",
+    "T11740",
+    "T11743",
+    "T11744",
+    "T11745",
+    "T11746",
+    "T11763",
+    "T11764",
+    "T11767",
+    "T11768",
+    "T11770",
+    "T11771",
+    "T12008",
+    "T12036",
+    "T12041",
+    "T12044",
+    "T12047",
+    "T12051",
+    "T12052",
+    "T12055",
+    "T12057",
+    "T12062",
+    "T12072",
+    "T12074",
+    "T12078",
+    "T12084",
+    "T12118",
+    "T12119",
+    "T12122",
+    "T12123",
+    "T12125",
+    "T12127",
+    "T12128",
+    "T12129",
+    "T12130",
+    "T12131",
+    "T12157",
+    "T12180"
+   ],
+   "people_key": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    7,
+    10,
+    8,
+    10,
+    11,
+    10,
+    12,
+    10,
+    8,
+    13,
+    7,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    24,
+    27,
+    28,
+    29,
+    22,
+    30,
+    31,
+    32,
+    21,
+    32,
+    33,
+    34,
+    21,
+    35
+   ],
+   "turns": 50,
+   "people": 36,
+   "parts": [
+    "Day 03_ Mini lab_ C401_ Chatbot vs ReAct Agent",
+    "Day03: Từ chatbot đến agentic agent react (Mr. [HV])",
+    "day03-tu-chatbot-den-agentic-agent-react"
+   ],
+   "weak": false,
+   "skew": false,
+   "skew_top_share": 0.08,
+   "examples": [
+    {
+     "turn_id": "T11666",
+     "q": "ReAct Agent và Chatbot thông thường khác nhau thế nào?"
+    },
+    {
+     "turn_id": "T11708",
+     "q": "LLM khác agent như thế nào"
+    },
+    {
+     "turn_id": "T11744",
+     "q": "giữa llm chatbot và reactive agent khác nhau chỗ nào"
+    }
+   ]
+  },
+  {
+   "name": "Yêu cầu tóm tắt bài học, video và tài liệu",
+   "why": "Đều là các yêu cầu tổng hợp, tóm tắt lại nội dung slide, video, transcript hoặc toàn bộ bài học.",
+   "turn_ids": [
+    "T11674",
+    "T11675",
+    "T11696",
+    "T11697",
+    "T11698",
+    "T11700",
+    "T11718",
+    "T11719",
+    "T11724",
+    "T11728",
+    "T11730",
+    "T11747",
+    "T11751",
+    "T11752",
+    "T11755",
+    "T11757",
+    "T11905",
+    "T11909",
+    "T11926",
+    "T11931",
+    "T11932",
+    "T11934",
+    "T11937",
+    "T11938",
+    "T11940",
+    "T11941",
+    "T11942",
+    "T11943",
+    "T11944",
+    "T11950",
+    "T11965",
+    "T11967",
+    "T11973",
+    "T11974",
+    "T11988",
+    "T11995",
+    "T12034",
+    "T12046",
+    "T12061",
+    "T12134",
+    "T12163",
+    "T12164",
+    "T12182",
+    "T12185",
+    "T12333",
+    "T12582",
+    "T12615",
+    "T12754",
+    "T12797",
+    "T13015"
+   ],
+   "people_key": [
+    0,
+    0,
+    1,
+    2,
+    2,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    6,
+    8,
+    9,
+    9,
+    9,
+    10,
+    11,
+    12,
+    13,
+    13,
+    13,
+    13,
+    13,
+    13,
+    13,
+    13,
+    13,
+    13,
+    14,
+    15,
+    14,
+    16,
+    16,
+    17,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    22,
+    23,
+    23,
+    22,
+    24,
+    25,
+    26,
+    27,
+    14
+   ],
+   "turns": 50,
+   "people": 28,
+   "parts": [
+    "Bên trong một AI Agent thực sự có những gì?",
+    "Day 03_ Mini lab_ C401_ Chatbot vs ReAct Agent",
+    "Day03: Từ chatbot đến agentic agent react (Mr. [HV])",
+    "Day03: from-chatbot-to-agentic-agent-react (Mr [HV])"
+   ],
+   "weak": false,
+   "skew": false,
+   "skew_top_share": 0.2,
+   "examples": [
+    {
+     "turn_id": "T11675",
+     "q": "tóm tắt video"
+    },
+    {
+     "turn_id": "T11719",
+     "q": "tổng hợp toàn bộ kiến thức, bài học hôm nay"
+    },
+    {
+     "turn_id": "T11751",
+     "q": "Tóm tắt bài hôm nay đi, nãy mới ngủ quên, không hiểu"
+    }
+   ]
+  },
+  {
+   "name": "Yêu cầu trích xuất nội dung, slide, trang tài liệu và đường dẫn",
+   "why": "Các cụm này đều yêu cầu trích xuất nội dung văn bản, slide, hoặc lấy link tài liệu từ bài học.",
+   "turn_ids": [
+    "T11498",
+    "T11499",
+    "T11500",
+    "T11502",
+    "T11503",
+    "T11504",
+    "T11506",
+    "T11507",
+    "T11508",
+    "T11509",
+    "T11510",
+    "T11511",
+    "T11684",
+    "T11685",
+    "T11686",
+    "T11687",
+    "T11688",
+    "T11689",
+    "T11709",
+    "T11712",
+    "T11714",
+    "T11716",
+    "T12257",
+    "T12259",
+    "T12306",
+    "T12313",
+    "T12316",
+    "T12317",
+    "T12320",
+    "T12324",
+    "T12327",
+    "T12331",
+    "T12332",
+    "T12355",
+    "T12363"
+   ],
+   "people_key": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    2,
+    2,
+    3,
+    3,
+    4,
+    5,
+    6,
+    4,
+    7,
+    5,
+    8,
+    9,
+    10,
+    10,
+    11,
+    12,
+    11
+   ],
+   "turns": 35,
+   "people": 13,
+   "parts": [
+    "Day 03_ Chatbot vs ReAct Agent",
+    "Day 03_ Mini lab_ C401_ Chatbot vs ReAct Agent",
+    "Day03: Từ chatbot đến agentic agent react (Mr. [HV])",
+    "day03-tu-chatbot-den-agentic-agent-react"
+   ],
+   "weak": false,
+   "skew": false,
+   "skew_top_share": 0.34,
+   "examples": [
+    {
+     "turn_id": "T11498",
+     "q": "trích text nhiều slide nhất có thể"
+    },
+    {
+     "turn_id": "T11499",
+     "q": "trích text từng slide , trích nhiều nhất có thể"
+    },
+    {
+     "turn_id": "T11716",
+     "q": "lấy địa chỉ url trong slide tôi đang mở"
+    }
+   ]
+  },
+  {
+   "name": "Giải thích nội dung slide và thuật ngữ chung",
+   "why": "Yêu cầu giải thích ý nghĩa đơn giản của các slide hoặc các trang slide cụ thể.",
+   "turn_ids": [
+    "T12092",
+    "T12095",
+    "T12097",
+    "T12103",
+    "T12105",
+    "T12108",
+    "T12110",
+    "T12116",
+    "T12117",
+    "T12124",
+    "T12142",
+    "T12162",
+    "T12166",
+    "T12170",
+    "T12175",
+    "T12191",
+    "T12199",
+    "T12206",
+    "T12229",
+    "T12232",
+    "T12245",
+    "T12246",
+    "T12249",
+    "T12250",
+    "T12256",
+    "T12263",
+    "T12301",
+    "T12307",
+    "T12309"
+   ],
+   "people_key": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    7,
+    11,
+    12,
+    2,
+    13,
+    14,
+    1,
+    15,
+    16,
+    16,
+    9,
+    17,
+    18,
+    19,
+    16,
+    8,
+    18
+   ],
+   "turns": 29,
+   "people": 20,
+   "parts": [
+    "Day 03_ Mini lab_ C401_ Chatbot vs ReAct Agent",
+    "Day03: Từ chatbot đến agentic agent react (Mr. [HV])",
+    "Day03: from-chatbot-to-agentic-agent-react (Mr [HV])",
+    "Quiz cuối ngày"
+   ],
+   "weak": false,
+   "skew": false,
+   "skew_top_share": 0.1,
+   "examples": [
+    {
+     "turn_id": "T12092",
+     "q": "slide này nghĩa là sao nhỉ, giải thích 1 cách đơn giản cho tôi"
+    },
+    {
+     "turn_id": "T12095",
+     "q": "giải thích rõ hơn về slide 15"
+    },
+    {
+     "turn_id": "T12097",
+     "q": "dynamic là gì"
+    }
+   ]
+  },
+  {
+   "name": "Bộ nhớ (Memory), Vector Store và Context Window",
+   "why": "Nói về long-term memory, short-term memory, vector store và context window của LLM.",
+   "turn_ids": [
+    "T11702",
+    "T11703",
+    "T11756",
+    "T11758",
+    "T11761",
+    "T11762",
+    "T11864",
+    "T11866",
+    "T11867",
+    "T11868",
+    "T11875",
+    "T12221",
+    "T12223",
+    "T12225",
+    "T12226",
+    "T12228",
+    "T12230",
+    "T12233",
+    "T12234",
+    "T12236",
+    "T12237",
+    "T12238",
+    "T12239",
+    "T12242",
+    "T12243",
+    "T12253"
+   ],
+   "people_key": [
+    0,
+    0,
+    1,
+    2,
+    2,
+    2,
+    3,
+    2,
+    4,
+    3,
+    2,
+    5,
+    6,
+    7,
+    5,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    8,
+    7,
+    15,
+    16
+   ],
+   "turns": 26,
+   "people": 17,
+   "parts": [
+    "Day03: Từ chatbot đến agentic agent react (Mr. [HV])",
+    "day03-tu-chatbot-den-agentic-agent-react"
+   ],
+   "weak": false,
+   "skew": false,
+   "skew_top_share": 0.19,
+   "examples": [
+    {
+     "turn_id": "T11702",
+     "q": "Long term memory có thể triển khai như nào"
+    },
+    {
+     "turn_id": "T11756",
+     "q": "vì sao llm có bộ nhớ ngắn hơn agentic"
+    },
+    {
+     "turn_id": "T11761",
+     "q": "chua hieu ve long term"
+    }
+   ]
+  },
+  {
+   "name": "Cách vận hành, vòng lặp và khái niệm trong ReAct Agent",
+   "why": "Tập trung hỏi về kiến trúc, vòng lặp ReAct, và quá trình suy luận (Thought - Action).",
+   "turn_ids": [
+    "T11667",
+    "T11668",
+    "T11669",
+    "T11725",
+    "T11734",
+    "T11841",
+    "T11852",
+    "T11856",
+    "T11870",
+    "T11877",
+    "T11891",
+    "T12283",
+    "T12285",
+    "T12286",
+    "T12287",
+    "T12289",
+    "T12290",
+    "T12291",
+    "T12293",
+    "T12300"
+   ],
+   "people_key": [
+    0,
+    0,
+    0,
+    1,
+    2,
+    3,
+    4,
+    2,
+    3,
+    3,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    12,
+    7
+   ],
+   "turns": 20,
+   "people": 13,
+   "parts": [
+    "Day 03_ Mini lab_ C401_ Chatbot vs ReAct Agent",
+    "Day03: Từ chatbot đến agentic agent react (Mr. [HV])",
+    "Day03: from-chatbot-to-agentic-agent-react (Mr [HV])",
+    "day03-tu-chatbot-den-agentic-agent-react"
+   ],
+   "weak": false,
+   "skew": false,
+   "skew_top_share": 0.15,
+   "examples": [
+    {
+     "turn_id": "T11667",
+     "q": "ReAct Agent thực hiện suy luận và hành động như thế nào?"
+    },
+    {
+     "turn_id": "T11668",
+     "q": "Vòng lặp ReAct bao gồm các bước nào?"
+    },
+    {
+     "turn_id": "T11725",
+     "q": "PLAN --> ACT ..> SEVER -- ADAPT LÀ GÌ"
+    }
+   ]
+  },
+  {
+   "name": "Tool, MCP và khác biệt với LLM",
+   "why": "Hỏi về định nghĩa Tool, MCP (Model Context Protocol) và cách chúng khác LLM.",
+   "turn_ids": [
+    "T11824",
+    "T11848",
+    "T11849",
+    "T11850",
+    "T11879",
+    "T11881",
+    "T11882",
+    "T11883",
+    "T11884",
+    "T11885",
+    "T12219",
+    "T12270",
+    "T12272",
+    "T12273",
+    "T12274",
+    "T12275",
+    "T12278",
+    "T12284"
+   ],
+   "people_key": [
+    0,
+    1,
+    1,
+    2,
+    3,
+    4,
+    5,
+    1,
+    6,
+    5,
+    7,
+    8,
+    9,
+    9,
+    10,
+    11,
+    8,
+    11
+   ],
+   "turns": 18,
+   "people": 12,
+   "parts": [
+    "Day03: Từ chatbot đến agentic agent react (Mr. [HV])",
+    "day03-tu-chatbot-den-agentic-agent-react"
+   ],
+   "weak": false,
+   "skew": false,
+   "skew_top_share": 0.17,
+   "examples": [
+    {
+     "turn_id": "T11824",
+     "q": "MCP là gì"
+    },
+    {
+     "turn_id": "T11850",
+     "q": "MCP là gì"
+    },
+    {
+     "turn_id": "T11881",
+     "q": "mcp khác gì function calling"
+    }
+   ]
+  },
+  {
+   "name": "Giải thích code và vòng lặp Agent Loop",
+   "why": "Cần giải thích chi tiết các đoạn code hoặc trang cụ thể trong Agent Loop.",
+   "turn_ids": [
+    "T11893",
+    "T11894",
+    "T11895",
+    "T11897",
+    "T11898",
+    "T11900",
+    "T11902",
+    "T11913",
+    "T12069",
+    "T12081"
+   ],
+   "people_key": [
+    0,
+    1,
+    0,
+    2,
+    3,
+    4,
+    3,
+    5,
+    6,
+    7
+   ],
+   "turns": 10,
+   "people": 8,
+   "parts": [
+    "Day 03_ Mini lab_ C401_ Chatbot vs ReAct Agent",
+    "Day03: Từ chatbot đến agentic agent react (Mr. [HV])",
+    "day03-tu-chatbot-den-agentic-agent-react"
+   ],
+   "weak": false,
+   "skew": false,
+   "skew_top_share": 0.2,
+   "examples": [
+    {
+     "turn_id": "T11894",
+     "q": "giải thích ngắn gọn đoạn code ở slide 27"
+    },
+    {
+     "turn_id": "T11895",
+     "q": "Giải thích giúp mình vùng vừa khoanh trên trang 27. Đoạn đang hỏi: “messages = [] for step in range (MAX_ITERATIONS): output = call_model( system=SYSTEM_PROMPT, messages=messages, tools=TOOLS, ) if output. type == \"final_answer\": return output.content result = run_tool(output.name, output.args) messages += [ output.as_message(), tool_message(output.name, result), ] return \"Stopped: max iterations reached\"”"
+    },
+    {
+     "turn_id": "T11898",
+     "q": "messages = [] for step in range(MAX_ITERATIONS): output = call_model( system=SYSTEM_PROMPT, messages=messages, tools=TOOLS, ) if output.type == \"final_answer\": return output.content result = run_tool(output.name, output.args) messages += [ output.as_message(), tool_message(output.name, result), ] return \"Stopped: max iterationss reached"
+    }
+   ]
+  },
+  {
+   "name": "Giải thích các thuật ngữ chuyên môn và hiện tượng",
+   "why": "Thắc mắc về các thuật ngữ cụ thể như Hallucination, Overkill, Agentic Fit hoặc các viết tắt hạ tầng.",
+   "turn_ids": [
+    "T11723",
+    "T11726",
+    "T11733",
+    "T11753",
+    "T11754",
+    "T11760",
+    "T12367",
+    "T12368"
+   ],
+   "people_key": [
+    0,
+    1,
+    1,
+    2,
+    2,
+    2,
+    3,
+    3
+   ],
+   "turns": 8,
+   "people": 4,
+   "parts": [
+    "Day03: Từ chatbot đến agentic agent react (Mr. [HV])",
+    "day03-tu-chatbot-den-agentic-agent-react"
+   ],
+   "weak": false,
+   "skew": false,
+   "skew_top_share": 0.38,
+   "examples": [
+    {
+     "turn_id": "T11723",
+     "q": "Hallucination / for- mat drift Hallucination + tool , là gì vậy"
+    },
+    {
+     "turn_id": "T11726",
+     "q": "overkill Đoạn đang hỏi: “agent thường là overkill.”"
+    },
+    {
+     "turn_id": "T11753",
+     "q": "Tiêu chí nào quan trọng nhất khi đánh giá Agentic Fit?"
+    }
+   ]
+  },
+  {
+   "name": "Giải thích Tool Calling và Action",
+   "why": "Tìm hiểu về các loại action và tool calling trong hệ thống.",
+   "turn_ids": [
+    "T12213",
+    "T12216",
+    "T12248",
+    "T12264",
+    "T12267",
+    "T12271",
+    "T12280"
+   ],
+   "people_key": [
+    0,
+    1,
+    1,
+    2,
+    3,
+    4,
+    5
+   ],
+   "turns": 7,
+   "people": 6,
+   "parts": [
+    "Day03: Từ chatbot đến agentic agent react (Mr. [HV])",
+    "day03-tu-chatbot-den-agentic-agent-react"
+   ],
+   "weak": false,
+   "skew": false,
+   "skew_top_share": 0.29,
+   "examples": [
+    {
+     "turn_id": "T12213",
+     "q": "Ngoài API/search và final answer thì action còn gì khác không"
+    },
+    {
+     "turn_id": "T12248",
+     "q": "Tool definitions phải rõ input / output / error mode ■ Agent mạnh lên nhờ tool, nhưng cũng dễ fail hơn vì external dependency ■ Tool calling là cầu nối giữa reasoning trong model và hành động ngoài thế giới thực giai thich"
+    },
+    {
+     "turn_id": "T12271",
+     "q": "tool calling là gì?"
+    }
+   ]
+  },
+  {
+   "name": "Ví dụ về Autonomous Agent và AI tự hành",
+   "why": "Yêu cầu cung cấp ví dụ cụ thể về Autonomous Agent.",
+   "turn_ids": [
+    "T11772",
+    "T11774",
+    "T11775",
+    "T11776",
+    "T11777",
+    "T11778"
+   ],
+   "people_key": [
+    0,
+    1,
+    2,
+    3,
+    1,
+    4
+   ],
+   "turns": 6,
+   "people": 5,
+   "parts": [
+    "day03-tu-chatbot-den-agentic-agent-react"
+   ],
+   "weak": false,
+   "skew": false,
+   "skew_top_share": 0.33,
+   "examples": [
+    {
+     "turn_id": "T11775",
+     "q": "vi du ve ai tu hanh"
+    },
+    {
+     "turn_id": "T11776",
+     "q": "cho ví dụ thực tế về Autonomous Agent"
+    },
+    {
+     "turn_id": "T11778",
+     "q": "ví dụ thực tế của autonomous agent"
+    }
+   ]
+  },
+  {
+   "name": "Thắc mắc về kiến trúc nâng cấp LLM và Guardrail",
+   "why": "Hỏi về các hình thức nâng cấp như Orchestrator, Prompt chaining, và Guardrail.",
+   "turn_ids": [
+    "T12139",
+    "T12140",
+    "T12143",
+    "T12172",
+    "T12173",
+    "T12184"
+   ],
+   "people_key": [
+    0,
+    1,
+    1,
+    2,
+    3,
+    4
+   ],
+   "turns": 6,
+   "people": 5,
+   "parts": [
+    "Day03: Từ chatbot đến agentic agent react (Mr. [HV])",
+    "day03-tu-chatbot-den-agentic-agent-react"
+   ],
+   "weak": false,
+   "skew": false,
+   "skew_top_share": 0.33,
+   "examples": [
+    {
+     "turn_id": "T12172",
+     "q": "augmented chatbot là gì, và agent đáng thử ở đây là gì"
+    },
+    {
+     "turn_id": "T12184",
+     "q": "Giải thích giúp mình vùng vừa khoanh trên trang 21. Đoạn đang hỏi: “Mức Cách xử lý Ưu điểm Nhược điểm Prompt + danh sách KS trong Augmented LLM Nhanh, rẻ Dữ liệu cũ context Prompt Chaining Rõ ràng Cứng nhắc Search → filter → format (cố định) Routing Hiệu quả Cần define paths Intent → “booking” path vs trước “info” path Orchestrator Mạnh Planner → workers → Phức tạp synthesize Agent Linh hoạt nhất Đắt, cần guardrails ReAct loop: search → compare → book Bài toán: “Đặt khách sạn Đà Nẵng 3 đêm, budget 5tr, gần biển””"
+    }
+   ]
+  },
+  {
+   "name": "Thắc mắc về các khái niệm nền tảng (Native Tool Calling, Baseline)",
+   "why": "Hỏi về định nghĩa cơ bản như Native Tool Calling và Chatbot baseline.",
+   "turn_ids": [
+    "T12373",
+    "T12472",
+    "T12755",
+    "T12988",
+    "T13016"
+   ],
+   "people_key": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "turns": 5,
+   "people": 5,
+   "parts": [
+    "Day03: Từ chatbot đến agentic agent react (Mr. [HV])",
+    "Kiến thức trọng tâm",
+    "day03-tu-chatbot-den-agentic-agent-react",
+    "📋 THÔNG TIN BRIEF & BỐI CẢNH LÝ THUYẾT"
+   ],
+   "weak": false,
+   "skew": false,
+   "skew_top_share": 0.2,
+   "examples": [
+    {
+     "turn_id": "T12373",
+     "q": "Native Tool Calling là gì"
+    },
+    {
+     "turn_id": "T12472",
+     "q": "chatbot baseline là gì, và react agent là gì; trace là gì"
+    },
+    {
+     "turn_id": "T12755",
+     "q": "Khi nào nên dùng ReAct pattern thay vì Function Calling?"
+    }
+   ]
+  },
+  {
+   "name": "Các cấp độ thông minh của AI",
+   "why": "Cụm chuyên biệt hỏi về các cấp độ thông minh của hệ thống AI.",
+   "turn_ids": [
+    "T11676",
+    "T11677",
+    "T11738",
+    "T11748"
+   ],
+   "people_key": [
+    0,
+    0,
+    1,
+    2
+   ],
+   "turns": 4,
+   "people": 3,
+   "parts": [
+    "Từ Chatbot đến AI Agent: Phổ 4 cấp độ thông minh của AI.",
+    "day03-tu-chatbot-den-agentic-agent-react"
+   ],
+   "weak": false,
+   "skew": true,
+   "skew_top_share": 0.5,
+   "examples": [
+    {
+     "turn_id": "T11676",
+     "q": "4 cấp độ thông minh của AI là gì?"
+    },
+    {
+     "turn_id": "T11738",
+     "q": "3 kiểu hệ thống AI"
+    }
+   ]
+  },
+  {
+   "name": "Thắc mắc về Trace Log và thứ tự sự kiện",
+   "why": "Nói về Waterfall Trace Log và thứ tự thực thi sự kiện của agent.",
+   "turn_ids": [
+    "T12374",
+    "T13007",
+    "T13362",
+    "T13363"
+   ],
+   "people_key": [
+    0,
+    1,
+    2,
+    2
+   ],
+   "turns": 4,
+   "people": 3,
+   "parts": [
+    "Luyện theo đề xuất",
+    "Quiz cuối ngày",
+    "📋 THÔNG TIN BRIEF & BỐI CẢNH LÝ THUYẾT"
+   ],
+   "weak": false,
+   "skew": true,
+   "skew_top_share": 0.5,
+   "examples": [
+    {
+     "turn_id": "T13007",
+     "q": "tôi đang sai ở thứ tự nào: Bối cảnh: Một lệnh gọi tool do nền tảng hỗ trợ có `call_id=c7`. Câu hỏi: Sắp xếp các sự kiện theo đúng thứ tự xử lý. Ứng dụng thực thi tool với tham số của c7 ↑ ↓ Thêm thông điệp tool `{call_id:c7, result}` ↑ ↓ Model trả thông điệp assistant chứa lệnh gọi tool c7 ↑ ↓ Thêm thông điệp assistant chứa lệnh gọi tool ↑ ↓ Gọi model ở lượt tiếp theo với trạng thái chứa cả hai thông điệp"
+    },
+    {
+     "turn_id": "T13362",
+     "q": "Bối cảnh: Trace gồm: (1) 'Cần biết tồn kho'; (2) `check_stock({sku:'A'})`; (3) `{available:4}`; (4) '4 đủ cho yêu cầu 3, dừng'; (5) câu trả lời cuối."
+    },
+    {
+     "turn_id": "T13363",
+     "q": "Câu hỏi: Ghép từng sự kiện với vai trò của nó. (1) Observation (2) Action (3) Quyết định dừng (4) Quyết định (5) Câu trả lời cuối"
+    }
+   ]
+  },
+  {
+   "name": "Thắc mắc về lý do và tiêu chí của Use Case",
+   "why": "Hỏi tại sao các Use Case cụ thể lại được thiết kế hoặc chấm điểm như vậy.",
+   "turn_ids": [
+    "T11801",
+    "T11802",
+    "T11803"
+   ],
+   "people_key": [
+    0,
+    1,
+    2
+   ],
+   "turns": 3,
+   "people": 3,
+   "parts": [
+    "day03-tu-chatbot-den-agentic-agent-react"
+   ],
+   "weak": false,
+   "skew": false,
+   "skew_top_share": 0.33,
+   "examples": [
+    {
+     "turn_id": "T11801",
+     "q": "faq noi bo la j"
+    },
+    {
+     "turn_id": "T11802",
+     "q": "tại sao FAQ nội bộ HR tại sao lại dùng 1 tool"
+    },
+    {
+     "turn_id": "T11803",
+     "q": "Tại sao FAQ nội bộ lại là 1"
+    }
+   ]
+  },
+  {
+   "name": "Thắc mắc về quy chế nộp bài và hạn nộp",
+   "why": "Hỏi về việc nộp bài muộn và hỗ trợ đánh giá Lab.",
+   "turn_ids": [
+    "T12540",
+    "T12544",
+    "T12545",
+    "T12546",
+    "T12547",
+    "T12548"
+   ],
+   "people_key": [
+    0,
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "turns": 6,
+   "people": 2,
+   "parts": [
+    "Nộp bài và đánh giá Lab"
+   ],
+   "weak": true,
+   "skew": true,
+   "skew_top_share": 0.83,
+   "examples": [
+    {
+     "turn_id": "T12540",
+     "q": "Em đã trễ hạn nộp bài và đánh giá Lab thì có thể được hỗ trợ như nào ạ ?"
+    },
+    {
+     "turn_id": "T12545",
+     "q": "Nếu em nộp muộn 1 bài có ảnh hưởng nhiều k? em hoàn thành bài muộn nên giờ k nộp được"
+    },
+    {
+     "turn_id": "T12546",
+     "q": "em hơi yếu và hoàn thành quá hạn thời gian nộp và giờ lab hết hạn em không nộp được thì e nên xử lý sao ạ?"
+    }
+   ]
+  },
+  {
+   "name": "Thắc mắc về Schema và payload",
+   "why": "Hỏi về cấu trúc schema và các trường bắt buộc.",
+   "turn_ids": [
+    "T13001",
+    "T13002",
+    "T13004",
+    "T13005"
+   ],
+   "people_key": [
+    0,
+    0,
+    1,
+    1
+   ],
+   "turns": 4,
+   "people": 2,
+   "parts": [
+    "Quiz cuối ngày"
+   ],
+   "weak": true,
+   "skew": true,
+   "skew_top_share": 0.5,
+   "examples": [
+    {
+     "turn_id": "T13002",
+     "q": "Schema quy định `order_id` là chuỗi bắt buộc theo mẫu `^ORD-[0-9]{4}$`; `limit` là số nguyên tùy chọn từ 1 đến 20."
+    },
+    {
+     "turn_id": "T13004",
+     "q": "tại sao với câu hỏi Schema quy định `order_id` là chuỗi bắt buộc theo mẫu `^ORD-[0-9]{4}$`; `limit` là số nguyên tùy chọn từ 1 đến 20. Câu hỏi: Chọn các payload hợp lệ. tôi chọn {\"order_id\":\"ORD-0042\",\"limit\":0} lại sai"
+    },
+    {
+     "turn_id": "T13005",
+     "q": "tại sao mình biết limit là trường không bắt buộc"
+    }
+   ]
+  }
+ ],
+ "scatter": {
+  "turn_ids": [
+   "T11665",
+   "T11707",
+   "T11732",
+   "T11739",
+   "T11741",
+   "T11742",
+   "T11769",
+   "T11773",
+   "T11781",
+   "T11784",
+   "T11786",
+   "T11790",
+   "T11791",
+   "T11792",
+   "T11793",
+   "T11795",
+   "T11796",
+   "T11797",
+   "T11798",
+   "T11805",
+   "T11808",
+   "T11819",
+   "T11823",
+   "T11825",
+   "T11826",
+   "T11829",
+   "T11830",
+   "T11832",
+   "T11833",
+   "T11834",
+   "T11840",
+   "T11843",
+   "T11844",
+   "T11845",
+   "T11851",
+   "T11855",
+   "T11858",
+   "T11859",
+   "T11861",
+   "T11863",
+   "T11871",
+   "T11876",
+   "T11880",
+   "T11887",
+   "T11888",
+   "T11889",
+   "T11892",
+   "T11896",
+   "T11901",
+   "T11903",
+   "T11906",
+   "T11910",
+   "T11915",
+   "T11916",
+   "T11917",
+   "T11918",
+   "T11951",
+   "T11968",
+   "T12006",
+   "T12027",
+   "T12029",
+   "T12030",
+   "T12032",
+   "T12039",
+   "T12040",
+   "T12043",
+   "T12048",
+   "T12049",
+   "T12050",
+   "T12054",
+   "T12056",
+   "T12058",
+   "T12059",
+   "T12060",
+   "T12063",
+   "T12064",
+   "T12066",
+   "T12067",
+   "T12070",
+   "T12071",
+   "T12073",
+   "T12075",
+   "T12077",
+   "T12079",
+   "T12080",
+   "T12082",
+   "T12087",
+   "T12089",
+   "T12090",
+   "T12091",
+   "T12094",
+   "T12113",
+   "T12114",
+   "T12121",
+   "T12126",
+   "T12132",
+   "T12144",
+   "T12147",
+   "T12159",
+   "T12169",
+   "T12174",
+   "T12187",
+   "T12200",
+   "T12202",
+   "T12207",
+   "T12209",
+   "T12211",
+   "T12212",
+   "T12215",
+   "T12217",
+   "T12220",
+   "T12224",
+   "T12235",
+   "T12240",
+   "T12241",
+   "T12251",
+   "T12254",
+   "T12260",
+   "T12262",
+   "T12265",
+   "T12266",
+   "T12268",
+   "T12269",
+   "T12276",
+   "T12277",
+   "T12279",
+   "T12288",
+   "T12292",
+   "T12294",
+   "T12296",
+   "T12297",
+   "T12298",
+   "T12299",
+   "T12302",
+   "T12304",
+   "T12305",
+   "T12310",
+   "T12311",
+   "T12312",
+   "T12318",
+   "T12321",
+   "T12322",
+   "T12326",
+   "T12336",
+   "T12337",
+   "T12338",
+   "T12342",
+   "T12343",
+   "T12344",
+   "T12346",
+   "T12347",
+   "T12349",
+   "T12350",
+   "T12351",
+   "T12354",
+   "T12356",
+   "T12357",
+   "T12361",
+   "T12362",
+   "T12364",
+   "T12365",
+   "T12370",
+   "T12387",
+   "T12422",
+   "T12428",
+   "T12430",
+   "T12539",
+   "T12855",
+   "T12860"
+  ],
+  "turns": 169,
+  "from_model": [
+   "T11665",
+   "T11707",
+   "T11732",
+   "T11739",
+   "T11741",
+   "T11742",
+   "T11769",
+   "T11773",
+   "T11781",
+   "T11784",
+   "T11786",
+   "T11790",
+   "T11791",
+   "T11792",
+   "T11793",
+   "T11795",
+   "T11796",
+   "T11797",
+   "T11798",
+   "T11805",
+   "T11808",
+   "T11819",
+   "T11823",
+   "T11825",
+   "T11826",
+   "T11829",
+   "T11830",
+   "T11832",
+   "T11833",
+   "T11834",
+   "T11840",
+   "T11843",
+   "T11844",
+   "T11845",
+   "T11851",
+   "T11855",
+   "T11858",
+   "T11859",
+   "T11861",
+   "T11863",
+   "T11871",
+   "T11876",
+   "T11880",
+   "T11887",
+   "T11888",
+   "T11889",
+   "T11892",
+   "T11896",
+   "T11901",
+   "T11903",
+   "T11906",
+   "T11910",
+   "T11915",
+   "T11916",
+   "T11917",
+   "T11918",
+   "T11951",
+   "T11968",
+   "T12006",
+   "T12027",
+   "T12029",
+   "T12030",
+   "T12032",
+   "T12039",
+   "T12040",
+   "T12043",
+   "T12048",
+   "T12049",
+   "T12050",
+   "T12054",
+   "T12056",
+   "T12058",
+   "T12059",
+   "T12060",
+   "T12063",
+   "T12064",
+   "T12066",
+   "T12067",
+   "T12070",
+   "T12071",
+   "T12073",
+   "T12075",
+   "T12077",
+   "T12079",
+   "T12080",
+   "T12082",
+   "T12087",
+   "T12089",
+   "T12090",
+   "T12091",
+   "T12094",
+   "T12113",
+   "T12114",
+   "T12121",
+   "T12126",
+   "T12132",
+   "T12144",
+   "T12147",
+   "T12159",
+   "T12169",
+   "T12174",
+   "T12187",
+   "T12200",
+   "T12202",
+   "T12207",
+   "T12209",
+   "T12211",
+   "T12212",
+   "T12215",
+   "T12217",
+   "T12220",
+   "T12224",
+   "T12235",
+   "T12240",
+   "T12241",
+   "T12251",
+   "T12254",
+   "T12260",
+   "T12262",
+   "T12265",
+   "T12266",
+   "T12268",
+   "T12269",
+   "T12276",
+   "T12277",
+   "T12279",
+   "T12288",
+   "T12292",
+   "T12294",
+   "T12296",
+   "T12297",
+   "T12298",
+   "T12299",
+   "T12302",
+   "T12304",
+   "T12305",
+   "T12310",
+   "T12311",
+   "T12312",
+   "T12318",
+   "T12321",
+   "T12322",
+   "T12326",
+   "T12336",
+   "T12337",
+   "T12338",
+   "T12342",
+   "T12343",
+   "T12344",
+   "T12346",
+   "T12347",
+   "T12349",
+   "T12350",
+   "T12351",
+   "T12354",
+   "T12356",
+   "T12357",
+   "T12361",
+   "T12362",
+   "T12364",
+   "T12365",
+   "T12370",
+   "T12387",
+   "T12422",
+   "T12428",
+   "T12430",
+   "T12539",
+   "T12855",
+   "T12860"
+  ],
+  "examples": [
+   {
+    "turn_id": "T11665",
+    "q": "Hi"
+   },
+   {
+    "turn_id": "T11707",
+    "q": "Bạn có thấy tôi đang xem tài liệu học nào không"
+   },
+   {
+    "turn_id": "T11732",
+    "q": "ví dụ sản phẩm thực tế"
+   },
+   {
+    "turn_id": "T11739",
+    "q": "ví dụ cụ thể"
+   },
+   {
+    "turn_id": "T11741",
+    "q": "allahuakbar"
+   },
+   {
+    "turn_id": "T11742",
+    "q": "bất cứ điều gì"
+   },
+   {
+    "turn_id": "T11769",
+    "q": "vi du"
+   },
+   {
+    "turn_id": "T11773",
+    "q": "Bài tập nhanh: Chấm agentic fit cho use case của nhóm Mỗi nhóm điền bảng (use case của nhóm - reasoning - tool use - dynamic - tổng) cho use case đã chọn từ ngày 2. use case là gì vậy ông?"
+   }
+  ]
+ },
+ "repairs": {
+  "invented_ids": [],
+  "duplicates": [
+   "T12264"
+  ],
+  "unplaced_added_to_scatter": [],
+  "protos_before_merge": 34,
+  "preset_dropped_here": 0
+ },
+ "ai_call": {
+  "called": true,
+  "call_id": "run:K4P1/D04",
+  "model": "gemini-3.5-flash-lite",
+  "models_used": [
+   "gemini-3.5-flash-lite"
+  ],
+  "fell_back": false,
+  "n_calls": 7,
+  "n_chunks": 6,
+  "latency_ms": 27335,
+  "tokens_in": 18050,
+  "tokens_out": 7926,
+  "attempts": 7
+ }
+}

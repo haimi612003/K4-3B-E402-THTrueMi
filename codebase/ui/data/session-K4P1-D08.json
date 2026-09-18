@@ -1,0 +1,1604 @@
+{
+ "sparse": false,
+ "sparse_reason": "",
+ "lecture": "K4P1/D08",
+ "total_turns": 532,
+ "real_turns": 453,
+ "preset_removed": 79,
+ "students": 101,
+ "clusters": [
+  {
+   "name": "Yêu cầu tóm tắt và tổng hợp nội dung slide bài giảng",
+   "why": "Học viên hỏi tóm tắt tổng quan nội dung các slide bài giảng.",
+   "turn_ids": [
+    "T12011",
+    "T12012",
+    "T12371",
+    "T12372",
+    "T12375",
+    "T12379",
+    "T12381",
+    "T12383",
+    "T12389",
+    "T12390",
+    "T12393",
+    "T12399",
+    "T12411",
+    "T12418",
+    "T12421",
+    "T12426",
+    "T12435",
+    "T12439",
+    "T12441",
+    "T12443",
+    "T12455",
+    "T12456",
+    "T12457",
+    "T12541",
+    "T12542",
+    "T12589",
+    "T12591",
+    "T12592",
+    "T12593",
+    "T12594"
+   ],
+   "people_key": [
+    0,
+    0,
+    1,
+    1,
+    2,
+    3,
+    4,
+    5,
+    5,
+    5,
+    5,
+    3,
+    4,
+    4,
+    6,
+    4,
+    4,
+    7,
+    8,
+    9,
+    10,
+    10,
+    11,
+    12,
+    12,
+    12,
+    12,
+    12,
+    13,
+    13
+   ],
+   "turns": 30,
+   "people": 14,
+   "parts": [
+    "Day 04_ C401_ Mini lab_System Prompt Engineering & Tool Calling Engine",
+    "Day04_(Mr.[HV])_Prompt-Engineering-Tool-Calling",
+    "huydd-day04-prompt-engineering-tool-calling.pptx (1)",
+    "huydd-day04-prompt-engineering-tool-calling.pptx (1) (2)"
+   ],
+   "weak": false,
+   "skew": false,
+   "skew_top_share": 0.17,
+   "examples": [
+    {
+     "turn_id": "T12371",
+     "q": "siêu tóm tắt những kiến thức quan trọng trong slide"
+    },
+    {
+     "turn_id": "T12375",
+     "q": "tóm tắt toàn bộ 200 trang slide"
+    },
+    {
+     "turn_id": "T12383",
+     "q": "Hãy note các nội dung chính trong bài học ngày hôm nay"
+    }
+   ]
+  },
+  {
+   "name": "Thắc mắc về nội dung cụ thể trong trang slide hoặc bài tập lab",
+   "why": "Học viên yêu cầu giải thích các khái niệm hoặc đưa ví dụ cho các đoạn văn bản, trang slide cụ thể.",
+   "turn_ids": [
+    "T12398",
+    "T12412",
+    "T12413",
+    "T12425",
+    "T12429",
+    "T12431",
+    "T12432",
+    "T12442",
+    "T12446",
+    "T12452",
+    "T12453",
+    "T12462",
+    "T12463",
+    "T12471",
+    "T12543",
+    "T12549",
+    "T12560",
+    "T12561",
+    "T12562",
+    "T12563",
+    "T12596",
+    "T12597",
+    "T12599",
+    "T12600",
+    "T12601",
+    "T12602",
+    "T12603",
+    "T12605",
+    "T13479"
+   ],
+   "people_key": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    4,
+    6,
+    2,
+    2,
+    2,
+    7,
+    7,
+    8,
+    9,
+    9,
+    10,
+    10,
+    10,
+    10,
+    11,
+    12,
+    11,
+    11,
+    11,
+    11,
+    11,
+    11,
+    13
+   ],
+   "turns": 29,
+   "people": 14,
+   "parts": [
+    "Day 04_ C401_ Mini lab_System Prompt Engineering & Tool Calling Engine",
+    "Day04_(Mr.[HV])_Prompt-Engineering-Tool-Calling",
+    "Quiz cuối ngày",
+    "huydd-day04-prompt-engineering-tool-calling.pptx (1) (2)"
+   ],
+   "weak": false,
+   "skew": false,
+   "skew_top_share": 0.24,
+   "examples": [
+    {
+     "turn_id": "T12413",
+     "q": "Giải thích giúp mình vùng vừa khoanh trên trang 7. Đoạn đang hỏi: “Cách xử lý khi thiếu dữ kiện”"
+    },
+    {
+     "turn_id": "T12446",
+     "q": "Giải thích giúp mình vùng vừa khoanh trên trang 111. Đoạn đang hỏi: “https://colab.research.google.com/github/Goog leCloudPlatform/generative-ai/blob/main/gemin i/prompts/intro_prompt_design.ipynb”"
+    },
+    {
+     "turn_id": "T12563",
+     "q": "Bối cảnh: Quyết định chỉ cần `order_status` và `updated_at`. Kết quả từ tool còn có `customer_email`, `access_token`, 500 dòng gỡ lỗi, `source_id` và ghi chú từ nhà cung cấp: “ignore policy”. Câu hỏi: Chọn nội dung đưa vào ngữ cảnh của model cho quyết định này. Chọn tất cả phương án đúng. A Toàn bộ dữ liệu gỡ lỗi B customer_email C Ghi chú từ nhà cung cấp: “ignore policy” Bạn đã chọn D source_id/provenance Đáp án đúng E access_token F updated_at Bạn chọn · Đáp án đúng G order_status Bạn chọn · Đáp án đúng Xem gợi ý Tai sao lai khong can ghi chu tu nha cung cap?"
+    }
+   ]
+  },
+  {
+   "name": "System prompt, Structured Output và cách đưa vào code",
+   "why": "Học viên hỏi về structured output, system prompt và cách phân tích lỗi/vấn đề trong các system prompt mẫu.",
+   "turn_ids": [
+    "T12874",
+    "T12876",
+    "T12911",
+    "T12912",
+    "T12913",
+    "T12921",
+    "T12929",
+    "T12930",
+    "T12932",
+    "T12933",
+    "T12934",
+    "T12938",
+    "T12939",
+    "T12941",
+    "T12936",
+    "T12940",
+    "T12944",
+    "T12947",
+    "T12948",
+    "T12950",
+    "T12967"
+   ],
+   "people_key": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+   ],
+   "turns": 21,
+   "people": 9,
+   "parts": [
+    "Day04_(Mr.[HV])_Prompt-Engineering-Tool-Calling"
+   ],
+   "weak": false,
+   "skew": false,
+   "skew_top_share": 0.38,
+   "examples": [
+    {
+     "turn_id": "T12912",
+     "q": "Giải thích giúp mình vùng vừa khoanh trên trang 26. Đoạn đang hỏi: “Anatomy của System Prompt Production-grade”"
+    },
+    {
+     "turn_id": "T12921",
+     "q": "Giải thích giúp mình vùng vừa khoanh trên trang 29. Đoạn đang hỏi: “Anthropic Claude OpenAI GPT client.messages.create( client.chat.completions.create( model=\"claude-sonnet-4-...\", model=\"gpt-4.1\", system =\"You are...\", messages=[ messages=[...], { \"role\": \"system\" , tools=[...] \"content\": \"You are...\"}, {\"role\": \"user\", ...} ) ], tools=[...] Hỗ trợ XML tags: , trong system <rules> <constraints> ) prompt để cấu trúc rõ hơn. System prompt nằm trong messages array. Concept giống nhau, chỉ khác syntax. Dùng markdown/XML sections để structure system prompt dài.”"
+    },
+    {
+     "turn_id": "T12930",
+     "q": "cấu hình nó vào trong system prom á như nào , ví dụ tiếng việt"
+    }
+   ]
+  },
+  {
+   "name": "Role, Task, Context và Format trong viết Prompt (RTCF)",
+   "why": "Thắc mắc về cấu trúc RTCF (Role, Task, Context, Format) và cách viết prompt chuẩn theo cấu trúc này.",
+   "turn_ids": [
+    "T12608",
+    "T12629",
+    "T12632",
+    "T12633",
+    "T12635",
+    "T12637",
+    "T12640",
+    "T12641",
+    "T12644",
+    "T12757",
+    "T12758",
+    "T12796",
+    "T12798",
+    "T12800",
+    "T12804",
+    "T12833",
+    "T12842",
+    "T12843",
+    "T12844",
+    "T12846"
+   ],
+   "people_key": [
+    0,
+    1,
+    2,
+    3,
+    3,
+    0,
+    0,
+    4,
+    5,
+    6,
+    6,
+    7,
+    8,
+    9,
+    7,
+    10,
+    10,
+    10,
+    10,
+    10
+   ],
+   "turns": 20,
+   "people": 11,
+   "parts": [
+    "Day04_(Mr.[HV])_Prompt-Engineering-Tool-Calling",
+    "huydd-day04-prompt-engineering-tool-calling.pptx (1)"
+   ],
+   "weak": false,
+   "skew": false,
+   "skew_top_share": 0.25,
+   "examples": [
+    {
+     "turn_id": "T12629",
+     "q": "Cho một ví dụ cụ thể minh hoạ cho đoạn này. Đoạn đang hỏi: “Xác định 4 thành phần: ■ Role:”"
+    },
+    {
+     "turn_id": "T12632",
+     "q": "Bạn cần viết prompt cho chatbot hỗ trợ sinh viên VinUni đăng ký môn học. Xác định 4 thành phần: ■ Role: Chatbot là ai? Expertise level? ■ Task: Nhiệm vụ cụ thể là gì? ■ Context: Hệ thống nào? Giới hạn gì? ■ Format: Output trông như thế nào?"
+    },
+    {
+     "turn_id": "T12641",
+     "q": "prompt trả lời cho slide 12: \"Đóng vai trò là 1 cố vấn hỗ trợ sinh viên đăng kí môn học có kinh nghiệm lâu năm. Bạn hãy giúp tôi đăng kí các môn học sao cho thời gian không quá sát nhau, tối đa 1 ngày học 2 buổi và cứ 2 3 ngày học sẽ được nghỉ 1 ngày. Giới hạn đăng kí đạt số tín chỉ tối thiểu của học kì. Output tôi mong muốn là thời khóa biểu của học kì đó sau khi đã đăng kí môn học hoàn tất.\" Bạn hãy chấm điểm cho tôi về prompt trên"
+    }
+   ]
+  },
+  {
+   "name": "Thắc mắc về kỹ thuật nâng cao Prompt (Few-shot, Zero-shot, CoT, ToT, Decomposition)",
+   "why": "Các cụm này đều hỏi về các kỹ thuật prompting nâng cao như Zero-shot, Few-shot, One-shot, CoT, ToT và Decomposition.",
+   "turn_ids": [
+    "T12391",
+    "T12395",
+    "T12396",
+    "T12402",
+    "T12406",
+    "T12409",
+    "T12650",
+    "T12652",
+    "T12659",
+    "T12671",
+    "T12753",
+    "T12799",
+    "T12803",
+    "T12805",
+    "T12863",
+    "T12864",
+    "T12870",
+    "T12872",
+    "T12926"
+   ],
+   "people_key": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    1,
+    2,
+    3,
+    4,
+    5,
+    5,
+    5,
+    6,
+    7,
+    7,
+    6,
+    8
+   ],
+   "turns": 19,
+   "people": 9,
+   "parts": [
+    "Day04_(Mr.[HV])_Prompt-Engineering-Tool-Calling"
+   ],
+   "weak": false,
+   "skew": false,
+   "skew_top_share": 0.32,
+   "examples": [
+    {
+     "turn_id": "T12395",
+     "q": "Khi nào nên ưu tiên dùng Few-shot thay vì Zero-shot?"
+    },
+    {
+     "turn_id": "T12402",
+     "q": "CoT khác gì với few-shot về cách cải thiện logic?"
+    },
+    {
+     "turn_id": "T12406",
+     "q": "Khi nào nên áp dụng Chain-of-Thought trong các bài toán thực tế?"
+    }
+   ]
+  },
+  {
+   "name": "Poll mở màn slide 11: Agent gọi tool lỗi",
+   "why": "Học viên hỏi về nội dung và giải thích cho phần Poll Mở Màn ở slide 11.",
+   "turn_ids": [
+    "T13028",
+    "T13030",
+    "T13033",
+    "T13035",
+    "T13036",
+    "T13037",
+    "T13039",
+    "T13040",
+    "T13042",
+    "T13043",
+    "T13047",
+    "T13048",
+    "T13050"
+   ],
+   "people_key": [
+    0,
+    1,
+    2,
+    3,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    7,
+    9,
+    2
+   ],
+   "turns": 13,
+   "people": 10,
+   "parts": [
+    "Day04_(Ms.[HV])_context-loop-harness-tool-calling",
+    "day04-context-loop-harness-tool-calling"
+   ],
+   "weak": false,
+   "skew": false,
+   "skew_top_share": 0.15,
+   "examples": [
+    {
+     "turn_id": "T13028",
+     "q": "Giải thích giúp mình vùng vừa khoanh trên trang 11. Đoạn đang hỏi: “Poll Mở Màn — giữ câu trả lời tới cuối buổi → → → → Agent gọi tool lỗi thử lại lỗi 40 lần hết tiền. Bạn sửa ở lớp nào? A. Prompt B. Context C. Loop D. Harness Đáp án phụ thuộc một chi tiết mà bây giờ chưa ai biết. Cuối buổi sẽ quay lại slide này. Giảng viên (VinUni) AICB · Ngày 4”"
+    },
+    {
+     "turn_id": "T13033",
+     "q": "Agent gọi tool → lỗi → thử lại → lỗi → 40 lần → hết tiền. Bạn sửa ở lớp nào? A. Prompt B. Context C. Loop D."
+    },
+    {
+     "turn_id": "T13039",
+     "q": "Agent gọi tool → lỗi → thử lại → lỗi → 40 lần → hết tiền. Bạn sửa ở lớp nào? A. Prompt B. Context C. Loop D."
+    }
+   ]
+  },
+  {
+   "name": "Quy trình làm việc nhóm, phân nhánh Git và quản lý version bài lab",
+   "why": "Tất cả đều nói về việc phân công nhóm, tạo branch, fork repo và chuẩn bị test case khi làm bài lab nhóm.",
+   "turn_ids": [
+    "T13325",
+    "T13326",
+    "T13418",
+    "T13447",
+    "T13457",
+    "T13458",
+    "T13459",
+    "T13460",
+    "T13461",
+    "T13467",
+    "T13477",
+    "T13485",
+    "T13487"
+   ],
+   "people_key": [
+    0,
+    0,
+    1,
+    2,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    4
+   ],
+   "turns": 13,
+   "people": 5,
+   "parts": [
+    "Chuẩn bị Môi trường & Chạy Lệnh Nền móng",
+    "Chạy Baseline v0 & Phân tích Failure Traces",
+    "Hướng dẫn Nộp bài & Tiêu chí Đánh giá",
+    "Tối ưu System Prompt & Tools Declaration (v1, v2, v3)"
+   ],
+   "weak": false,
+   "skew": true,
+   "skew_top_share": 0.62,
+   "examples": [
+    {
+     "turn_id": "T13325",
+     "q": "bài lab này yêu cầu mỗi thành viên làm trên branch hay là main luôn"
+    },
+    {
+     "turn_id": "T13457",
+     "q": "cho tôi hỏi bài lab này giống như 1 bài lab cá nhân nhưng lại thiết kế theo nhóm, vậy bài lab này theo nhóm thì chức năng và vai trò của từng thành viên trong nhóm là gì thay vì làm hết toàn bộ và commit rồi nộp"
+    },
+    {
+     "turn_id": "T13461",
+     "q": "yêu cầu hoàn thành là 3 version và 10 test case đúng không"
+    }
+   ]
+  },
+  {
+   "name": "Cấu hình Temperature, Top_k, Top_p và các thông số LLM",
+   "why": "Đều hỏi về các tham số của model như temperature, top_k, top_p, TTFT.",
+   "turn_ids": [
+    "T12619",
+    "T12622",
+    "T12624",
+    "T12625",
+    "T12627",
+    "T12628",
+    "T12819",
+    "T12821",
+    "T12822",
+    "T12826",
+    "T12835"
+   ],
+   "people_key": [
+    0,
+    1,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+   ],
+   "turns": 11,
+   "people": 10,
+   "parts": [
+    "Day04_(Mr.[HV])_Prompt-Engineering-Tool-Calling"
+   ],
+   "weak": false,
+   "skew": false,
+   "skew_top_share": 0.18,
+   "examples": [
+    {
+     "turn_id": "T12624",
+     "q": "top_p top_k là j"
+    },
+    {
+     "turn_id": "T12625",
+     "q": "top p và top k"
+    },
+    {
+     "turn_id": "T12628",
+     "q": "top_p khác gì với top_k"
+    }
+   ]
+  },
+  {
+   "name": "Tìm hiểu về ReAct framework và Harness Engineering",
+   "why": "Các câu hỏi tập trung hoàn toàn vào ReAct và Harness Engineering.",
+   "turn_ids": [
+    "T13013",
+    "T13014",
+    "T13017",
+    "T13018",
+    "T13019",
+    "T13023",
+    "T13024",
+    "T13025",
+    "T13027",
+    "T13029",
+    "T13034"
+   ],
+   "people_key": [
+    0,
+    0,
+    1,
+    2,
+    3,
+    1,
+    4,
+    4,
+    5,
+    6,
+    5
+   ],
+   "turns": 11,
+   "people": 7,
+   "parts": [
+    "Day04_(Ms.[HV])_context-loop-harness-tool-calling",
+    "day04-context-loop-harness-tool-calling"
+   ],
+   "weak": false,
+   "skew": false,
+   "skew_top_share": 0.18,
+   "examples": [
+    {
+     "turn_id": "T13014",
+     "q": "Em đang muốn hiểu thêm về ReAct"
+    },
+    {
+     "turn_id": "T13017",
+     "q": "harness được coi là trung tâm"
+    },
+    {
+     "turn_id": "T13019",
+     "q": "Môi trường harness trong AI à gì?"
+    }
+   ]
+  },
+  {
+   "name": "Phân biệt System Prompt, Instruction và User Prompt",
+   "why": "Các cụm này đều thắc mắc về sự khác biệt giữa các loại prompt như System prompt, Instruction và User prompt.",
+   "turn_ids": [
+    "T12382",
+    "T12385",
+    "T12386",
+    "T12388",
+    "T12459",
+    "T13072",
+    "T13073",
+    "T13075",
+    "T13078",
+    "T13079",
+    "T13080"
+   ],
+   "people_key": [
+    0,
+    1,
+    2,
+    1,
+    0,
+    3,
+    4,
+    5,
+    5,
+    5,
+    5
+   ],
+   "turns": 11,
+   "people": 6,
+   "parts": [
+    "Day04_(Mr.[HV])_Prompt-Engineering-Tool-Calling",
+    "Day04_(Ms.[HV])_context-loop-harness-tool-calling",
+    "day04-context-loop-harness-tool-calling",
+    "huydd-day04-prompt-engineering-tool-calling.pptx (1)"
+   ],
+   "weak": false,
+   "skew": false,
+   "skew_top_share": 0.36,
+   "examples": [
+    {
+     "turn_id": "T12385",
+     "q": "Sự khác biệt giữa System prompt và User prompt là gì?"
+    },
+    {
+     "turn_id": "T12386",
+     "q": "mình chưa phân biệt sâu được giữa instruction prompt và system prompt"
+    },
+    {
+     "turn_id": "T12459",
+     "q": "Sự khác biệt giữa Instruction, Conversation và System prompt?"
+    }
+   ]
+  },
+  {
+   "name": "Nhận định về Context Window 1 triệu token và nén context",
+   "why": "Cùng chung một câu hỏi trắc nghiệm/bài tập về xử lý context window 1 triệu token.",
+   "turn_ids": [
+    "T13106",
+    "T13109",
+    "T13114",
+    "T13115",
+    "T13116",
+    "T13119",
+    "T13122",
+    "T13123",
+    "T13124",
+    "T13126",
+    "T13130"
+   ],
+   "people_key": [
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    2,
+    3,
+    2,
+    4,
+    5
+   ],
+   "turns": 11,
+   "people": 6,
+   "parts": [
+    "Day04_(Ms.[HV])_context-loop-harness-tool-calling",
+    "day04-context-loop-harness-lecture (2)"
+   ],
+   "weak": false,
+   "skew": false,
+   "skew_top_share": 0.45,
+   "examples": [
+    {
+     "turn_id": "T13106",
+     "q": "Context window 1 triệu token. Hội thoại hiện dùng 180k. Nhận định nào SAI? A. Vẫn còn nhiều chỗ, chưa cần nén B. Độ chính xác truy xuất có thể đã giảm dù chưa chạm trần C. Mỗi lượt bạn vẫn đang trả tiền cho toàn bộ 180k D. Thông tin quan trọng nằm giữa 180k có rủi ro bị bỏ sót"
+    },
+    {
+     "turn_id": "T13109",
+     "q": "Context window 1 triệu token. Hội thoại hiện dùng 180k. Nhận định nào SAI? A. Vẫn còn nhiều chỗ, chưa cần nén B. Độ chính xác truy xuất có thể đã giảm dù chưa chạm trần C. Mỗi lượt bạn vẫn đang trả tiền cho toàn bộ 180k D. Thông tin quan trọng nằm giữa 180k đó có rủi ro bị bỏ sót câu nào đúng và giải thích tại sao"
+    },
+    {
+     "turn_id": "T13123",
+     "q": "Agent du lịch đã chạy 20 lượt. Context sắp chạm trần, hệ thống chuẩn bị nén.Liệt kê 5 thứ BẮT BUỘC phải sống sót qua bản tóm tắt."
+    }
+   ]
+  },
+  {
+   "name": "Phân tích câu hỏi tóm tắt ticket hỗ trợ",
+   "why": "Thắc mắc về việc prompt tóm tắt ticket còn thiếu thành phần gì.",
+   "turn_ids": [
+    "T13060",
+    "T13061",
+    "T13063",
+    "T13064",
+    "T13065",
+    "T13066",
+    "T13067",
+    "T13068",
+    "T13069",
+    "T13070",
+    "T13071"
+   ],
+   "people_key": [
+    0,
+    1,
+    2,
+    0,
+    1,
+    1,
+    3,
+    1,
+    4,
+    3,
+    2
+   ],
+   "turns": 11,
+   "people": 5,
+   "parts": [
+    "Day04_(Ms.[HV])_context-loop-harness-tool-calling",
+    "day04-context-loop-harness-tool-calling"
+   ],
+   "weak": false,
+   "skew": false,
+   "skew_top_share": 0.36,
+   "examples": [
+    {
+     "turn_id": "T13060",
+     "q": "Prompt này thiếu gì: Tóm tắt các Ticket hỗ trợ hôm nay."
+    },
+    {
+     "turn_id": "T13063",
+     "q": "nếu câu hỏi là \"tóm tắt các ticket hỗ trợ hôm nay\" thì thiếu thành phần nào nặng nhất"
+    },
+    {
+     "turn_id": "T13064",
+     "q": "Đáp án Role - Task - Context - Format, thiếu thành phần nào là nặng nhất."
+    }
+   ]
+  },
+  {
+   "name": "Tìm kiếm tài liệu, link bài lab và hướng dẫn nộp bài",
+   "why": "Học viên hỏi xin link bài lab và hướng dẫn nộp bài.",
+   "turn_ids": [
+    "T12369",
+    "T12376",
+    "T12380",
+    "T12392",
+    "T12397",
+    "T12414",
+    "T12437",
+    "T12445",
+    "T12454",
+    "T12458"
+   ],
+   "people_key": [
+    0,
+    1,
+    2,
+    0,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+   ],
+   "turns": 10,
+   "people": 9,
+   "parts": [
+    "Day 04_ C401_ Mini lab_System Prompt Engineering & Tool Calling Engine",
+    "Day04_(Mr.[HV])_Prompt-Engineering-Tool-Calling",
+    "huydd-day04-prompt-engineering-tool-calling.pptx (1)",
+    "huydd-day04-prompt-engineering-tool-calling.pptx (1) (2)"
+   ],
+   "weak": false,
+   "skew": false,
+   "skew_top_share": 0.2,
+   "examples": [
+    {
+     "turn_id": "T12369",
+     "q": "lấy link lab từ bài lab"
+    },
+    {
+     "turn_id": "T12376",
+     "q": "xin cái link"
+    },
+    {
+     "turn_id": "T12392",
+     "q": "lấy link nộp bài lab"
+    }
+   ]
+  },
+  {
+   "name": "Xử lý lỗi parse JSON khi Agent phân loại ticket",
+   "why": "Học viên hỏi về phần anget phân loại ticket và xử lý output contact.",
+   "turn_ids": [
+    "T13084",
+    "T13085",
+    "T13086",
+    "T13087",
+    "T13088",
+    "T13089",
+    "T13090"
+   ],
+   "people_key": [
+    0,
+    0,
+    1,
+    2,
+    0,
+    3,
+    4
+   ],
+   "turns": 7,
+   "people": 5,
+   "parts": [
+    "Day04_(Ms.[HV])_context-loop-harness-tool-calling",
+    "day04-context-loop-harness-tool-calling",
+    "huydd-day04-prompt-engineering-tool-calling.pptx (1)"
+   ],
+   "weak": false,
+   "skew": false,
+   "skew_top_share": 0.43,
+   "examples": [
+    {
+     "turn_id": "T13086",
+     "q": "agent phân loại tícket. Nội dung phân loại luôn đúng, nhưng app parse lỗi: có lượt trả Json, có lượt trả json kèm câu \"Đây là kết quả của bạn\". thêm few-shot hay sửa output contract"
+    },
+    {
+     "turn_id": "T13087",
+     "q": "agent phaan loaij ticket, nooij dung phaan loiaj luoon đúng app parse lỗi, có lợt trả json, kem câu đây làkết quả cảu bạn:. nên hêm few shor example, hay sửa utput contract"
+    },
+    {
+     "turn_id": "T13090",
+     "q": "Agent phân loại Ticket. Nội dung phân loại luôn đúng, nhưng app Pakse lỗi: có lượt trả JSON, có lượt trả JSON kèm câu \"Đây là kết quả của bạn\". Bạn thêm few-shot example hay sửa output contract?"
+    }
+   ]
+  },
+  {
+   "name": "Bảo mật prompt và Human-in-the-loop",
+   "why": "Học viên hỏi về delimiter separation, output validation và khái niệm Human-in-the-loop.",
+   "turn_ids": [
+    "T12966",
+    "T12972",
+    "T12973",
+    "T12978",
+    "T12979"
+   ],
+   "people_key": [
+    0,
+    1,
+    1,
+    2,
+    3
+   ],
+   "turns": 5,
+   "people": 4,
+   "parts": [
+    "Day04_(Mr.[HV])_Prompt-Engineering-Tool-Calling"
+   ],
+   "weak": false,
+   "skew": false,
+   "skew_top_share": 0.4,
+   "examples": [
+    {
+     "turn_id": "T12966",
+     "q": "Giải thích giúp mình vùng vừa khoanh trên trang 43. Đoạn đang hỏi: “1. Delimiter separation: 4. Output validation: Wrap untrusted input: Kiểm tra output trước khi execute actions <user_input>...</user_input> 5. Least privilege: 2. Instruction hierarchy: Tool permissions tối thiểu cần thiết System prompt luôn ưu tiên hơn user input 6. Human-in-the-loop: 3. Input validation: Yêu cầu confirm cho sensitive actions Filter known injection patterns trước khi đưa vào prompt Lưu ý: Không có defense nào là hoàn hảo 100%. Defense-in-depth: kết hợp nhiều”"
+    },
+    {
+     "turn_id": "T12972",
+     "q": "Human-in-the-loop là gì"
+    },
+    {
+     "turn_id": "T12979",
+     "q": "PII là gì"
+    }
+   ]
+  },
+  {
+   "name": "Phân biệt Chatbot LLM và AI Agent",
+   "why": "Học viên thắc mắc về điểm khác biệt cốt lõi giữa chatbot LLM truyền thống và AI Agent.",
+   "turn_ids": [
+    "T13010",
+    "T13011",
+    "T13012"
+   ],
+   "people_key": [
+    0,
+    1,
+    2
+   ],
+   "turns": 3,
+   "people": 3,
+   "parts": [
+    "Day04_(Ms.[HV])_context-loop-harness-tool-calling"
+   ],
+   "weak": false,
+   "skew": false,
+   "skew_top_share": 0.33,
+   "examples": [
+    {
+     "turn_id": "T13010",
+     "q": "khác nhau giữa chatbot LLM và AI agent"
+    },
+    {
+     "turn_id": "T13011",
+     "q": "“Cùng một model, cùng một prompt, cùng sáu tool. Một agent dừng lại hỏi. Agent kia tự đi đặt phòng thiif khác biệt nằm ở đâu"
+    },
+    {
+     "turn_id": "T13012",
+     "q": "LLM differance Agent"
+    }
+   ]
+  },
+  {
+   "name": "Thắc mắc về môi trường ảo, docker và quản lý mã nguồn trong thực tế",
+   "why": "Học viên hỏi về virtual environment, git và ứng dụng thực tế doanh nghiệp.",
+   "turn_ids": [
+    "T13258",
+    "T13259",
+    "T13260",
+    "T13261",
+    "T13264",
+    "T13266"
+   ],
+   "people_key": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "turns": 6,
+   "people": 1,
+   "parts": [
+    "Chuẩn bị Môi trường & Chạy Lệnh Nền móng"
+   ],
+   "weak": true,
+   "skew": true,
+   "skew_top_share": 1.0,
+   "examples": [
+    {
+     "turn_id": "T13258",
+     "q": "tại sao luôn phải khởi tạo virtual environment trước khi làm bất cứ cái gì khác? khi nào không cần"
+    },
+    {
+     "turn_id": "T13260",
+     "q": "nhưng 1 app đến tay người dùng rõ ràng người dùng ko khởi tạo venv hay cài docker, sao app vẫn chạy đúng như dự đoán trên máy user"
+    },
+    {
+     "turn_id": "T13266",
+     "q": ".venv có đẩy lên git ko? những gì đẩy lên những gì ko (theo thực tế doanh nghiệp)"
+    }
+   ]
+  },
+  {
+   "name": "Cấu trúc file, thư mục và dữ liệu trong bài lab",
+   "why": "Học viên hỏi về chức năng của các thư mục như helpdesk_data, knowledge_base trong bài lab.",
+   "turn_ids": [
+    "T13470",
+    "T13472",
+    "T13473",
+    "T13474",
+    "T13475",
+    "T13476"
+   ],
+   "people_key": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "turns": 6,
+   "people": 1,
+   "parts": [
+    "Xây dựng Team Eval & Kiểm thử Adversarial Safety"
+   ],
+   "weak": true,
+   "skew": true,
+   "skew_top_share": 1.0,
+   "examples": [
+    {
+     "turn_id": "T13470",
+     "q": "helpdesk_data có chức năng gì"
+    },
+    {
+     "turn_id": "T13474",
+     "q": "các file asset, service_status, users có chức năng gì"
+    },
+    {
+     "turn_id": "T13475",
+     "q": "thư mục providers có chức năng gì"
+    }
+   ]
+  },
+  {
+   "name": "Thuật ngữ kiểm thử Regression và Preflight",
+   "why": "Học viên hỏi về ý nghĩa và cách dùng của kiểm thử preflight và regression.",
+   "turn_ids": [
+    "T13268",
+    "T13293",
+    "T13295",
+    "T13296",
+    "T13299"
+   ],
+   "people_key": [
+    0,
+    1,
+    1,
+    1,
+    1
+   ],
+   "turns": 5,
+   "people": 2,
+   "parts": [
+    "Chuẩn bị Môi trường & Chạy Lệnh Nền móng",
+    "Tối ưu System Prompt & Tools Declaration (v1, v2, v3)"
+   ],
+   "weak": true,
+   "skew": true,
+   "skew_top_share": 0.8,
+   "examples": [
+    {
+     "turn_id": "T13268",
+     "q": "kiểm thử preflight là gì"
+    },
+    {
+     "turn_id": "T13293",
+     "q": "Kiểm tra Regression là sao"
+    },
+    {
+     "turn_id": "T13299",
+     "q": "nói chung nó nghĩa là \"cải lùi\"? dịch là hồi quy khó hiểu quá"
+    }
+   ]
+  },
+  {
+   "name": "Thắc mắc về hệ thống đánh giá (eval), metric và script",
+   "why": "Học viên thắc mắc về các metric đánh giá trong lab và cách chạy script.",
+   "turn_ids": [
+    "T13300",
+    "T13301",
+    "T13318",
+    "T13319"
+   ],
+   "people_key": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "turns": 4,
+   "people": 1,
+   "parts": [
+    "Tối ưu System Prompt & Tools Declaration (v1, v2, v3)"
+   ],
+   "weak": true,
+   "skew": true,
+   "skew_top_share": 1.0,
+   "examples": [
+    {
+     "turn_id": "T13300",
+     "q": "các metric được sử dụng trong lab này là gì xây dựng như thế nào, có phải metric chuẩn doanh nghiệp ko"
+    },
+    {
+     "turn_id": "T13301",
+     "q": "lấy ví dụ metric tính tuân thủ. đo như thế nào? tôi thấy hơi cảm tính"
+    },
+    {
+     "turn_id": "T13318",
+     "q": "python run_eval.py --provider openrouter --version v3 --suite base --eval-cases data/eval_base.json \"--version v3\" nghĩa là gì"
+    }
+   ]
+  }
+ ],
+ "scatter": {
+  "turn_ids": [
+   "T12400",
+   "T12415",
+   "T12416",
+   "T12417",
+   "T12419",
+   "T12427",
+   "T12447",
+   "T12448",
+   "T12449",
+   "T12451",
+   "T12606",
+   "T12609",
+   "T12610",
+   "T12612",
+   "T12614",
+   "T12623",
+   "T12630",
+   "T12638",
+   "T12645",
+   "T12647",
+   "T12655",
+   "T12666",
+   "T12667",
+   "T12668",
+   "T12669",
+   "T12670",
+   "T12672",
+   "T12673",
+   "T12674",
+   "T12676",
+   "T12689",
+   "T12691",
+   "T12692",
+   "T12693",
+   "T12694",
+   "T12696",
+   "T12701",
+   "T12705",
+   "T12707",
+   "T12708",
+   "T12709",
+   "T12710",
+   "T12711",
+   "T12712",
+   "T12716",
+   "T12717",
+   "T12721",
+   "T12724",
+   "T12729",
+   "T12730",
+   "T12734",
+   "T12738",
+   "T12739",
+   "T12742",
+   "T12743",
+   "T12756",
+   "T12775",
+   "T12776",
+   "T12777",
+   "T12779",
+   "T12780",
+   "T12784",
+   "T12790",
+   "T12794",
+   "T12795",
+   "T12801",
+   "T12816",
+   "T12818",
+   "T12825",
+   "T12834",
+   "T12836",
+   "T12837",
+   "T12838",
+   "T12840",
+   "T12918",
+   "T12937",
+   "T12952",
+   "T12954",
+   "T12957",
+   "T12959",
+   "T12963",
+   "T12964",
+   "T13006",
+   "T13021",
+   "T13022",
+   "T13026",
+   "T13031",
+   "T13032",
+   "T13038",
+   "T13041",
+   "T13044",
+   "T13046",
+   "T13049",
+   "T13051",
+   "T13052",
+   "T13053",
+   "T13054",
+   "T13055",
+   "T13056",
+   "T13057",
+   "T13058",
+   "T13059",
+   "T13062",
+   "T13074",
+   "T13081",
+   "T13083",
+   "T13091",
+   "T13092",
+   "T13093",
+   "T13094",
+   "T13095",
+   "T13096",
+   "T13098",
+   "T13099",
+   "T13100",
+   "T13101",
+   "T13103",
+   "T13104",
+   "T13105",
+   "T13107",
+   "T13108",
+   "T13110",
+   "T13111",
+   "T13112",
+   "T13113",
+   "T13117",
+   "T13118",
+   "T13121",
+   "T13125",
+   "T13127",
+   "T13128",
+   "T13129",
+   "T13131",
+   "T13133",
+   "T13134",
+   "T13135",
+   "T13137",
+   "T13138",
+   "T13140",
+   "T13142",
+   "T13144",
+   "T13145",
+   "T13146",
+   "T13148",
+   "T13149",
+   "T13150",
+   "T13151",
+   "T13152",
+   "T13153",
+   "T13154",
+   "T13157",
+   "T13159",
+   "T13160",
+   "T13163",
+   "T13164",
+   "T13165",
+   "T13166",
+   "T13170",
+   "T13171",
+   "T13174",
+   "T13177",
+   "T13196",
+   "T13197",
+   "T13198",
+   "T13199",
+   "T13200",
+   "T13201",
+   "T13204",
+   "T13221",
+   "T13230",
+   "T13231",
+   "T13232",
+   "T13233",
+   "T13255",
+   "T13256",
+   "T13257",
+   "T13270",
+   "T13278",
+   "T13279",
+   "T13285",
+   "T13287",
+   "T13289",
+   "T13305",
+   "T13306",
+   "T13307",
+   "T13308",
+   "T13310",
+   "T13311",
+   "T13312",
+   "T13315",
+   "T13316",
+   "T13317",
+   "T13322",
+   "T13323",
+   "T13324",
+   "T13422",
+   "T13424",
+   "T13426",
+   "T13428",
+   "T13440",
+   "T13448",
+   "T13454",
+   "T13464",
+   "T13465",
+   "T13468",
+   "T13478",
+   "T12423"
+  ],
+  "turns": 207,
+  "from_model": [
+   "T12400",
+   "T12415",
+   "T12416",
+   "T12417",
+   "T12419",
+   "T12427",
+   "T12447",
+   "T12448",
+   "T12449",
+   "T12451",
+   "T12606",
+   "T12609",
+   "T12610",
+   "T12612",
+   "T12614",
+   "T12623",
+   "T12630",
+   "T12638",
+   "T12645",
+   "T12647",
+   "T12655",
+   "T12666",
+   "T12667",
+   "T12668",
+   "T12669",
+   "T12670",
+   "T12672",
+   "T12673",
+   "T12674",
+   "T12676",
+   "T12689",
+   "T12691",
+   "T12692",
+   "T12693",
+   "T12694",
+   "T12696",
+   "T12701",
+   "T12705",
+   "T12707",
+   "T12708",
+   "T12709",
+   "T12710",
+   "T12711",
+   "T12712",
+   "T12716",
+   "T12717",
+   "T12721",
+   "T12724",
+   "T12729",
+   "T12730",
+   "T12734",
+   "T12738",
+   "T12739",
+   "T12742",
+   "T12743",
+   "T12756",
+   "T12775",
+   "T12776",
+   "T12777",
+   "T12779",
+   "T12780",
+   "T12784",
+   "T12790",
+   "T12794",
+   "T12795",
+   "T12801",
+   "T12816",
+   "T12818",
+   "T12825",
+   "T12834",
+   "T12836",
+   "T12837",
+   "T12838",
+   "T12840",
+   "T12918",
+   "T12937",
+   "T12952",
+   "T12954",
+   "T12957",
+   "T12959",
+   "T12963",
+   "T12964",
+   "T13006",
+   "T13021",
+   "T13022",
+   "T13026",
+   "T13031",
+   "T13032",
+   "T13038",
+   "T13041",
+   "T13044",
+   "T13046",
+   "T13049",
+   "T13051",
+   "T13052",
+   "T13053",
+   "T13054",
+   "T13055",
+   "T13056",
+   "T13057",
+   "T13058",
+   "T13059",
+   "T13062",
+   "T13074",
+   "T13081",
+   "T13083",
+   "T13091",
+   "T13092",
+   "T13093",
+   "T13094",
+   "T13095",
+   "T13096",
+   "T13098",
+   "T13099",
+   "T13100",
+   "T13101",
+   "T13103",
+   "T13104",
+   "T13105",
+   "T13107",
+   "T13108",
+   "T13110",
+   "T13111",
+   "T13112",
+   "T13113",
+   "T13117",
+   "T13118",
+   "T13121",
+   "T13125",
+   "T13127",
+   "T13128",
+   "T13129",
+   "T13131",
+   "T13133",
+   "T13134",
+   "T13135",
+   "T13137",
+   "T13138",
+   "T13140",
+   "T13142",
+   "T13144",
+   "T13145",
+   "T13146",
+   "T13148",
+   "T13149",
+   "T13150",
+   "T13151",
+   "T13152",
+   "T13153",
+   "T13154",
+   "T13157",
+   "T13159",
+   "T13160",
+   "T13163",
+   "T13164",
+   "T13165",
+   "T13166",
+   "T13170",
+   "T13171",
+   "T13174",
+   "T13177",
+   "T13196",
+   "T13197",
+   "T13198",
+   "T13199",
+   "T13200",
+   "T13201",
+   "T13204",
+   "T13221",
+   "T13230",
+   "T13231",
+   "T13232",
+   "T13233",
+   "T13255",
+   "T13256",
+   "T13257",
+   "T13270",
+   "T13278",
+   "T13279",
+   "T13285",
+   "T13287",
+   "T13289",
+   "T13305",
+   "T13306",
+   "T13307",
+   "T13308",
+   "T13310",
+   "T13311",
+   "T13312",
+   "T13315",
+   "T13316",
+   "T13317",
+   "T13322",
+   "T13323",
+   "T13324",
+   "T13422",
+   "T13424",
+   "T13426",
+   "T13428",
+   "T13440",
+   "T13448",
+   "T13454",
+   "T13464",
+   "T13465",
+   "T13468",
+   "T13478"
+  ],
+  "examples": [
+   {
+    "turn_id": "T12400",
+    "q": "prompting guide 101"
+   },
+   {
+    "turn_id": "T12415",
+    "q": "dữ liệu bài giảng hiện tại từ đâu mà có? chắc chắn không phải từ slide rồi"
+   },
+   {
+    "turn_id": "T12416",
+    "q": "cậu đọc dữ liệu từ file nào"
+   },
+   {
+    "turn_id": "T12417",
+    "q": "cậu có đọc trực tiếp slide đâu đúng không, phải có file khác"
+   },
+   {
+    "turn_id": "T12419",
+    "q": "hướng dẫn cách nấu cơm"
+   },
+   {
+    "turn_id": "T12427",
+    "q": "bafii giảng dạy j"
+   },
+   {
+    "turn_id": "T12447",
+    "q": "ai là em?"
+   },
+   {
+    "turn_id": "T12448",
+    "q": "linh tinh, nhiêu tuổi mà xưng em"
+   }
+  ]
+ },
+ "repairs": {
+  "invented_ids": [],
+  "duplicates": [],
+  "unplaced_added_to_scatter": [
+   "T12423"
+  ],
+  "protos_before_merge": 29,
+  "preset_dropped_here": 0
+ },
+ "ai_call": {
+  "called": true,
+  "call_id": "run:K4P1/D08",
+  "model": "gemini-3.5-flash-lite",
+  "models_used": [
+   "gemini-3.5-flash-lite"
+  ],
+  "fell_back": false,
+  "n_calls": 7,
+  "n_chunks": 6,
+  "latency_ms": 26412,
+  "tokens_in": 17250,
+  "tokens_out": 7061,
+  "attempts": 10
+ }
+}

@@ -1,0 +1,2 @@
+# Không cần cài gì cả — module chỉ dùng thư viện chuẩn của Python 3.8+
+# (csv, json, urllib, re, collections). Giữ file này để nói rõ điều đó.
