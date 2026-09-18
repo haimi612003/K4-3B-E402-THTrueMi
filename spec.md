@@ -487,10 +487,41 @@ Ba con số, kiểm lại được:
   | 1 · Gom cụm | ≥ 85% | **91,7%** (22/24) | `no_invented_ids` **0 case trượt** · `must_not_group_together` **0 case trượt** | **ĐẠT** |
   | 2 · Soạn nội dung ôn | ≥ 75% | **87,5%** (7/8) | `--selftest` **11/11** | **ĐẠT** |
 
-  Cả hai đều đạt, nhưng nói rõ hai chuyện để con số không bị đọc quá lên:
-  - Bar được viết ở CP2 và **không sửa sau khi thấy kết quả**. Lượt 4 đo lại sau khi bịt rò rỉ làm
-    con số **tụt** (95,8% → 91,7% và 100% → 87,5%) mà bar vẫn giữ nguyên.
-  - Hai điều kiện cứng đều là **“0 case trượt”**, tức không có chỗ để lách bằng cách đạt tỉ lệ cao.
+  Cả hai đều đạt. Nhưng trước khi đọc hai con số đó, phải đọc mục dưới đây.
+
+- **⚠️ Tự khai nặng nhất của cả tài liệu: bar KHÔNG được đặt trước khi biết kết quả**
+
+  CP4 nói rõ lý do phải đóng băng bar: *“Chốt quality bar trước khi biết kết quả chạy giúp ngăn
+  hiện tượng hạ chuẩn sau khi đã thấy số.”* Nhóm **không làm được đúng thứ tự đó**. Lịch sử git
+  nói thẳng:
+
+  | Thời điểm | Chuyện gì | Bằng chứng |
+  |---|---|---|
+  | 17/09 20:22 | spec.md chỉ có ô trống `"Đạt khi ≥ ___% qua bộ, và ___"` | `2cd5b7d` |
+  | **18/09 12:59** | `results-run1.json` (**75,0%**) và `results-run2.json` (**95,8%**) được commit — **kết quả đã biết** | `d5309bf` |
+  | **18/09 14:01** | Con số **85%** lần đầu được viết vào spec. Cùng commit đó cũng đưa vào `results-answer-run1/2/3` (**75,0% · 75,0% · 100%**) và bar **≥75%** | `b621cbb` |
+
+  Nói thẳng nghĩa của nó:
+  - Bar gom cụm **85%** được chọn khi trên màn hình đã có **95,8%**. Đó là một con số **an toàn**,
+    không phải một con số đặt mù.
+  - Bar soạn nội dung ôn **75%** còn rõ hơn: hai lượt đầu đạt **đúng 75,0%**, và bar đặt **đúng
+    bằng sàn đã quan sát**. Không thể gọi đó là đặt chuẩn.
+
+  **Vì sao vẫn giữ nguyên hai con số thay vì nâng lên bây giờ.** Nâng bar tại thời điểm này cũng là
+  hành động hậu nghiệm, chỉ đổi chiều — và sau 21:00 thì bar khoá. Sửa con số để trông đẹp hơn là
+  đúng thứ mốc đóng băng sinh ra để ngăn. Nhóm giữ nguyên bar và ghi lại sự thật về cách nó ra đời.
+
+  **Một dữ kiện giảm nhẹ, không phải lời bào chữa.** Lượt đo 4 — lượt **duy nhất không bị rò rỉ đáp
+  án** — chạy **sau** khi bar đã chốt, và nó làm cả hai con số **tụt** (95,8% → 91,7%; 100% →
+  87,5%). Tức bar không chỉ đóng dấu lên một con số đã đạt được một cách trung thực, vì con số
+  trung thực lúc đó **chưa tồn tại**. Nhưng điều đó không xoá được chuyện bar được chọn khi đã nhìn
+  thấy 95,8%.
+
+  **Rút kinh nghiệm, ghi ở đây để lần sau không lặp lại:** viết bar vào spec **trước khi chạy dòng
+  lệnh eval đầu tiên**, và commit riêng một lần để lịch sử git chứng minh được thứ tự.
+
+  Hai điều kiện cứng thì không dính vấn đề này — cả hai đều là **“0 case trượt”**, không có chỗ lách
+  bằng cách đạt tỉ lệ chung cao.
 
 - **Tự khai — chức năng và ca kiểm thử CHƯA xử lý xong**
 
@@ -547,4 +578,4 @@ Ba con số, kiểm lại được:
 | **CP4** | Sửa **“69/127”** thành **“36/127”** ở §2 | Tính lại: **67/127** là số học viên khớp **từ khoá**, còn cụm AI gom được là **36/127**. Hai phép đếm khác nhau, không được dùng thay nhau. §1 mục 4 |
 | **CP4** | Sửa **“22,7% `is_preset`”** thành **17,5%** | 22,7% là tỉ lệ của **cả file** (K3+K4); riêng K4 là 17,5%. `evidence/mining-log.md` mục 1 |
 | **CP4** | Tạo `evidence/mine_k4.py` + `evidence/mining-log.md` | Đầu spec từ CP2 đã trỏ tới hai file này nhưng **chúng chưa tồn tại** — tham chiếu gãy. Giờ mọi con số trong tài liệu chạy lại được bằng một lệnh |
-| **CP4** | **Đóng băng quality bar** ở §7 | Theo yêu cầu CP4. Bar viết từ CP2, không sửa sau khi thấy kết quả — kể cả khi lượt 4 làm con số tụt |
+| **CP4** | **Đóng băng quality bar** ở §7 **và tự khai rằng bar không được đặt trước khi biết kết quả** | Lịch sử git: kết quả lượt 1-2 commit lúc 12:59 (`d5309bf`), con số 85% mới vào spec lúc 14:01 (`b621cbb`). Bar ≥75% của bộ thứ hai đặt đúng bằng sàn hai lượt đầu. Giữ nguyên con số, ghi lại sự thật. §7 |
