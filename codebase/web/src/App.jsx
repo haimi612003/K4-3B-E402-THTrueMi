@@ -11,12 +11,14 @@ import { D, TH, sessionsByDate } from "./lib/data";
 import Home from "./tabs/Home.jsx";
 import Overview from "./tabs/Overview.jsx";
 import Clusters from "./tabs/Clusters.jsx";
+import Quality from "./tabs/Quality.jsx";
 import Live from "./tabs/Live.jsx";
 
 const TABS = [
   { k: "home", label: "Trang chủ" },
   { k: "tong", label: "Tổng quan" },
   { k: "cum", label: "Cụm vấn đề" },
+  { k: "eval", label: "Chất lượng" },
   { k: "live", label: "Thử trực tiếp" },
 ];
 
@@ -133,10 +135,10 @@ export default function App() {
   }
 
   const shared = { sess, setSess, goTab: setTab };
-  // Tab "eval" và "log" đã bỏ khỏi thanh điều hướng. Người dùng cũ có thể còn
-  // localStorage cp.tab="eval" hoặc một dấu trang #log — cả hai rơi về Home chứ
-  // không để trang trắng.
-  const Panel = { home: Home, tong: Overview, cum: Clusters, live: Live }[tab] || Home;
+  // Tab "log" (Nhật ký AI) đã bỏ khỏi thanh điều hướng. Người dùng cũ có thể còn
+  // localStorage cp.tab="log" hoặc một dấu trang #log — nó rơi về Home chứ không
+  // để trang trắng.
+  const Panel = { home: Home, tong: Overview, cum: Clusters, eval: Quality, live: Live }[tab] || Home;
 
   return (
     <ThemeProvider theme={theme}>

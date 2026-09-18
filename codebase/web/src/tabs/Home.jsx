@@ -472,15 +472,19 @@ export default function Home({ sess, setSess, goTab }) {
               .
             </p>
 
-            {/* Tab "Chất lượng" đã bỏ khỏi thanh điều hướng, nên không còn chỗ để
-                bấm sang. Con số vẫn đứng nguyên ở trên, và đường tới bằng chứng
-                đầy đủ giờ là file trong repo — nói thẳng ra đây thay vì để một
-                nút trỏ vào hư không. */}
-            <p className="reveal mt-5 text-[13px] text-[color:var(--muted)]">
-              Kết quả đo đầy đủ, từng trường hợp một, nằm ở <code>eval/README.md</code>.
-              Nhật ký từng lời gọi model nằm ở <code>logs/gemini-calls.jsonl</code> kèm prompt
-              đầy đủ và phản hồi thô.
-            </p>
+            <div className="reveal mt-5 flex flex-wrap items-center gap-x-4 gap-y-2">
+              <Button variant="outlined" onClick={() => goTab("eval")}
+                endIcon={<ArrowForwardRoundedIcon fontSize="small" />}
+                className="!rounded-full !border-[color:var(--line)] !bg-[color:var(--panel)] !text-[color:var(--ink)] !px-5 !py-2 !text-[14px]">
+                Xem chi tiết kết quả đo
+              </Button>
+              {/* Tab Nhật ký AI đã bỏ khỏi thanh điều hướng, nên đường tới nhật ký
+                  từng lời gọi phải được nói ra ở đây — đó là bằng chứng "AI chạy
+                  thật", không để nó biến mất theo cái tab. */}
+              <span className="text-[13px] text-[color:var(--muted)]">
+                Nhật ký từng lời gọi model: <code>logs/gemini-calls.jsonl</code>, kèm prompt đầy đủ và phản hồi thô.
+              </span>
+            </div>
           </section>
         )}
 
