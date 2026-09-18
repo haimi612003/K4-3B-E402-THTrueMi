@@ -9,7 +9,6 @@ import {
   unstable_defaultDirectiveFormatter,
 } from '@assistant-ui/react'
 import { ArrowDownIcon, ArrowUpIcon, SparklesIcon, XMarkIcon } from '@heroicons/react/20/solid'
-import classPulseLogo from '../assets/class-pulse-logo.svg'
 import { ClusterResultView } from './ClusterResultView'
 import { isClusterResult } from './cluster-result'
 import type { Sample } from './SamplePanel'
@@ -54,31 +53,10 @@ function AssistantMessage({ result, hidden }: { result?: unknown; hidden?: boole
 
 function Welcome() {
   return (
-    <div className="mx-auto flex max-w-xl flex-col items-center gap-5 py-16 text-center">
-      <img src={classPulseLogo} alt="Class Pulse" className="h-11 w-auto dark:invert" />
-      <div>
-        <h2 className="text-2xl font-semibold text-foreground">Hỏi Class Pulse</h2>
-        <p className="mt-2 text-sm leading-6 text-muted-foreground">
-          Gửi câu hỏi cho trợ lý AG-UI. Nội dung trả lời, suy luận và các sự kiện
-          công cụ sẽ được hiển thị tại đây.
-        </p>
-      </div>
-      <div className="grid w-full gap-2 sm:grid-cols-2">
-        <ThreadPrimitive.Suggestion
-          prompt="Tóm tắt những câu hỏi phổ biến nhất của lớp này."
-          autoSend
-          className="rounded-xl border border-border bg-card px-4 py-3 text-left text-sm text-card-foreground transition hover:bg-accent"
-        >
-          Tóm tắt câu hỏi phổ biến
-        </ThreadPrimitive.Suggestion>
-        <ThreadPrimitive.Suggestion
-          prompt="Lab Coach nên ôn lại chủ đề nào tiếp theo?"
-          autoSend
-          className="rounded-xl border border-border bg-card px-4 py-3 text-left text-sm text-card-foreground transition hover:bg-accent"
-        >
-          Gợi ý chủ đề cần ôn
-        </ThreadPrimitive.Suggestion>
-      </div>
+    <div className="mx-auto max-w-xl py-16 text-center">
+      <h2 className="text-2xl font-semibold leading-relaxed text-foreground">
+        Nhanh chóng quyết định điểm cần ôn lại cho lớp của bạn chỉ với ‘@’
+      </h2>
     </div>
   )
 }

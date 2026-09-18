@@ -82,9 +82,6 @@ export function SamplePanel({ onSamplesChange }: { onSamplesChange: (samples: Sa
             <p className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
               Dữ liệu đầu vào
             </p>
-            <h2 className="mt-1 text-lg font-semibold text-card-foreground">
-              Mẫu phân tích
-            </h2>
           </div>
         </div>
       </div>
