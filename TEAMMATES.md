@@ -1,13 +1,13 @@
 # 👥 Danh sách thành viên nhóm
 
-**Lớp:** 3B · **Phòng:** E402 · **Cụm:** C2 · **Track:** B
+**Lớp:** 3B · **Phòng:** E402 · **Cụm:** C2 · **Track:** A
 
-| STT | Họ và Tên | MSSV | Vai trò |
-|---|---|---|---|
-| 1 | Nguyễn Thị Hải Mi | 2A202602667 | Leader |
-| 2 | Trần Nguyễn Trí Dũng | 2A202602784 | Phó nhóm |
-| 3 | Mai Huy Hoàng | 2A202602685 | Teammate |
-| 4 | Nguyễn Đức Tâm | 2A202602921 | Teammate |
+| STT | Họ và Tên            | MSSV        | Vai trò  |
+| --- | -------------------- | ----------- | -------- |
+| 1   | Nguyễn Thị Hải Mi    | 2A202602667 | Leader   |
+| 2   | Trần Nguyễn Trí Dũng | 2A202602784 | Phó nhóm |
+| 3   | Mai Huy Hoàng        | 2A202602685 | Teammate |
+| 4   | Nguyễn Đức Tâm       | 2A202602921 | Teammate |
 
 ## 📇 Liên hệ đội trưởng
 
