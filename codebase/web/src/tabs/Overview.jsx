@@ -13,6 +13,7 @@ import ArrowForwardRounded from "@mui/icons-material/ArrowForwardRounded";
 import { D, TH, fmt, dmy, sessionsByDate, scatterCount } from "../lib/data";
 import { GroupedBars, StackedBar, Columns, TableView, Legend } from "../ui/Charts";
 import { useReveal, Kicker, Card, SectionTitle, Kpi, KpiGrid, Banner, Chip, Disclosure } from "../ui/Bits";
+import Timeline from "../ui/Timeline";
 
 /* ══════════════════════════════════════════════════════════════════════════
    TAB TỔNG QUAN — dựng lại renderTong() của bản HTML một file.
@@ -481,6 +482,11 @@ export default function Overview({ sess, setSess, goTab }) {
           </Card>
         )}
       </Disclosure>
+
+      {/* Dòng thời gian + ba bộ lọc (buổi/tháng/ngày) + biểu đồ đường + input→output.
+          Đặt SAU phần bằng chứng vì nó trả lời câu khác: không phải "buổi này lớp
+          kẹt đâu" mà "câu hỏi tới vào những ngày nào". */}
+      <Timeline sess={sess} setSess={setSess} />
     </>
   );
 }

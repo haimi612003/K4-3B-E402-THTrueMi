@@ -71,6 +71,26 @@ def main():
                 s["days"] = days
                 s["first_day"] = days[0]    # ngày buổi được DẠY — dùng để sắp thứ tự buổi
                 s["last_day"] = days[-1]    # câu hỏi cuối cùng về buổi này
+
+            # Chuỗi thời gian theo NGÀY — nguồn cho line chart và cho bộ lọc
+            # ngày/tháng. Đếm cả lượt thực, số học viên khác nhau, và số câu bấm
+            # nút có sẵn đã loại, để biểu đồ nói được cả phần bị loại chứ không
+            # chỉ phần còn lại.
+            preset_here = [t for t in turns_all
+                           if t["course_id"] == course and t["lecture_code"] == lecture and t["preset"]]
+            by_day = collections.defaultdict(lambda: {"turns": 0, "students": set(), "preset": 0})
+            for t in real:
+                if t.get("at"):
+                    b = by_day[t["at"][:10]]
+                    b["turns"] += 1
+                    b["students"].add(t["student"])
+            for t in preset_here:
+                if t.get("at"):
+                    by_day[t["at"][:10]]["preset"] += 1
+            s["per_day"] = [
+                {"day": d, "turns": v["turns"], "students": len(v["students"]), "preset": v["preset"]}
+                for d, v in sorted(by_day.items())
+            ]
             s["per_student"] = {
                 "median": vals[len(vals) // 2] if vals else 0,
                 "max": vals[0] if vals else 0,
@@ -133,8 +153,29 @@ def main():
                 })
         print("nạp %-26s %d lời gọi" % ("gemini-calls.jsonl", len(calls)))
 
+    # Gộp chuỗi theo ngày của mọi buổi thành MỘT dòng thời gian chung.
+    # Một ngày có thể chứa lượt hỏi của nhiều buổi (học viên hỏi về buổi cũ sau
+    # khi buổi mới đã dạy), nên phải cộng dồn chứ không ghi đè.
+    tl = collections.defaultdict(lambda: {"turns": 0, "students": 0, "preset": 0, "lectures": set()})
+    for s in sessions:
+        for d in s.get("per_day") or []:
+            b = tl[d["day"]]
+            b["turns"] += d["turns"]
+            b["students"] += d["students"]   # cộng theo buổi: cùng một người hỏi hai buổi thì tính hai
+            b["preset"] += d["preset"]
+            b["lectures"].add(s.get("lecture") or s.get("key"))
+    timeline = [
+        {"day": d, "turns": v["turns"], "students": v["students"], "preset": v["preset"],
+         "lectures": sorted(v["lectures"])}
+        for d, v in sorted(tl.items())
+    ]
+    if timeline:
+        print("nạp %-26s %d ngày (%s → %s)"
+              % ("dòng thời gian", len(timeline), timeline[0]["day"], timeline[-1]["day"]))
+
     payload = {
         "sessions": sessions,
+        "timeline": timeline,
         "eval": ev,
         "eval_history": ev_hist,
         "eval_answer": ev_answer,

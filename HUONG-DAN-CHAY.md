@@ -177,9 +177,14 @@ Nó gom kết quả gom cụm + kết quả eval + nhật ký gọi model thành
 giao diện (`codebase/ui/data.js` và `codebase/web/public/data.js`). Cả hai đọc cùng một
 `window.CP_DATA` nên không có hai định dạng dữ liệu phải đồng bộ bằng tay.
 
+Nó cũng dựng **chuỗi theo ngày**: `per_day` cho từng buổi và `timeline` gộp cả lớp — nguồn cho
+biểu đồ đường và ba bộ lọc ở mục 4e. Một ngày có thể chứa câu hỏi của nhiều buổi (học viên hỏi về
+buổi cũ sau khi buổi mới đã dạy), nên `timeline` **cộng dồn** chứ không ghi đè, và ghi luôn danh
+sách buổi đã đóng góp vào ngày đó.
+
 Đổi dữ liệu thì **không cần** `npm run build` lại — `data.js` nằm ngoài gói build.
 
-**Cách chạy được khuyên dùng — có đủ 6 tab, kể cả tab gọi AI thật:**
+**Cách chạy được khuyên dùng — có đủ 5 tab, kể cả tab gọi AI thật:**
 
 ```bash
 python codebase/serve.py
@@ -194,15 +199,14 @@ Nếu `.env` có `CLASS_PULSE_PASSCODE`, trang sẽ hỏi mã trước — xem m
 Gemini thật — khoá API phải ở phía server chứ không nhúng vào trang web. Mở bằng `file://`
 thì không có cổng đăng nhập, vì lúc đó dữ liệu đã nằm sẵn trên ổ đĩa của chính người mở.
 
-Dashboard có 6 tab:
+Dashboard có 5 tab:
 
 | Tab | Nội dung |
 |---|---|
 | **Trang chủ** | **Buổi gần nhất và ba cụm đông nhất của lớp**, rồi mới tới sản phẩm này là gì, **cách hoạt động** (ba bước: đọc log → gom cụm → soạn vật liệu) và **sáu nguyên tắc** hệ thống không đánh đổi. Đây là tab mở đầu — người lần đầu vào đọc ở đây trước khi xem số |
-| **Tổng quan** | Số dẫn đầu, một dòng tin cậy, **ba cụm mạnh đông nhất**, biểu đồ sáu cụm lớn nhất (đuôi gập lại, cùng thang), thành phần lượt hỏi. Số kỹ thuật và phân bố lượt/học viên nằm sau cửa “Vì sao tin được mấy con số trên” |
+| **Tổng quan** | Số dẫn đầu, một dòng tin cậy, **ba cụm mạnh đông nhất**, biểu đồ sáu cụm lớn nhất (đuôi gập lại, cùng thang), thành phần lượt hỏi. Số kỹ thuật và phân bố lượt/học viên nằm sau cửa “Vì sao tin được mấy con số trên”. Cuối tab là **dòng thời gian** — xem mục 4e |
 | **Cụm vấn đề** | Danh sách cụm **chia ba băng theo số người** (ngưỡng in thẳng trên màn hình), mở ra đọc câu nguyên văn có ID, tick chọn cụm, bấm "Không thuộc cụm" để sửa tay (lưu lại giữa các lần mở trang), và **"✨ Soạn nội dung ôn"** để AI soạn vật liệu giảng lại — xem mục 4c |
 | **Chất lượng** | Tỉ lệ đạt + **một câu kết luận nói thẳng chỗ sản phẩm còn sai**. Toàn bộ phương pháp đo (lịch sử các lượt, đạt theo lớp chỗ khó, nhóm lỗi, từng trường hợp) nằm sau một cửa gập |
-| **Nhật ký AI** | Bằng chứng AI chạy thật: model, số lời gọi, token, độ trễ, số lần model bịa mã / bỏ sót câu. **Bảng lời gọi lọc theo mục đích** — gom cụm / bộ kiểm thử / thử trực tiếp |
 | **Thử trực tiếp** | **Gọi AI thật ngay trên trang.** Xem mục 4b |
 
 ### 4a · Đăng nhập
@@ -302,6 +306,43 @@ văn từ học viên** để khoá sau gõ kiểu gì cũng tìm ra, kể cả 
 Lab Coach cần kiểm.
 
 Demo nhanh: `http://127.0.0.1:8765/?filter=top&faq=1#cum`
+
+### 4e · Dòng thời gian — ba bộ lọc và biểu đồ đường
+
+Cuối tab **Tổng quan**. Nó trả lời một câu khác với phần trên: không phải *"buổi này lớp kẹt ở đâu"*
+mà **"câu hỏi tới vào những ngày nào"**.
+
+**Ba bộ lọc trên một hàng, ngay trên biểu đồ:**
+
+| Bộ lọc | Làm gì |
+|---|---|
+| **Buổi học** | `Tất cả các buổi` hoặc một buổi. Ô này **dùng chung** với thanh chọn buổi ở đầu tab — đổi một chỗ thì chỗ kia đổi theo, nên trang chỉ có một khái niệm "buổi đang xem" |
+| **Tháng** | Lọc theo tháng của ngày hỏi |
+| **Ngày** | Một ngày cụ thể. Danh sách ngày đổi theo hai bộ lọc trên |
+
+Nút **Bỏ lọc** đưa dòng thời gian về `Tất cả các buổi` (thanh chọn buổi ở đầu tab giữ nguyên, vì phần
+trên luôn cần đúng một buổi).
+
+**Hai biểu đồ đường, không phải một biểu đồ hai trục:**
+
+1. **Đầu vào theo ngày** — ba chuỗi cùng đơn vị: lượt hỏi thực · học viên đã hỏi · câu bấm nút có sẵn
+   (đã loại). Câu bấm nút vẽ chung được vì cùng thang, và **phải** vẽ để thấy phần hệ thống bỏ đi,
+   chứ không chỉ phần còn lại.
+2. **Trung bình lượt hỏi trên mỗi học viên** — tách thành biểu đồ **riêng** vì khác thang đo. Nhét nó
+   làm trục y thứ hai của biểu đồ trên là lỗi biểu đồ phổ biến nhất, nên không làm.
+
+Rê chuột vào biểu đồ có **đường dóng + bảng nhỏ** đọc thẳng số của ngày đó. Mỗi biểu đồ có
+**"Xem dạng bảng"** — đó là chỗ duy nhất còn đủ mọi điểm, dành cho người đọc bằng trình đọc màn hình
+hoặc người muốn copy số.
+
+**Lọc còn đúng một ngày thì không vẽ đường nữa** — một điểm không thành đường. Chỗ đó đổi sang bốn ô
+số đọc thẳng.
+
+**"Từ đầu vào tới đầu ra"** chỉ dựng được khi đã chọn **một buổi cụ thể**: tổng lượt trong log →
+câu bấm nút bị loại → lượt hỏi thực → vào được cụm → rải rác, tất cả trên **cùng một thang** nên đọc
+được ngay tỉ lệ. Chọn `Tất cả các buổi` thì chỗ này nói thẳng là **không dựng** — việc gom cụm chạy
+trên trọn một buổi, nên "cụm theo ngày" là khái niệm không tồn tại và một phép chia theo ngày ở đây
+sẽ là con số bịa.
 
 **Deep-link khi demo:**
 
