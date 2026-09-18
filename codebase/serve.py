@@ -317,10 +317,29 @@ class Handler(SimpleHTTPRequestHandler):
     def _deny(self):
         self._send({"error": "Chưa đăng nhập.", "need_login": True}, 401)
 
+    # Vỏ ứng dụng: HTML, mã JS/CSS đã build, favicon. Đây là MÃ NGUỒN GIAO DIỆN,
+    # không có câu hỏi học viên trong đó — dữ liệu nằm ở /data.js và /api/*.
+    #
+    # Vì sao phải liệt kê riêng: bản React build ra `dist/assets/index-<hash>.js`,
+    # và MÀN HÌNH ĐĂNG NHẬP nằm bên trong chính file đó. Chặn nó vì "chưa đăng
+    # nhập" thì trình duyệt tải về 401, React không chạy, #root rỗng — người dùng
+    # thấy TRANG TRẮNG chứ không thấy ô nhập mã, và không còn đường nào để đăng
+    # nhập. Bản HTML một file trước đây không lộ lỗi này vì cả ứng dụng nằm gọn
+    # trong index.html.
+    _OPEN_EXACT = ("/", "/index.html", "/api/login", "/api/session",
+                   "/favicon.ico", "/favicon.svg")
+    _OPEN_ASSET_EXT = (".js", ".css", ".woff", ".woff2", ".ttf", ".svg", ".png", ".ico", ".map")
+
     def _needs_auth(self, path):
-        """Cho qua: trang đăng nhập và chính lời gọi đăng nhập. Còn lại phải có phiên."""
-        p = path.split("?")[0]
-        return p not in ("/", "/index.html", "/api/login", "/api/session")
+        """Cho qua vỏ ứng dụng. Dữ liệu (/data.js, /api/*) thì bắt buộc có phiên."""
+        p = path.split("?")[0].split("#")[0]
+        if p in self._OPEN_EXACT:
+            return False
+        # Chỉ mở đúng thư mục assets của bản build, và chỉ các đuôi tĩnh —
+        # không mở bừa mọi đường dẫn có đuôi .js, vì /data.js cũng là .js.
+        if p.startswith("/assets/") and p.endswith(self._OPEN_ASSET_EXT) and ".." not in p:
+            return False
+        return True
 
     # ── GET ──────────────────────────────────────────────────────────────
     def do_GET(self):
@@ -378,8 +397,12 @@ class Handler(SimpleHTTPRequestHandler):
                 given = str((self._body() or {}).get("passcode", ""))
                 if not passcode():
                     return self._send({"ok": True, "note": "Máy chủ chưa đặt mã, đang chạy mở."})
-                # so sánh theo thời gian hằng định để không lộ độ dài mã
-                if not secrets.compare_digest(given, passcode()):
+                # So sánh theo thời gian hằng định để không lộ độ dài mã.
+                # PHẢI so trên BYTES: compare_digest với chuỗi có ký tự ngoài
+                # ASCII ném TypeError → máy chủ trả 500. Nghĩa là đặt mã tiếng
+                # Việt có dấu trong .env thì KHÔNG AI đăng nhập được, và thông
+                # báo lỗi cũng không nói vì sao.
+                if not secrets.compare_digest(given.encode("utf-8"), passcode().encode("utf-8")):
                     LOGIN_FAILS[ip].append(time.time())
                     left = max(0, LOCK_AFTER - len(LOGIN_FAILS[ip]))
                     return self._send({"error": "Mã không đúng. Còn %d lần thử." % left}, 403)

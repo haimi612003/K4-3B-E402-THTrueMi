@@ -33,7 +33,17 @@ function Gate({ onOk }) {
   const submit = async (e) => {
     e.preventDefault();
     setBusy(true); setErr("");
-    try { await api.login(pass); onOk(); }
+    try {
+      await api.login(pass);
+      /* PHẢI tải lại trang, không chỉ đổi state. data.js là <script src> chạy
+         TRƯỚC gói React và nó bị máy chủ trả 401 khi chưa có phiên — nên ở lần
+         tải đầu window.CP_DATA không tồn tại. Nếu chỉ setState thì giao diện
+         hiện ra nhưng MỌI CON SỐ là "—", vì D đã bị đóng băng thành rỗng lúc
+         module nạp. Tải lại là lúc data.js được gửi kèm cookie.
+         onOk() giữ lại cho nhánh không có window (test/SSR). */
+      if (typeof window !== "undefined" && window.location) { window.location.reload(); return; }
+      onOk();
+    }
     catch (ex) { setErr(String(ex.message || ex)); setBusy(false); }
   };
   return (

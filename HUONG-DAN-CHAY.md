@@ -235,6 +235,19 @@ và lúc đó phải làm lại đàng hoàng chứ không nới cái mã này r
 
 Bỏ trống `CLASS_PULSE_PASSCODE` thì máy chủ chạy mở và màn hình nói rõ là đang chạy mở.
 
+**Kiểm cổng đăng nhập:**
+
+```bash
+python codebase/test_serve.py
+```
+
+Dựng máy chủ thật trên một cổng trống rồi gọi HTTP thật — không cần mạng, không gọi model. Nó kiểm
+đúng một thứ dễ hỏng âm thầm: **cổng phải mở cho vỏ ứng dụng (`/`, `/assets/*.js|css`) và chặn dữ
+liệu (`/data.js`, `/api/*`)**. Chặn nhầm gói JavaScript thì màn hình đăng nhập — vốn nằm bên trong
+chính gói đó — không bao giờ hiện, người dùng chỉ thấy trang trắng và không còn đường nào đăng nhập,
+trong khi máy chủ vẫn trả 200 cho `/` và log không có gì bất thường. Lỗi này đã xảy ra thật khi
+chuyển giao diện từ một file HTML sang bản React có gói rời.
+
 ### 4b · Tab "Thử trực tiếp" — thao tác thật với model
 
 Ba cách lấy dữ liệu vào, chọn một:
@@ -408,7 +421,9 @@ Khi nộp form CP3 nhớ kèm: đường dẫn video, **con số đo được** 
 | `Thiếu GEMINI_API_KEY` | Chưa có `.env`, hoặc chưa điền khoá. Xem mục 1.1. |
 | `503 Service Unavailable` | Model đang quá tải. Code tự thử lại 3 lần rồi rơi sang model dự phòng — cứ đợi. Nếu vẫn hỏng, đổi `GEMINI_MODEL` trong `.env`. |
 | `Gemini trả 404 … no longer available` | Model trong `.env` đã bị gỡ. Xem danh sách model còn dùng được:<br>`curl -H "x-goog-api-key: $KEY" https://generativelanguage.googleapis.com/v1beta/models` |
-| Dashboard trắng trơn | Chưa chạy `build_data.py`, hoặc `data.js` chưa có. Mở Console trình duyệt xem lỗi. |
+| Dashboard trắng trơn | Chưa chạy `build_data.py`, hoặc `data.js` chưa có. Mở Console trình duyệt xem lỗi. Nếu tab Network báo **401 ở `/assets/index-*.js`** thì là lỗi cổng đăng nhập chặn nhầm gói giao diện — `git pull` rồi chạy `python codebase/test_serve.py` để xác nhận đã hết. |
+| Đăng nhập xong mà **mọi con số là `—`** | Trang chưa tải lại sau khi đăng nhập nên `data.js` chưa vào. Đã sửa: đăng nhập thành công là trang tự tải lại. Nhấn F5 là xong. |
+| Gõ mã đúng mà báo lỗi 500 | Mã trong `.env` có chữ tiếng Việt có dấu, bản cũ so sánh mã bằng chuỗi nên ném lỗi. Đã sửa (so trên bytes). |
 | **Trình duyệt báo không kết nối được `127.0.0.1:8765`** | Xem lại cửa sổ đã chạy `serve.py`: nếu ở đó là `UnicodeEncodeError: 'charmap' codec can't encode character` thì **máy chủ đã chết trước khi mở cổng** — console Windows không in được chữ có dấu. Đã sửa trong mã (`class_pulse/console.py`), `git pull` rồi chạy lại. Cách chữa tạm không cần sửa mã: `set PYTHONUTF8=1` (cmd) hoặc `$env:PYTHONUTF8=1` (PowerShell) trước khi chạy. |
 | Vào được nhưng chỉ thấy ô nhập mã | Đúng như thiết kế — xem mục 4a. Mã nằm ở `CLASS_PULSE_PASSCODE` trong `.env`. |
 | Trang hỏi mã mà không biết mã | Mã nằm ở `CLASS_PULSE_PASSCODE` trong `.env` của máy chủ. Xoá dòng đó rồi khởi động lại là chạy mở. |
