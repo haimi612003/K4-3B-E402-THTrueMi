@@ -166,11 +166,11 @@ Dashboard có 6 tab:
 
 | Tab | Nội dung |
 |---|---|
-| **Trang chủ** | Sản phẩm này là gì, **cách hoạt động** (ba bước: đọc log → gom cụm → soạn vật liệu) và **sáu nguyên tắc** hệ thống không đánh đổi. Đây là tab mở đầu — người lần đầu vào đọc ở đây trước khi xem số |
-| **Tổng quan** | Số dẫn đầu, dải chỉ số, biểu đồ cụm theo lượt/người, thành phần lượt hỏi, phân bố lượt/học viên. Hàng chip phía trên lọc nhanh: tất cả / đông nhất / cụm mạnh / cụm yếu / tín hiệu lệch |
-| **Cụm vấn đề** | Danh sách cụm, mở ra đọc câu nguyên văn có ID, tick chọn cụm, bấm "Không thuộc cụm" để sửa tay (lưu lại giữa các lần mở trang), và **"✨ Soạn nội dung ôn"** để AI soạn vật liệu giảng lại — xem mục 4c |
-| **Chất lượng** | Kết quả bộ kiểm thử: tỉ lệ đạt, đạt theo từng lớp chỗ khó, nhóm lỗi, từng case |
-| **Nhật ký AI** | Bằng chứng AI chạy thật: model, số lời gọi, token, độ trễ, số lần model bịa mã / bỏ sót câu |
+| **Trang chủ** | **Buổi gần nhất và ba cụm đông nhất của lớp**, rồi mới tới sản phẩm này là gì, **cách hoạt động** (ba bước: đọc log → gom cụm → soạn vật liệu) và **sáu nguyên tắc** hệ thống không đánh đổi. Đây là tab mở đầu — người lần đầu vào đọc ở đây trước khi xem số |
+| **Tổng quan** | Số dẫn đầu, một dòng tin cậy, **ba cụm mạnh đông nhất**, biểu đồ sáu cụm lớn nhất (đuôi gập lại, cùng thang), thành phần lượt hỏi. Số kỹ thuật và phân bố lượt/học viên nằm sau cửa “Vì sao tin được mấy con số trên” |
+| **Cụm vấn đề** | Danh sách cụm **chia ba băng theo số người** (ngưỡng in thẳng trên màn hình), mở ra đọc câu nguyên văn có ID, tick chọn cụm, bấm "Không thuộc cụm" để sửa tay (lưu lại giữa các lần mở trang), và **"✨ Soạn nội dung ôn"** để AI soạn vật liệu giảng lại — xem mục 4c |
+| **Chất lượng** | Tỉ lệ đạt + **một câu kết luận nói thẳng chỗ sản phẩm còn sai**. Toàn bộ phương pháp đo (lịch sử các lượt, đạt theo lớp chỗ khó, nhóm lỗi, từng trường hợp) nằm sau một cửa gập |
+| **Nhật ký AI** | Bằng chứng AI chạy thật: model, số lời gọi, token, độ trễ, số lần model bịa mã / bỏ sót câu. **Bảng lời gọi lọc theo mục đích** — gom cụm / bộ kiểm thử / thử trực tiếp |
 | **Thử trực tiếp** | **Gọi AI thật ngay trên trang.** Xem mục 4b |
 
 ### 4a · Đăng nhập
@@ -271,7 +271,20 @@ Lab Coach cần kiểm.
 
 Demo nhanh: `http://127.0.0.1:8765/?filter=top&faq=1#cum`
 
-**Deep-link khi demo:** `?filter=` nhận `all` · `top` · `strong` · `weak` · `skew`.
+**Deep-link khi demo:**
+
+| Tham số | Tác dụng |
+|---|---|
+| `?filter=all\|strong\|weak\|skew` | Mở sẵn một bộ lọc cụm |
+| `?judge=1` | **Mở sẵn mọi tầng sâu** — phương pháp đo, bảng từng trường hợp, đuôi biểu đồ, băng cụm yếu. Dùng khi nộp bài hoặc khi người chấm muốn kiểm chứng mà không phải đi bấm từng cửa |
+| `?theme=dark\|light` | Chọn nền |
+| `?sample=<id>&run=1` | Chạy sẵn một kịch bản ở tab Thử trực tiếp |
+| `?answer=1` · `?faq=N` | Soạn nội dung ôn / xuất hỏi đáp cho cụm đông nhất |
+
+**Giao diện mặc định ưu tiên Lab Coach, không ưu tiên người chấm.** Các bảng dài,
+biểu đồ đuôi và toàn bộ phần phương pháp đo nằm sau một cửa gập — **không bị xoá, chỉ
+đổi chỗ đứng**. Con số bất lợi (cụm yếu, tín hiệu lệch, lượt chưa quy được, số lần
+model trả kết quả hỏng) đều nằm trên dòng luôn hiện, không nằm trong cửa gập.
 
 ---
 
