@@ -2,7 +2,7 @@
 
 > File này **được sinh ra** bởi `python eval/report.py`, không gõ tay. Nguồn: `results-run4.json`.
 
-> **Lượt đo này khác lượt trước ở chỗ:** SUA BO DO, khong sua san pham. Luot 1-3 truyen case[title] lam nhan buoi, ma PROMPT nhet nhan do vao dong 'cau hoi hoc vien da hoi trong buoi "{lecture}"' — nen model doc duoc nguyen van tieu de ca kiem thu, vot chinh la dap an (vi du 'Cau rac phai roi vao rai rac, khong duoc nan thanh mot cum'). Log tho xac nhan ca 22 loi goi deu dinh. Luot 4 truyen nhan buoi trung tinh 'K4P1/D04' dung nhu san pham that. Con so luot 4 KHONG so truc tiep duoc voi luot 1-3.
+> **Lượt đo này khác lượt trước ở chỗ:** SỬA BỘ ĐO, không sửa sản phẩm. Lượt 1-3 truyền case["title"] làm nhãn buổi, mà PROMPT nhét nhãn đó vào dòng 'câu hỏi học viên đã hỏi trong buổi "{lecture}"' — nên model đọc được nguyên văn tiêu đề ca kiểm thử, vốn chính là đáp án (ví dụ "Câu rác phải rơi vào rải rác, không được nặn thành một cụm"). Log thô xác nhận cả 22 lời gọi đều dính. Lượt 4 truyền nhãn buổi trung tính "K4P1/D04" đúng như sản phẩm thật dùng. Con số lượt 4 KHÔNG so trực tiếp được với lượt 1-3.
 
 ## Con số
 

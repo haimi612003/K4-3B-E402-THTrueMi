@@ -29,7 +29,11 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
-UI = os.path.join(HERE, "ui")
+# Giao diện: ưu tiên bản React đã build (codebase/web/dist), rơi về bản HTML một file
+# (codebase/ui) khi chưa chạy `npm run build`. Nhờ vậy người chấm không có Node
+# vẫn mở được sản phẩm, và nhóm không phải commit thư mục dist.
+_DIST = os.path.join(HERE, "web", "dist")
+UI = _DIST if os.path.isfile(os.path.join(_DIST, "index.html")) else os.path.join(HERE, "ui")
 sys.path.insert(0, HERE)
 
 from class_pulse import cluster, config, gemini, loader  # noqa: E402

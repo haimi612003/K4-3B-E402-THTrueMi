@@ -149,13 +149,20 @@ def main():
             "min_students_for_examples": config.MIN_STUDENTS_FOR_EXAMPLES,
         },
     }
-    out = os.path.join(HERE, "data.js")
-    with open(out, "w", encoding="utf-8") as f:
-        f.write("// Sinh tự động bởi codebase/ui/build_data.py — đừng sửa tay.\n")
-        f.write("window.CP_DATA = ")
-        json.dump(payload, f, ensure_ascii=False)
-        f.write(";\n")
-    print("\nĐã ghi %s (%.0f KB)" % (out, os.path.getsize(out) / 1024))
+    # Ghi cho CẢ HAI giao diện: bản HTML một file (codebase/ui) và bản React
+    # (codebase/web/public). Cả hai đọc cùng một window.CP_DATA nên không có
+    # hai định dạng dữ liệu phải đồng bộ bằng tay.
+    targets = [os.path.join(HERE, "data.js"),
+               os.path.join(ROOT, "codebase", "web", "public", "data.js")]
+    for out in targets:
+        if not os.path.isdir(os.path.dirname(out)):
+            continue        # chưa dựng bản React thì bỏ qua, không báo lỗi
+        with open(out, "w", encoding="utf-8") as f:
+            f.write("// Sinh tự động bởi codebase/ui/build_data.py — đừng sửa tay.\n")
+            f.write("window.CP_DATA = ")
+            json.dump(payload, f, ensure_ascii=False)
+            f.write(";\n")
+        print("\nĐã ghi %s (%.0f KB)" % (out, os.path.getsize(out) / 1024))
 
 
 if __name__ == "__main__":

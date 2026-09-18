@@ -18,3 +18,9 @@ __pycache__/
 *.py[cod]
 .venv/
 venv/
+
+# giao diện React (Vite)
+node_modules/
+codebase/web/dist/
+codebase/web/public/data.js
+.vite/

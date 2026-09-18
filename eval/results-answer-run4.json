@@ -1,7 +1,7 @@
 {
  "summary": {
   "run": "4",
-  "note": "SUA BO DO, khong sua san pham. Luot 1-3 truyen case[title] lam TEN CUM, ma title mo ta ky vong cua phep kiem ('phai tu nhan tin hieu mong') nen model doc duoc dap an. Luot 4 dung truong cluster_name moi — ten cum suy tu chinh noi dung cac cau hoi, dung thu buoc gom cum sinh ra khi chay that. Khong so truc tiep duoc voi luot 1-3.",
+  "note": "SỬA BỘ ĐO, không sửa sản phẩm. Lượt 1-3 truyền case[\"title\"] làm TÊN CỤM, mà title mô tả kỳ vọng của phép kiểm (\"phải tự nhận tín hiệu mỏng\") nên model đọc được đáp án. Lượt 4 dùng trường cluster_name mới — tên cụm suy từ chính nội dung các câu hỏi, đúng thứ bước gom cụm sinh ra khi chạy thật. Không so trực tiếp được với lượt 1-3.",
   "kind": "answer",
   "model": "gemini-3.5-flash-lite",
   "models_actually_used": [
