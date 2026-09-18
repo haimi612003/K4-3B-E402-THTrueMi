@@ -472,13 +472,15 @@ export default function Home({ sess, setSess, goTab }) {
               .
             </p>
 
-            <div className="reveal mt-5">
-              <Button variant="outlined" onClick={() => goTab("eval")}
-                endIcon={<ArrowForwardRoundedIcon fontSize="small" />}
-                className="!rounded-full !border-[color:var(--line)] !bg-[color:var(--panel)] !text-[color:var(--ink)] !px-5 !py-2 !text-[14px]">
-                Xem chi tiết kết quả đo
-              </Button>
-            </div>
+            {/* Tab "Chất lượng" đã bỏ khỏi thanh điều hướng, nên không còn chỗ để
+                bấm sang. Con số vẫn đứng nguyên ở trên, và đường tới bằng chứng
+                đầy đủ giờ là file trong repo — nói thẳng ra đây thay vì để một
+                nút trỏ vào hư không. */}
+            <p className="reveal mt-5 text-[13px] text-[color:var(--muted)]">
+              Kết quả đo đầy đủ, từng trường hợp một, nằm ở <code>eval/README.md</code>.
+              Nhật ký từng lời gọi model nằm ở <code>logs/gemini-calls.jsonl</code> kèm prompt
+              đầy đủ và phản hồi thô.
+            </p>
           </section>
         )}
 

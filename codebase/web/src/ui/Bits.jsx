@@ -5,39 +5,15 @@ import Paper from "@mui/material/Paper";
    IntersectionObserver có thật — nhờ vậy nội dung KHÔNG BAO GIỜ bị giấu vĩnh
    viễn nếu có gì hỏng. Đây là điều kiện bắt buộc: giao diện này chở số liệu,
    không phải trang quảng cáo. */
-export function useReveal(rootRef) {
-  useEffect(() => {
-    const host = rootRef?.current || document.body;
-    if (!("IntersectionObserver" in window)) return;
-    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+/* Giữ tên hàm để các tab không phải sửa import, nhưng nó KHÔNG CÒN LÀM GÌ.
+   Hiệu ứng hiện dần giờ nằm hoàn toàn trong CSS (xem .reveal trong index.css).
 
-    const els = [...host.querySelectorAll(".reveal")];
-    if (!els.length) return;
-    host.classList.add("js-reveal");
-
-    const showAll = () => els.forEach((el) => el.classList.add("in"));
-
-    const io = new IntersectionObserver(
-      (es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }),
-      { root: host.closest("[data-scroll]") || null, rootMargin: "0px 0px -8% 0px", threshold: 0.08 }
-    );
-    els.forEach((el, i) => { el.style.transitionDelay = `${Math.min(i, 6) * 55}ms`; io.observe(el); });
-
-    /* LƯỚI AN TOÀN — bắt buộc phải có.
-       Vừa thêm .js-reveal là mọi .reveal về opacity 0, và từ đó nội dung CHỈ hiện
-       lại nếu IntersectionObserver gọi callback. Nếu IO không gọi (trình duyệt cũ,
-       tiện ích chặn, tab nền, hoặc chỉ là một trường hợp tôi chưa lường), nội dung
-       bị giấu VĨNH VIỄN. Đã xảy ra thật: cả cột trái và tiêu đề tab Thử trực tiếp
-       biến mất trắng trơn.
-
-       Giao diện này chở số liệu cho người ra quyết định dạy học — thà hiện không
-       có hiệu ứng còn hơn không hiện. Sau 1,2 giây thì hiện hết, bất kể IO có
-       chạy hay không. */
-    const t = setTimeout(showAll, 1200);
-
-    return () => { clearTimeout(t); io.disconnect(); host.classList.remove("js-reveal"); };
-  }, [rootRef]);
-}
+   Vì sao bỏ bản JS: nó bật một class lên khối cha để giấu MỌI .reveal rồi chỉ
+   hiện lại danh sách phần tử chụp tại một thời điểm. Khối sinh ra sau — dữ liệu
+   tới muộn, hoặc React dựng lại khi đổi nền sáng/tối — bị giấu mà không ai hiện
+   lại. Đo được trên trang chủ: 0/23 khối hiện. Không có cách vá nào an toàn cho
+   một cơ chế mà đường mặc định của nó là GIẤU nội dung. */
+export function useReveal() { /* no-op, xem .reveal trong index.css */ }
 
 export const Kicker = ({ children }) => (
   <p className="text-[12px] font-semibold tracking-[.12em] uppercase text-[color:var(--primary)] mb-2">{children}</p>
