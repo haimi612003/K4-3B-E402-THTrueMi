@@ -211,6 +211,13 @@ tbody tr:last-child td{border-bottom:0}
 .faqmeta{margin:7px 0 0 27px;font-size:12px;color:var(--muted)}
 .faqmeta b{color:var(--ink-2);font-weight:500}
 .faqfoot{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px;padding-top:13px;border-top:1px solid var(--line-2)}
+p.verdict{font-size:14px;color:var(--ink);background:var(--panel);border:1px solid var(--line);
+  border-left:3px solid var(--primary);border-radius:9px;padding:13px 15px;margin:0 0 16px;line-height:1.6}
+p.notel{font-size:12.5px;color:var(--ink-2);margin:0 0 16px}
+.lnk{background:none;border:0;padding:0;color:var(--primary);font-weight:600;font-size:12.5px;cursor:pointer}
+.lnk:hover{text-decoration:underline}
+code.sl{color:var(--muted);font-size:.85em}
+
 /* ba băng cụm + nhãn chung tách ra khỏi thẻ */
 p.common{font-size:12.5px;color:var(--ink-2);margin:0 0 12px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
 .band{margin-bottom:20px}
@@ -222,8 +229,8 @@ p.common{font-size:12.5px;color:var(--ink-2);margin:0 0 12px;display:flex;gap:6p
 .bct{font-size:12px;color:var(--ink-2);background:var(--surface-2);border:1px solid var(--line);
   border-radius:99px;padding:1px 9px}
 .bsub{font-size:12.5px;color:var(--muted);margin-left:auto}
-details.band>summary .bnm::before{content:"b8 ";color:var(--muted)}
-details.band[open]>summary .bnm::before{content:"be "}
+details.band>summary .bnm::before{content:"▸ ";color:var(--muted)}
+details.band[open]>summary .bnm::before{content:"▾ "}
 /* Phân tầng thị giác giữa ba băng chỉ được chạm vào CHIỀU CAO thanh và cỡ chữ.
    TUYỆT ĐỐI không thu chiều rộng track .bar: bề rộng thanh tính theo % của
    container, thu track lại là cùng một giá trị 8 lượt hiện chênh nhau 4,5 lần
@@ -661,7 +668,7 @@ var TABS = [
   {k:"live", label:"Thử trực tiếp", rail:"Thử",        ic:'<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>'}
 ];
 
-var state = { sess:0, sort:"turns", filter:"all", evalKind:"cluster", open:{}, sel:{}, moved:{}, det:{} };
+var state = { sess:0, sort:"turns", filter:"all", evalKind:"cluster", open:{}, sel:{}, moved:{}, det:{}, logKind:"" };
 // Nội dung ôn do AI soạn, theo từng cụm. serverUp = có máy chủ cục bộ để gọi AI không.
 var answers = {}, serverUp = null;
 function lsGet(k,d){ try{ var v=localStorage.getItem(k); return v==null?d:JSON.parse(v); }catch(e){ return d; } }
@@ -900,7 +907,7 @@ function renderShell(){
   document.getElementById("crumbs").innerHTML =
     '<b>Khoá K4 · Lớp 3B</b><span class="sep">›</span><span>Bản đồ vấn đề</span><span class="sep">›</span><b>'+
     esc(tab.label)+'</b><span class="acts">'+
-    (s&&needsSess?'<span class="chipinfo">'+(s.sparse?"SPARSE — KHÔNG GOM":"ĐÃ GOM "+fmt(s.real_turns)+" LƯỢT")+"</span>":"")+
+    (s&&needsSess?'<span class="chipinfo">'+(s.sparse?"QUÁ ÍT CÂU — KHÔNG GOM":"ĐÃ GOM "+fmt(s.real_turns)+" LƯỢT")+"</span>":"")+
     '<a href="#live">⚡ Thử trực tiếp</a></span>';
 
   var tb=document.getElementById("toolbar");
@@ -915,7 +922,7 @@ function renderShell(){
     var sel=document.getElementById("sess");
     D.sessions.forEach(function(x,i){
       var o=document.createElement("option"); o.value=i; o.selected=(i===state.sess);
-      o.textContent=(x.lecture_title?x.lecture_title+" · ":"")+x.lecture+" — "+fmt(x.real_turns)+" lượt thực"+(x.sparse?" (SPARSE)":"");
+      o.textContent=(x.lecture_title?x.lecture_title+" · ":"")+x.lecture+" — "+fmt(x.real_turns)+" lượt thực"+(x.sparse?" — quá ít câu để gom":"");
       sel.appendChild(o); });
     sel.addEventListener("change",function(){ state.sess=+sel.value; lsSet("cp.sess",state.sess); renderAllAnimated(); });
     document.getElementById("s-turns").addEventListener("click",function(){ setSort("turns"); });
@@ -1016,7 +1023,7 @@ var PRINS=[
   ["Model không bao giờ thấy mã học viên.",
    "Prompt gửi đi chỉ có số thứ tự và câu hỏi. “Không lộ danh tính” vì thế là bảo đảm bằng cấu trúc, không phải một lời dặn model có thể quên."],
   ["Không chắc thì nói không chắc.",
-   "Dưới sáu lượt hỏi thật, hệ thống báo SPARSE và không gọi AI. Thà không trả lời còn hơn nặn ra một danh sách trông đáng tin."],
+   "Dưới sáu lượt hỏi thật, hệ thống báo “quá ít câu để kết luận” và không gọi AI. Thà không trả lời còn hơn nặn ra một danh sách trông đáng tin."],
   ["Thà tách nhỏ dư còn hơn gộp nhầm.",
    "Hai chỗ kẹt dùng chung một từ khoá vẫn là hai vấn đề. Tách dư thì giảng viên nhìn phát biết; gộp nhầm thì cả lớp mất một buổi mà không ai phát hiện."],
   ["Sửa chữa được ghi lại, không giấu.",
@@ -1029,6 +1036,10 @@ function renderHome(){
   var host=document.getElementById("p-home");
   var ev=D.eval&&D.eval.summary, ea=D.eval_answer&&D.eval_answer.summary;
   var s=D.sessions&&D.sessions[0];
+  /* Cụm đông NGƯỜI nhất — khác cụm nhiều LƯỢT nhất mà tab Tổng quan dẫn đầu.
+     Nói rõ đang tính gì thay vì để hai con số chọi nhau. */
+  var peak=null;
+  if(s&&s.clusters) s.clusters.forEach(function(c){ if(!peak||c.people>peak.people) peak=c; });
   var h="";
 
   h+='<div class="land"><p class="kicker">VLearn · Bản đồ vấn đề của lớp</p>'+
@@ -1036,14 +1047,35 @@ function renderHome(){
      '<p class="lede">Sau mỗi buổi học, câu hỏi của lớp nằm rải rác trong log — hàng trăm dòng, không nhóm, không đếm. '+
      'Class Pulse gom chúng lại thành những <strong>cụm vấn đề có số lượng và câu nguyên văn</strong>, '+
      'để giảng viên biết buổi sau nên ôn lại chỗ nào thay vì đoán.</p>'+
-     '<div class="cta"><button class="btn" type="button" data-tab="tong">Mở bảng điều khiển →</button>'+
-     '<button class="btn ghost" type="button" data-go="how">Xem cách hoạt động</button>'+
-     '<button class="btn ghost" type="button" data-tab="live">⚡ Thử ngay với AI thật</button></div>'+
+     '<div class="cta"><button class="btn" type="button" data-tab="cum">Xem lớp tôi kẹt ở đâu →</button>'+
+     '<button class="btn ghost" type="button" data-go="how">Cách hoạt động</button>'+
+     '<button class="btn ghost" type="button" data-tab="live">⚡ Thử với AI thật</button></div>'+
      '<div class="evid">'+
      '<div><b>92,6%</b><span>câu hỏi thực của khoá K4 là chuỗi chỉ xuất hiện <strong>đúng một lần</strong> — gom bằng trùng khớp văn bản là vô dụng</span></div>'+
-     '<div><b>36/127</b><span>học viên của một buổi cùng kẹt ở một chỗ, hỏi bằng 50 cách diễn đạt khác nhau</span></div>'+
-     '<div><b>'+(s?fmt(s.real_turns):"511")+'</b><span>lượt hỏi thật một buổi, tương đương 20 trang A4 nếu đọc tay</span></div>'+
+     /* Trước đây ghi cứng "36/127" trong khi tab Tổng quan tính ra "32/127" cho
+        cùng một buổi — hai con số dẫn đầu chọi nhau mà người đọc không có cách
+        nào biết vì sao. Cả hai đều đúng: một cái là cụm ĐÔNG NGƯỜI nhất, cái
+        kia là cụm NHIỀU LƯỢT nhất. Giờ tính từ dữ liệu và nói rõ đang tính gì. */
+     '<div><b>'+(peak?peak.people+"/"+s.students:"—")+'</b><span>học viên của một buổi cùng kẹt ở '+
+       (peak?'<strong>'+esc(peak.name)+'</strong>, hỏi bằng '+peak.turns+' lượt khác nhau':'một chỗ')+'</span></div>'+
+     '<div><b>'+(s?fmt(s.real_turns):"—")+'</b><span>lượt hỏi thật một buổi, tương đương 20 trang A4 nếu đọc tay</span></div>'+
      "</div></div>";
+
+  /* Lab Coach mở máy lúc 9 giờ tối muốn thấy LỚP MÌNH, không phải một trang
+     giới thiệu. Ba cụm đông nhất của buổi gần nhất, bấm một cái là vào đọc. */
+  if(s && !s.sparse && s.clusters && s.clusters.length){
+    var t3=s.clusters.slice().sort(function(a,b){return b.turns-a.turns;})
+             .filter(function(c){return !c.weak;}).slice(0,3);
+    h+='<div class="sec"><p class="kicker">Buổi gần nhất</p>'+
+       "<h2>"+esc((s.lecture_title?s.lecture_title+" · ":"")+s.lecture)+"</h2>"+
+       '<p class="sub">'+fmt(s.real_turns)+' lượt hỏi của '+s.students+' học viên, gom thành '+
+       s.clusters.length+' cụm vấn đề. Ba cụm đông nhất:</p><ol class="todo">'+
+      t3.map(function(c,i){
+        return '<li><span class="rk num">'+(i+1)+'</span><div class="tdbody"><div class="tt">'+esc(c.name)+'</div>'+
+          '<div class="mt"><b class="num">'+c.people+'</b>/'+s.students+' học viên · <b class="num">'+c.turns+'</b> lượt'+
+          (c.skew?' <span class="chip skew">tín hiệu lệch</span>':'')+'</div></div></li>'; }).join("")+
+      '</ol><button class="btn" type="button" data-tab="cum">Mở danh sách đầy đủ →</button></div>';
+  }
 
   h+='<div class="sec" id="how"><p class="kicker">Cách hoạt động</p>'+
      "<h2>Ba bước, từ log thô tới quyết định dạy.</h2>"+
@@ -1253,7 +1285,11 @@ function renderTong(){
 function drawLazy(detId, draw){
   var d=document.querySelector('[data-det="'+detId+'"]');
   if(!d) return;
-  if(d.open){ draw(); growBars(d); return; }
+  /* Đang mở sẵn thì chỉ vẽ, KHÔNG gọi growBars ở đây: animate() ngay sau đó sẽ
+     chạy growBars trên cả panel. Gọi hai lần thì lần sau đọc đúng bề rộng lần
+     trước vừa set về 0, rồi "khôi phục" về 0 — thanh cụt vĩnh viễn.
+     Chỉ tự chạy growBars khi người dùng bấm mở, vì lúc đó animate() không chạy. */
+  if(d.open){ draw(); return; }
   d.addEventListener("toggle", function once(){
     if(!d.open) return;
     d.removeEventListener("toggle", once);
@@ -1310,7 +1346,7 @@ function renderCum(){
   var host=document.getElementById("p-cum"), s=cur();
   if(!s){ host.innerHTML=emptyState(); return; }
   var cls=filtered(), mv=movedSet(), h="";
-  if(s.sparse) h+='<div class="banner warn"><span class="bi">SPARSE</span><span>'+esc(s.sparse_reason)+"</span></div>";
+  if(s.sparse) h+='<div class="banner warn"><span class="bi">QUÁ ÍT CÂU</span><span>'+esc(s.sparse_reason)+"</span></div>";
 
   var nmoved=Object.keys(mv).filter(function(k){return mv[k];}).length;
   h+='<div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:10px">'+
@@ -1319,7 +1355,11 @@ function renderCum(){
      '<span class="capt">Mở một cụm để đọc câu nguyên văn · bấm “Không thuộc cụm” để sửa bằng tay'+
      (nmoved?' · <b>'+nmoved+" câu đã sửa</b>":"")+"</span></div>";
 
-  var maxT=Math.max.apply(null,cls.map(function(x){return x.turns;}).concat([1]));
+  /* maxT tính trên TOÀN BỘ cụm của buổi, không phải trên danh sách đã lọc.
+     Nếu tính trên danh sách lọc thì cụm 6 lượt sẽ vẽ hết chiều rộng khi đang lọc
+     "Cụm yếu" — cùng một giá trị hiện dài ngắn khác nhau tuỳ bộ lọc, tức thanh
+     đang đo THỨ HẠNG chứ không đo SỐ LƯỢT. */
+  var maxT=Math.max.apply(null,sortedClusters().map(function(x){return x.turns;}).concat([1]));
   var common=commonParts(cls), commonKeys=Object.keys(common);
   if(commonKeys.length){
     h+='<p class="common">Mọi cụm dưới đây đều thuộc '+
@@ -1389,8 +1429,15 @@ function renderCum(){
              '<span class="bsub">'+esc(b.sub)+'</span>';
     /* Băng cụm yếu gập sẵn — nhưng đếm số vẫn nằm ngay trên nhãn, nên không có
        chuyện con số bất lợi biến mất khỏi màn hình. */
-    if(b.k==="b3") h+=det("cum."+b.k,"band","<span class=\"bhd\">"+head+"</span>",list);
-    else h+='<div class="band open"><div class="bhd">'+head+"</div>"+list+"</div>";
+    /* Băng cụm yếu gập sẵn khi đang xem tất cả — nhưng nếu người dùng vừa bấm
+       đúng bộ lọc "Cụm yếu", hoặc nó là băng DUY NHẤT có cụm, thì gập lại là
+       trả về một trang trống đúng lúc họ xin thấy. */
+    var onlyBand = bands.filter(function(x){return x.rows.length;}).length===1;
+    if(b.k==="b3" && state.filter!=="weak" && !onlyBand){
+      h+=det("cum."+b.k,"band","<span class=\"bhd\">"+head+"</span>",list);
+    } else {
+      h+='<div class="band open"><div class="bhd">'+head+"</div>"+list+"</div>";
+    }
   });
 
   h+='<div class="scatter"><div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap">'+
@@ -1588,6 +1635,50 @@ function downloadFaq(){
 /* ══════════ CHẤT LƯỢNG ══════════ */
 var CLSNAME={lop1:"① Nguồn sự thật",lop2:"② Mơ hồ / thiếu thông tin",lop3:"③ Ngoài phạm vi",
              lop4:"④ Đặc thù domain",thuong:"Thường gặp",hiem:"Hiếm"};
+/* Dữ liệu đã chứa sẵn "slug — giải thích tiếng Việt"; code cũ cắt bằng
+   split("—")[0] và giữ đúng nửa không ai đọc được. Giờ lấy nửa tiếng Việt làm
+   nhãn, slug làm phụ chú cho người đi kiểm chứng. */
+function errVi(name){
+  var p=String(name||"").split("—");
+  return (p.length>1 ? p.slice(1).join("—") : p[0]).trim();
+}
+function errSlug(name){ return String(name||"").split("—")[0].trim(); }
+
+/* Khoá assertion là tiếng Anh vì nó là tên trong mã nguồn — giữ nguyên cho
+   người đi kiểm, nhưng kèm nghĩa. Và bỏ trùng: một case trượt cùng một
+   assertion hai lần thì in hai lần là nhiễu, không phải thông tin. */
+var ASSERT_VI={
+  must_not_group_together:"gộp nhầm hai vấn đề khác nhau",
+  must_be_unclustered:"nặn câu rác thành cụm",
+  must_group_together:"tách nhầm một vấn đề thành hai cụm",
+  no_invented_ids:"bịa mã câu hỏi không có thật",
+  no_duplicate_ids:"xếp một câu vào hai cụm",
+  counts_reconcile:"số đếm không khớp đầu vào",
+  min_clusters:"gom ra quá ít cụm",
+  max_clusters:"gom ra quá nhiều cụm",
+  all_fields_present:"thiếu phần bắt buộc trong kết quả",
+  no_student_identifiers:"để lộ mã học viên",
+  no_imperative:"viết như ra lệnh cho giảng viên",
+  output_is_vietnamese:"trả lời không phải tiếng Việt",
+  expect_confidence_in:"tự khai độ chắc chắn sai mức",
+  caveat_flags:"không nêu đúng cảnh báo cần có",
+  must_mention_any:"không bám vào chữ học viên viết",
+  must_not_mention:"kéo vào khái niệm không ai hỏi",
+  check_not_definition_recall:"câu kiểm tra chỉ hỏi thuộc lòng"
+};
+function failVi(keys){
+  var seen={}, out=[];
+  (keys||[]).forEach(function(k){
+    if(seen[k]) return; seen[k]=1;
+    out.push(ASSERT_VI[k] ? ASSERT_VI[k]+' <code class="sl">'+esc(k)+"</code>" : "<code>"+esc(k)+"</code>");
+  });
+  return out.join(" · ");
+}
+function firstSentence(t){
+  var m=String(t||"").match(/^[\s\S]*?[.!?](\s|$)/);
+  return (m?m[0]:String(t||"")).trim();
+}
+
 function renderEval(){
   var host=document.getElementById("p-eval");
   var sets=[];
@@ -1615,25 +1706,53 @@ function renderEval(){
   var used=sm.models_actually_used||[sm.model];
   h+='<div class="hero"><div class="fig num">'+sm.pass_rate+'%</div><div class="cap"><strong>'+sm.n_pass+"/"+sm.n_cases+" case đạt</strong> ở lượt đo "+
      esc(sm.run)+", model <code>"+esc(used.join(", "))+"</code>. "+esc(E.sub)+
-     ". Mỗi case chấm bằng assertion máy kiểm được — hai người chạy lại đều ra cùng con số.</div>"+
+     ". Mỗi trường hợp chấm bằng phép kiểm máy tự chấm — hai người chạy lại đều ra cùng con số.</div>"+
      '<div class="meter '+lvl+'"><i style="width:'+sm.pass_rate+'%"></i></div></div>';
 
+  /* Banner này KHÔNG được gập: nó nói thẳng rằng đúng-sai kiến thức cần Lab
+     Coach chấm vì nhóm không đủ thẩm quyền — thông tin làm đổi cách dùng sản
+     phẩm, phải đọc TRƯỚC khi tin con số phía trên. */
   if(sm.not_measured) h+='<div class="banner warn"><span class="bi">KHÔNG ĐO</span><span>'+esc(sm.not_measured)+"</span></div>";
-  if(sm.note) h+='<div class="banner info"><span class="bi">LƯU Ý</span><span>'+esc(sm.note)+"</span></div>";
 
-  h+='<dl class="kpis">'+
-     kpi("Case đã chạy",String(sm.n_cases),"","","golden set trong eval/")+
-     kpi("Không đạt",String(sm.n_fail),"","",sm.n_fail?"xem bảng dưới":"không case nào trượt")+
+  /* Trước đây in nguyên 492 ký tự changelog kỹ thuật ngay dưới con số lớn nhất
+     trang — và đó là bản sao byte-identical của ô ngay bên dưới trong bảng
+     "Các lượt đo". Giờ chỉ câu đầu, NGUYÊN VĂN từ dữ liệu. Cố ý không viết
+     template: bộ gom cụm khai "Áp các sửa chữa sau vòng soi CP3", bộ soạn nội
+     dung ôn khai "SỬA BỘ ĐO, không sửa sản phẩm" — hai chuyện khác hẳn nhau,
+     và cái thứ hai là lý do duy nhất con số nhảy lên 100%. */
+  if(sm.note) h+='<p class="notel">Lượt đo '+esc(sm.run)+": "+esc(firstSentence(sm.note))+
+     ' <button class="lnk" type="button" data-opendet="eval.method">Xem đầy đủ →</button></p>';
+
+  /* Kết luận: câu Lab Coach thật sự cần, và nó phải nói chỗ sản phẩm CÒN SAI
+     chứ không chỉ khoe tỉ lệ đạt. Lấy thẳng từ nhóm lỗi còn lại. */
+  var topErr=(sm.errors&&sm.errors.length)?sm.errors[0]:null;
+  h+='<p class="verdict">'+
+     (sm.n_fail
+       ? 'Còn <b>'+sm.n_fail+"</b> trong "+sm.n_cases+" trường hợp chưa đạt"+
+         (topErr?", chủ yếu là <b>"+esc(errVi(topErr.name))+"</b>":"")+
+         '. Nghĩa là khi đọc kết quả, hãy soi kỹ nhất chỗ đó.'
+       : "Không trường hợp nào trượt ở lượt đo này.")+
+     (sm.cases_needing_repair!=null && sm.cases_needing_repair>0
+       ? ' Ngoài ra <b>'+sm.cases_needing_repair+"</b> lần model trả kết quả hỏng và hệ thống phải tự sửa."
+       : "")+
+     "</p>";
+
+  var kpiHtml='<dl class="kpis">'+
+     kpi("Trường hợp đã chạy",String(sm.n_cases),"","","bộ kiểm thử trong eval/")+
+     kpi("Không đạt",String(sm.n_fail),"","",sm.n_fail?"xem bảng dưới":"không trường hợp nào trượt")+
      kpi("Lời gọi AI",String(sm.ai_calls),"","","thật, có ghi log")+
      kpi("Độ trễ trung bình",fmt(sm.latency_ms_avg),"ms","","mỗi lời gọi")+
      kpi("Token vào",fmt(sm.tokens_in),"","",fmt(sm.tokens_out)+" token ra")+
      (sm.cases_needing_repair!=null
-       ? kpi("Phải sửa chữa",String(sm.cases_needing_repair),"","","case model trả kết quả hỏng")
+       ? kpi("Phải sửa chữa",String(sm.cases_needing_repair),"","","lần model trả kết quả hỏng")
        : kpi("Kiểm ngược bộ đo","11/11","","","--selftest: thước đo còn bắt được lỗi"))+
      "</dl>";
 
+  /* Tầng phương pháp: giám khảo cần để kiểm chứng, Lab Coach không. Giữ NGUYÊN VẸN,
+     chỉ đổi chỗ đứng — ba biểu đồ và bảng 24 dòng không bị cắt dòng nào. */
+  var m=kpiHtml;
   if(E.hist.length>1){
-    h+='<div class="card"><h3>Các lượt đo — sửa gì thì số đổi thế nào</h3>'+
+    m+='<div class="card"><h3>Các lượt đo — sửa gì thì số đổi thế nào</h3>'+
        '<p class="capt">Các lượt KHÔNG so trực tiếp được với nhau vì thước đo có thay đổi giữa chừng. Mỗi dòng ghi rõ đổi gì.</p>'+
        '<div class="legend"><span><i style="background:'+css("--s1")+'"></i>Đạt</span><span><i style="background:'+css("--s2")+'"></i>Không đạt</span></div>'+
        '<div id="ch-hist"></div><table><thead><tr>'+
@@ -1641,7 +1760,7 @@ function renderEval(){
        "</tr></thead><tbody>"+
        E.hist.map(function(r,i2){
          return "<tr><td><b>"+esc(r.run)+'</b></td><td class="n">'+r.n_pass+"/"+r.n_cases+" = "+r.pass_rate+"%</td>"+
-           "<td>"+esc((r.errors||[]).map(function(e){return e.count+"\u00d7 "+e.name.split("\u2014")[0].trim();}).join(" \u00b7 ")||"không còn lỗi nào")+"</td>"+
+           "<td>"+esc((r.errors||[]).map(function(e){return e.count+"\u00d7 "+errVi(e.name);}).join(" \u00b7 ")||"không còn lỗi nào")+"</td>"+
            '<td class="capt">'+esc(i2===0?"gốc":(r.note||"\u2014"))+"</td></tr>"; }).join("")+
        "</tbody></table></div>";
   }
@@ -1649,7 +1768,7 @@ function renderEval(){
   if(sm.by_class){
     var rows=Object.keys(sm.by_class).map(function(k){ var v=sm.by_class[k];
       return {label:CLSNAME[k]||k,a:v.pass,b:v.total-v.pass,_t:v.total}; });
-    h+='<div class="card"><h3>Đạt theo từng lớp chỗ khó</h3>'+
+    m+='<div class="card"><h3>Đạt theo từng lớp chỗ khó</h3>'+
        '<p class="capt">Mỗi lớp phải có ít nhất 2 case. Lớp nào trượt nhiều là chỗ sản phẩm yếu nhất.</p>'+
        '<div class="legend"><span><i style="background:'+css("--s1")+'"></i>Đạt</span><span><i style="background:'+css("--s2")+'"></i>Không đạt</span></div>'+
        '<div id="ch-class"></div>'+
@@ -1659,15 +1778,16 @@ function renderEval(){
   } else { state._evalRows=null; }
 
   if(sm.errors&&sm.errors.length){
-    h+='<div class="card"><h3>Nhóm lỗi — xếp theo số lần gặp</h3>'+
-       '<p class="capt">Mỗi assertion trượt được quy về một tên lỗi. Đây là danh sách việc cần sửa, xếp sẵn theo ưu tiên.</p>'+
+    m+='<div class="card"><h3>Nhóm lỗi — xếp theo số lần gặp</h3>'+
+       '<p class="capt">Mỗi phép kiểm trượt được quy về một tên lỗi. Đây là danh sách việc cần sửa, xếp sẵn theo ưu tiên.</p>'+
        '<div id="ch-err"></div>'+
-       tableView([{t:"Nhóm lỗi"},{t:"Số lần",n:1}],sm.errors.map(function(e){return [e.name,e.count];}))+"</div>";
+       tableView([{t:"Nhóm lỗi"},{t:"Tên trong mã nguồn"},{t:"Số lần",n:1}],
+         sm.errors.map(function(e){return [errVi(e.name),errSlug(e.name),e.count];}))+"</div>";
   } else {
-    h+='<div class="banner info"><span class="bi">SẠCH</span><span>Không assertion nào trượt ở lượt đo này.</span></div>';
+    m+='<div class="banner info"><span class="bi">SẠCH</span><span>Không phép kiểm nào trượt ở lượt đo này.</span></div>';
   }
 
-  h+='<div class="card"><h3>Từng case</h3><table><thead><tr><th>Mã</th>'+
+  m+='<div class="card"><h3>Từng trường hợp</h3><table><thead><tr><th>Mã</th>'+
      (sm.by_class?"<th>Lớp</th>":"")+'<th>Case</th><th class="n">Input</th>'+
      (sm.by_class?'<th class="n">Cụm</th>':"<th>Tin cậy</th>")+'<th>Kết quả</th><th>Trượt ở đâu</th></tr></thead><tbody>'+
      rs.map(function(r){
@@ -1677,21 +1797,37 @@ function renderEval(){
          (sm.by_class?'<td class="n">'+(r.n_clusters==null?"\u2014":r.n_clusters)+"</td>"
                      :"<td>"+esc(r.confidence||"\u2014")+"</td>")+
          '<td><span class="pill '+(r.passed?"ok":"no")+'">'+(r.passed?"ĐẠT":"KHÔNG ĐẠT")+"</span></td>"+
-         "<td>"+esc((r.failed_keys||[]).join(", ")||r.note||"\u2014")+"</td></tr>"; }).join("")+
+         "<td>"+(failVi(r.failed_keys)||esc(r.note||"\u2014"))+"</td></tr>"; }).join("")+
      "</tbody></table></div>";
+  h+=det("eval.method","proof","Xem phương pháp đo và toàn bộ kết quả", m);
   host.innerHTML=h;
 
-  if(state._evalRows) groupedBars(document.getElementById("ch-class"),state._evalRows,
-    {labelW:210,alt:"Đạt theo lớp chỗ khó",aLabel:"Đạt",bLabel:"Không đạt"});
-  if(sm.errors&&sm.errors.length) groupedBars(document.getElementById("ch-err"),
-    sm.errors.map(function(e){ return {label:e.name.split("\u2014")[0].trim(),a:e.count,extra:e.name}; }),
-    {labelW:200,alt:"Nhóm lỗi",single:true,aLabel:"Số lần gặp"});
-  if(E.hist.length>1) groupedBars(document.getElementById("ch-hist"),
-    E.hist.map(function(r){ return {label:"Lượt "+r.run,a:r.n_pass,b:r.n_cases-r.n_pass}; }),
-    {labelW:90,alt:"Tỉ lệ đạt qua các lượt",aLabel:"Đạt",bLabel:"Không đạt"});
+  drawLazy("eval.method", function(){
+    if(state._evalRows) groupedBars(document.getElementById("ch-class"),state._evalRows,
+      {labelW:210,alt:"Đạt theo lớp chỗ khó",aLabel:"Đạt",bLabel:"Không đạt"});
+    if(sm.errors&&sm.errors.length) groupedBars(document.getElementById("ch-err"),
+      sm.errors.map(function(e){ return {label:e.name.split("\u2014")[0].trim(),a:e.count,extra:e.name}; }),
+      {labelW:200,alt:"Nhóm lỗi",single:true,aLabel:"Số lần gặp"});
+    if(E.hist.length>1) groupedBars(document.getElementById("ch-hist"),
+      E.hist.map(function(r){ return {label:"Lượt "+r.run,a:r.n_pass,b:r.n_cases-r.n_pass}; }),
+      {labelW:90,alt:"Tỉ lệ đạt qua các lượt",aLabel:"Đạt",bLabel:"Không đạt"});
+  });
 }
 
 /* ══════════ NHẬT KÝ AI ══════════ */
+/* call_id có dạng "run:K4P1/D04:p1/6", "eval3:C1-01", "live:answer"…
+   Nhóm theo tiền tố để người đọc lọc được đúng loại bằng chứng họ đang nghi. */
+var CALLKIND=[
+  {k:"run",  nm:"Gom cụm buổi học", re:/^run\b/,          hint:"Quyết định AI chính — chạy khi dựng dữ liệu một buổi"},
+  {k:"eval", nm:"Chạy bộ kiểm thử", re:/^eval/,           hint:"Mỗi case một lời gọi, số đo ở tab Chất lượng ra từ đây"},
+  {k:"live", nm:"Thử trực tiếp",    re:/^live/,           hint:"Bấm nút trên tab Thử trực tiếp, kể cả soạn nội dung ôn và hỏi đáp"}
+];
+function callKind(c){
+  var id=String(c.call_id||"");
+  for(var i=0;i<CALLKIND.length;i++) if(CALLKIND[i].re.test(id)) return CALLKIND[i].k;
+  return "khac";
+}
+
 function renderLog(){
   var host=document.getElementById("p-log"), calls=D.calls||[], h="";
   var ok=calls.filter(function(c){return c.ok;});
@@ -1729,7 +1865,7 @@ function renderLog(){
 
   h+='<div class="card"><h3>Ngưỡng của hệ thống</h3>'+
      '<p class="capt">Deterministic, nằm trong <code>codebase/class_pulse/config.py</code> — không do model quyết.</p><table><tbody>'+
-     "<tr><th>Dưới bao nhiêu lượt thì báo SPARSE</th><td>"+(TH.sparse_min_turns||"?")+" lượt thực</td></tr>"+
+     "<tr><th>Dưới bao nhiêu lượt thì không gom cụm</th><td>"+(TH.sparse_min_turns||"?")+" lượt thực</td></tr>"+
      "<tr><th>Mỗi lời gọi tối đa</th><td>"+(TH.chunk_size||"?")+" lượt</td></tr>"+
      "<tr><th>Cụm yếu khi</th><td>≤ "+(TH.weak_max_people||"?")+" người</td></tr>"+
      "<tr><th>Tín hiệu lệch khi</th><td>một người chiếm ≥ "+Math.round((TH.skew_ratio||0)*100)+
@@ -1737,14 +1873,35 @@ function renderLog(){
      "<tr><th>Giấu câu nguyên văn khi</th><td>chu kỳ có dưới "+(TH.min_students_for_examples||"?")+" học viên</td></tr>"+
      "</tbody></table></div>";
 
-  h+='<div class="card"><h3>'+Math.min(calls.length,40)+' lời gọi gần nhất</h3><table><thead><tr>'+
+  /* Trước đây bảng này lấy thẳng calls.slice(-40): trên dữ liệu thật ra 29 lời
+     gọi "live" (bấm demo) + 11 "eval", và KHÔNG lời gọi gom cụm nào — tức bảng
+     mang nhãn "bằng chứng CP3" lại không chứa bằng chứng cho quyết định AI
+     chính. Giờ lọc theo mục đích, mặc định mở đúng loại đó. */
+  var kindCounts={};
+  calls.forEach(function(c){ var k=callKind(c); kindCounts[k]=(kindCounts[k]||0)+1; });
+  var lk=state.logKind;
+  if(!lk || !kindCounts[lk]) lk = kindCounts.run ? "run" : (kindCounts.eval ? "eval" : (kindCounts.live ? "live" : "khac"));
+  state.logKind=lk;
+  var shown=calls.filter(function(c){ return callKind(c)===lk; });
+  var meta=CALLKIND.filter(function(x){return x.k===lk;})[0];
+
+  h+='<div class="card"><h3>Từng lời gọi model</h3>'+
+     '<div class="seg" style="margin:4px 0 10px;display:inline-flex;flex-wrap:wrap">'+
+     CALLKIND.concat([{k:"khac",nm:"Khác",hint:""}]).filter(function(x){return kindCounts[x.k];})
+       .map(function(x){
+         return '<button type="button" data-logkind="'+x.k+'" aria-pressed="'+(x.k===lk)+'">'+
+           esc(x.nm)+' <span class="num">'+kindCounts[x.k]+"</span></button>"; }).join("")+"</div>"+
+     '<p class="capt">'+esc(meta?meta.hint:"Lời gọi không rơi vào nhóm nào ở trên")+
+     '. Hiện '+Math.min(shown.length,40)+'/'+shown.length+' lời gọi gần nhất của nhóm này.</p>'+
+     '<table><thead><tr>'+
      "<th>Nhãn</th><th>Model</th><th class='n'>Lần thử</th><th class='n'>ms</th><th class='n'>Token vào</th>"+
      "<th class='n'>Token ra</th><th>Kết quả</th></tr></thead><tbody>"+
-     calls.slice(-40).reverse().map(function(c){
+     shown.slice(-40).reverse().map(function(c){
        return "<tr><td><code>"+esc(c.call_id)+"</code></td><td>"+esc(c.model)+"</td><td class='n'>"+(c.attempt||"")+"</td>"+
          "<td class='n'>"+fmt(c.latency_ms)+"</td><td class='n'>"+fmt(c.tokens_in)+"</td><td class='n'>"+fmt(c.tokens_out)+"</td>"+
-         "<td>"+(c.ok?'<span class="pill ok">OK</span>':'<span class="pill no">lỗi</span> <span class="capt">'+esc(c.error)+"</span>")+"</td></tr>"; }).join("")+
+         '<td><span class="pill '+(c.ok?"ok":"no")+'">'+(c.ok?"OK":esc(String(c.status||"lỗi")))+"</span></td></tr>"; }).join("")+
      "</tbody></table></div>";
+
   host.innerHTML=h;
 }
 
@@ -1920,13 +2077,13 @@ function liveOutHtml(){
   var h="", a=r.ai_call||{};
   h+='<dl class="kpis">'+
      kpi("Câu vào",String((r.input||[]).length),"","","")+
-     kpi("Cụm tìm được",String(r.clusters.length),"","",r.sparse?"báo SPARSE":"")+
+     kpi("Cụm tìm được",String(r.clusters.length),"","",r.sparse?"quá ít câu để gom":"")+
      kpi("Rải rác",String(r.scatter.turns),"","","")+
      kpi("Thời gian",((r.wall_ms||0)/1000).toFixed(1),"s","",a.called?a.n_calls+" lời gọi AI":"không gọi AI")+
      kpi("Token",fmt(a.tokens_in||0),"vào","",fmt(a.tokens_out||0)+" ra")+
      "</dl>";
 
-  if(r.sparse) h+='<div class="banner warn"><span class="bi">SPARSE</span><span>'+esc(r.sparse_reason)+"</span></div>";
+  if(r.sparse) h+='<div class="banner warn"><span class="bi">QUÁ ÍT CÂU</span><span>'+esc(r.sparse_reason)+"</span></div>";
 
   if(r.clusters.length){
     var maxT=Math.max.apply(null,r.clusters.map(function(c){return c.turns;}).concat([1]));
@@ -2000,15 +2157,22 @@ document.addEventListener("toggle", function(e){
 
 function renderAll(){ renderShell(); renderers[active](); }
 function renderAllAnimated(){ renderAll(); animate(); }
+/* Đổi bộ lọc thì thứ đổi thật chỉ là danh sách cụm. Phát lại hiệu ứng vào màn cho
+   cả panel + 19 ô chip là nói "mọi thứ vừa đổi" trong khi không phải, và bắt mắt
+   quét lại từ đầu mỗi lần chạm vào bộ lọc. Chỉ cho thanh mọc lại. */
+function renderAllQuiet(){ renderAll(); growBars(document.getElementById(panels[active])); }
 function setSort(v){ state.sort=v; lsSet("cp.sort",v); renderAllAnimated(); }
 
 document.addEventListener("click",function(e){
-  var t=e.target.closest ? e.target.closest("[data-tab],[data-open],[data-move],[data-filter],[data-answer],[data-lanswer],[data-evalkind],[data-goto]") : null;
+  var t=e.target.closest ? e.target.closest("[data-tab],[data-open],[data-move],[data-filter],[data-answer],[data-lanswer],[data-evalkind],[data-goto],[data-opendet],[data-logkind]") : null;
   if(!t) return;
   if(t.dataset.tab){ show(t.dataset.tab); return; }
   if(t.dataset.goto!=null){ state.open[t.dataset.goto]=1; show("cum"); return; }
-  if(t.dataset.filter){ state.filter=t.dataset.filter; lsSet("cp.filter",state.filter); renderAllAnimated(); return; }
+  if(t.dataset.opendet){ var dd=document.querySelector('[data-det="'+t.dataset.opendet+'"]');
+    if(dd){ dd.open=true; state.det[t.dataset.opendet]=1; dd.scrollIntoView({block:"start"}); } return; }
+  if(t.dataset.filter){ state.filter=t.dataset.filter; lsSet("cp.filter",state.filter); renderAllQuiet(); return; }
   if(t.dataset.evalkind){ state.evalKind=t.dataset.evalkind; lsSet("cp.evalkind",state.evalKind); renderAllAnimated(); return; }
+  if(t.dataset.logkind){ state.logKind=t.dataset.logkind; renderAll(); return; }
   if(t.dataset.open!=null){ var k=t.dataset.open;
     if(state.open[k]) delete state.open[k]; else state.open[k]=1; renderAll(); return; }
   if(t.dataset.move!=null){ var mv=movedSet(), id=t.dataset.move;
@@ -2060,6 +2224,12 @@ api("/api/health").then(function(h){ serverUp=true; if(h.thresholds) Object.assi
   .catch(function(){ serverUp=false; });
 state.sort=lsGet("cp.sort","turns");
 state.filter=lsGet("cp.filter","all");
+/* ?judge=1 — mở sẵn mọi tầng sâu. Người đi chấm không phải đi tìm bằng chứng qua
+   từng cái bấm, còn Lab Coach vẫn được mặc định gọn. */
+if(/[?&]judge=1/.test(location.search)){
+  ["eval.method","tong.proof","tong.rest","cum.b3","chips.filter","chips.gloss"]
+    .forEach(function(k){ state.det[k]=1; });
+}
 if(state.filter==="top"||state.filter==="scat") state.filter="all";   // bộ lọc cũ đã bỏ
 state.evalKind=lsGet("cp.evalkind","cluster");
 var qs=new URLSearchParams(location.search);
