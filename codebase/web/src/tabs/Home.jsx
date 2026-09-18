@@ -83,6 +83,15 @@ function useScrollLift(ref) {
   }, [ref]);
 }
 
+/* Phần trăm kiểu Việt: một chữ số thập phân, dấu phẩy, số tròn thì bỏ đuôi
+   ",0". Làm tròn 1 chữ số chứ không làm tròn về số nguyên — 22/24 là 91,7%,
+   ghi "92%" là nói quá lên một chút mà chẳng được gì. */
+const pct = (a, b) => {
+  if (!b) return "—";
+  const v = Math.round((a / b) * 1000) / 10;
+  return (Number.isInteger(v) ? String(v) : String(v).replace(".", ",")) + "%";
+};
+
 /* Ô bằng chứng. Con số là TEXT TĨNH — tuyệt đối không có hiệu ứng đếm lên: đã
    xảy ra thật chuyện hiệu ứng hiện 509 trong khi sự thật là 511. */
 function Evid({ big, children }) {
@@ -437,19 +446,26 @@ export default function Home({ sess, setSess, goTab }) {
                 cùng con số.
               </p>
             </div>
+            {/* Con số lớn là PHẦN TRĂM, nhưng phân số phải đi kèm ngay dưới và
+                không được bỏ: 87,5% của 8 case và 87,5% của 800 case là hai mức
+                tin cậy khác hẳn nhau, mà riêng phần trăm thì trông y hệt. */}
             <div className="mt-6 grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit,minmax(248px,1fr))" }}>
               {ev && (
-                <Evid big={ev.n_pass + "/" + ev.n_cases}>
-                  case đạt ở bộ đo <strong className="text-[color:var(--ink)]">gom cụm</strong> — lượt đo {ev.run}
+                <Evid big={pct(ev.n_pass, ev.n_cases)}>
+                  đạt ở bộ đo <strong className="text-[color:var(--ink)]">gom cụm</strong> —{" "}
+                  <b className="num">{ev.n_pass}/{ev.n_cases}</b> case, lượt đo {ev.run}
                 </Evid>
               )}
               {ea && (
-                <Evid big={ea.n_pass + "/" + ea.n_cases}>
-                  case đạt ở bộ đo <strong className="text-[color:var(--ink)]">soạn nội dung ôn</strong> — chỉ đo tính kỷ
-                  luật, không đo đúng-sai kiến thức
+                <Evid big={pct(ea.n_pass, ea.n_cases)}>
+                  đạt ở bộ đo <strong className="text-[color:var(--ink)]">soạn nội dung ôn</strong> —{" "}
+                  <b className="num">{ea.n_pass}/{ea.n_cases}</b> case. Chỉ đo tính kỷ luật, không đo
+                  đúng-sai kiến thức
                 </Evid>
               )}
-              <Evid big="11/11">ca kiểm ngược: output cố tình hỏng vẫn bị bộ đo bắt được</Evid>
+              <Evid big="100%">
+                ca kiểm ngược bị bắt — <b className="num">11/11</b> output cố tình hỏng đều không lọt qua bộ đo
+              </Evid>
             </div>
 
             {/* Case TRƯỢT nằm cùng tầng với case ĐẠT — không gập, không giấu. */}

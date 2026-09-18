@@ -14,6 +14,7 @@ import { D, TH, fmt, dmy, sessionsByDate, scatterCount } from "../lib/data";
 import { GroupedBars, StackedBar, Columns, TableView, Legend } from "../ui/Charts";
 import { useReveal, Kicker, Card, SectionTitle, Kpi, KpiGrid, Banner, Chip, Disclosure } from "../ui/Bits";
 import Timeline from "../ui/Timeline";
+import QuestionsDialog from "../ui/QuestionsDialog";
 
 /* ══════════════════════════════════════════════════════════════════════════
    TAB TỔNG QUAN — dựng lại renderTong() của bản HTML một file.
@@ -336,6 +337,22 @@ export default function Overview({ sess, setSess, goTab }) {
   const ps = s.per_student;
   const inCluster = all.reduce((a, c) => a + c.turns, 0);
 
+  /* Cụm đang mở trong cửa sổ câu hỏi gốc. null = đóng. */
+  const [peek, setPeek] = useState(null);
+
+  /* Ô "lượt" trong bảng là NÚT, không phải chữ: bấm vào ra câu học viên đã gõ.
+     Đây là chỗ nối con số với bằng chứng của nó — thứ mà cả sản phẩm dựa vào. */
+  const turnsCell = (c) => (
+    /* Phải tự gỡ style mặc định của <button>: preflight của Tailwind bị tắt nên
+       trình duyệt vẫn vẽ nền xám và viền, con số trong bảng thành một ô nút. */
+    <button type="button" onClick={() => setPeek(c)}
+      title={"Xem câu hỏi gốc của cụm: " + c.name}
+      className="num appearance-none bg-transparent border-0 p-0 font-inherit text-[13px] cursor-pointer
+                 underline decoration-dotted underline-offset-2 text-[color:var(--primary)] hover:decoration-solid">
+      {fmt(c.turns)}
+    </button>
+  );
+
   const goCluster = (c) => {
     try { sessionStorage.setItem("cp.goto", s.key + "#" + c._i); } catch { /* chế độ riêng tư */ }
     goTab("cum");
@@ -412,6 +429,15 @@ export default function Overview({ sess, setSess, goTab }) {
           <div className="mt-3">
             <Legend items={legend} />
             <GroupedBars rows={rowsOf(head)} max={MX} alt="Sáu cụm vấn đề lớn nhất theo số lượt và số người" />
+            {/* Bảng khớp ĐÚNG số thanh của biểu đồ ngay trên nó. Trước đây bảng
+                này liệt kê cả những cụm không có trong biểu đồ, nên hai thứ nằm
+                cạnh nhau mà đếm ra hai con số khác nhau. Phần còn lại có bảng
+                riêng, nằm cùng biểu đồ của nó trong cửa gập bên dưới. */}
+            <TableView
+              label={`Xem dạng bảng (${head.length} cụm trong biểu đồ trên)`}
+              cols={[{ t: "Cụm vấn đề" }, { t: "Lượt", n: 1 }, { t: "Người", n: 1 }, { t: "Cờ" }]}
+              rows={head.map((c) => [c.name, turnsCell(c), fmt(c.people),
+                [c.weak ? "cụm yếu" : "", c.skew ? "tín hiệu lệch" : ""].filter(Boolean).join(", ") || "—"])} />
           </div>
           {rest.length > 0 && (
             /* Mẫu số tính trên LƯỢT CỦA BUỔI, không trên riêng phần đã gom, và
@@ -421,14 +447,13 @@ export default function Overview({ sess, setSess, goTab }) {
               summary={`${rest.length} cụm nhỏ còn lại (${fmt(restTurns)} lượt · ${Math.round(restTurns / s.real_turns * 100)}% lượt của buổi) — cùng với ${fmt(scatter)} lượt rải rác, ${Math.round(outside / s.real_turns * 100)}% lượt của buổi không nằm trong ${head.length} thanh trên`}>
               <Legend items={legend} />
               <GroupedBars rows={rowsOf(rest)} max={MX} alt="Các cụm nhỏ còn lại, cùng thang với biểu đồ trên" />
+              <TableView
+                label={`Xem dạng bảng (${rest.length} cụm còn lại)`}
+                cols={[{ t: "Cụm vấn đề" }, { t: "Lượt", n: 1 }, { t: "Người", n: 1 }, { t: "Cờ" }]}
+                rows={rest.map((c) => [c.name, turnsCell(c), fmt(c.people),
+                  [c.weak ? "cụm yếu" : "", c.skew ? "tín hiệu lệch" : ""].filter(Boolean).join(", ") || "—"])} />
             </Disclosure>
           )}
-          {/* Bảng giữ ĐỦ mọi cụm — đây là nơi duy nhất còn đủ dòng sau khi
-              biểu đồ bị cắt còn sáu thanh. */}
-          <TableView
-            cols={[{ t: "Cụm vấn đề" }, { t: "Lượt", n: 1 }, { t: "Người", n: 1 }, { t: "Cờ" }]}
-            rows={cls.map((c) => [c.name, fmt(c.turns), fmt(c.people),
-              [c.weak ? "cụm yếu" : "", c.skew ? "tín hiệu lệch" : ""].filter(Boolean).join(", ") || "—"])} />
         </Card>
       ) : (
         <Banner kind="info" tag="LỌC">
@@ -487,6 +512,9 @@ export default function Overview({ sess, setSess, goTab }) {
           Đặt SAU phần bằng chứng vì nó trả lời câu khác: không phải "buổi này lớp
           kẹt đâu" mà "câu hỏi tới vào những ngày nào". */}
       <Timeline sess={sess} setSess={setSess} />
+
+      {/* Cửa sổ câu hỏi gốc — mở từ ô "lượt" trong các bảng ở trên. */}
+      <QuestionsDialog cluster={peek} onClose={() => setPeek(null)} />
     </>
   );
 }

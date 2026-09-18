@@ -41,6 +41,39 @@ def histogram(values, edges):
     return out
 
 
+def withhold_examples(s):
+    """Gỡ câu nguyên văn khỏi mọi cụm/nhóm dưới ngưỡng số học viên.
+
+    Vì sao phải làm ở ĐÂY nữa dù cluster.py đã chặn: các file session-*.json
+    trên đĩa được sinh bởi lần chạy TRƯỚC khi luật được sửa, và chúng vẫn kèm 3
+    câu nguyên văn cho cả những cụm chỉ có 1 học viên. Đây là cửa cuối cùng
+    trước khi dữ liệu vào giao diện, nên chặn ở đây thì không phụ thuộc vào việc
+    ai đã chạy lại gom cụm hay chưa.
+
+    Chỉ gỡ CHỮ. Số lượt, số người, mã lượt hỏi giữ nguyên — nếu không thì con số
+    trên màn hình sẽ lệch khỏi kết quả gom cụm thật.
+    """
+    n = 0
+    for c in (s.get("clusters") or []):
+        if c.get("people", 0) < config.MIN_STUDENTS_FOR_EXAMPLES and (c.get("examples") or []):
+            n += len(c["examples"])
+            c["examples"] = []
+        c["examples_withheld"] = c.get("people", 0) < config.MIN_STUDENTS_FOR_EXAMPLES
+    sc = s.get("scatter") or {}
+    # Nhóm rải rác: số học viên không có sẵn trong file, nên dùng chính cờ mà
+    # cluster.py ghi. Thiếu cờ (file cũ) thì suy từ số lượt — một nhóm rải rác
+    # dưới ngưỡng lượt thì không thể đủ ngưỡng người.
+    if sc.get("examples"):
+        few = sc.get("examples_withheld")
+        if few is None:
+            few = sc.get("turns", 0) < config.MIN_STUDENTS_FOR_EXAMPLES
+        if few:
+            n += len(sc["examples"])
+            sc["examples"] = []
+        sc["examples_withheld"] = bool(few)
+    return n
+
+
 def main():
     sessions = []
     turns_all = None
@@ -103,8 +136,12 @@ def main():
                     ("7–10", 7, 10), ("11–20", 11, 20), ("trên 20", 21, None),
                 ]),
             }
+        held = withhold_examples(s)
         sessions.append(s)
-        print("nạp %-26s %d cụm · %d lượt thực" % (key, len(s["clusters"]), s["real_turns"]))
+        print("nạp %-26s %d cụm · %d lượt thực%s"
+              % (key, len(s["clusters"]), s["real_turns"],
+                 ("  · gỡ %d câu nguyên văn dưới ngưỡng %d học viên"
+                  % (held, config.MIN_STUDENTS_FOR_EXAMPLES)) if held else ""))
 
     # Sắp theo SỐ lượt đo, không theo thứ tự chữ cái: "run10" phải sau "run9".
     def _run_no(pth):

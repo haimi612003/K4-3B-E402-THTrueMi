@@ -259,8 +259,23 @@ def _finalize(name, why, members, evidence, index):
         "weak": len(people) <= config.WEAK_MAX_PEOPLE,
         "skew": len(members) >= config.SKEW_MIN_TURNS and top_n / len(members) >= config.SKEW_RATIO,
         "skew_top_share": round(top_n / len(members), 2),
-        "examples": [{"turn_id": i, "q": index[i]["q"]} for i in ev[:3]],
+        # Câu NGUYÊN VĂN chỉ ra khỏi đây khi cụm đủ đông người. Câu hỏi của một
+        # hai học viên là thông tin nhận dạng được: đọc nội dung là đoán ra ai.
+        #
+        # Luật này trước đây CHỈ chạy ở nhánh buổi quá ít câu (_sparse_result),
+        # không chạy ở đường bình thường — nên mọi cụm 1–2 người vẫn kèm 3 câu
+        # nguyên văn, trong khi ngưỡng MIN_STUDENTS_FOR_EXAMPLES=3 vẫn được in
+        # ra màn hình như một luật đang có hiệu lực.
+        "examples_withheld": len(people) < config.MIN_STUDENTS_FOR_EXAMPLES,
+        "examples": ([] if len(people) < config.MIN_STUDENTS_FOR_EXAMPLES
+                     else [{"turn_id": i, "q": index[i]["q"]} for i in ev[:3]]),
     }
+
+
+def _few_students(turn_ids, index):
+    """True khi tập lượt hỏi này đến từ quá ít học viên để lộ câu nguyên văn."""
+    who = {index[i]["student"] for i in turn_ids if i in index}
+    return len(who) < config.MIN_STUDENTS_FOR_EXAMPLES
 
 
 def _merge_protos(protos, call_id, metas):
@@ -407,7 +422,11 @@ def cluster_session(turns, preset_count=0, lecture_label="buổi này", call_id=
             "turn_ids": scatter_ids,
             "turns": len(scatter_ids),
             "from_model": scatter_from_model,
-            "examples": [{"turn_id": i, "q": index[i]["q"]} for i in scatter_ids[:8]],
+            # Cùng một luật với cụm — nhóm rải rác không được miễn trừ chỉ vì
+            # nó là phần thừa.
+            "examples_withheld": _few_students(scatter_ids, index),
+            "examples": ([] if _few_students(scatter_ids, index)
+                         else [{"turn_id": i, "q": index[i]["q"]} for i in scatter_ids[:8]]),
         },
         "repairs": {
             "invented_ids": invented,
