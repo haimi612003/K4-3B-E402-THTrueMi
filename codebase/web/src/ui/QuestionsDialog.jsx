@@ -26,7 +26,11 @@ export default function QuestionsDialog({ cluster, onClose }) {
   const min = TH.min_students_for_examples ?? 3;
   const tooFew = !!c && (c.people || 0) < min;
   const withheld = tooFew || !!(c && c.examples_withheld);
-  const ex = withheld ? [] : (c && c.examples) || [];
+  /* questions = ĐỦ mọi lượt hỏi của cụm (build_data.py gắn vào). examples chỉ
+     có 3 câu — giữ làm đường lui cho data.js sinh bởi bản cũ. */
+  const all = withheld ? [] : (c && c.questions) || [];
+  const ex = all.length ? all : withheld ? [] : (c && c.examples) || [];
+  const partial = !all.length && ex.length > 0;
 
   return (
     /* container: BẮT BUỘC. MUI Dialog dựng qua portal, mặc định gắn vào
@@ -65,9 +69,16 @@ export default function QuestionsDialog({ cluster, onClose }) {
               </Banner>
             ) : (
               <>
-                {/* list-none: preflight của Tailwind bị tắt trong dự án này nên <ul> vẫn
-    giữ dấu đầu dòng mặc định của trình duyệt, nằm chỏng chơ ngoài thẻ. */}
-                <ul className="list-none p-0 m-0 space-y-2.5">
+                <p className="mb-2.5 text-[12.5px] text-[color:var(--ink-2)]">
+                  {partial
+                    ? <>Đang hiện <b className="num">{ex.length}</b> câu ví dụ (dữ liệu cũ chưa mang đủ câu — chạy lại <code>build_data.py</code> để có hết).</>
+                    : <>Đủ <b className="num">{ex.length}</b> câu, cuộn để xem hết.</>}
+                </p>
+                {/* Khung cuộn riêng: cụm lớn nhất có 51 câu, để tràn ra thì cửa
+                    sổ dài hơn màn hình và nút đóng trôi mất khỏi tầm mắt.
+                    list-none: preflight của Tailwind bị tắt trong dự án này nên
+                    <ul> vẫn giữ dấu đầu dòng mặc định của trình duyệt. */}
+                <ul className="list-none p-0 m-0 space-y-2.5 max-h-[58vh] overflow-y-auto pr-1">
                   {ex.map((e, i) => (
                     <li key={i} className="rounded-xl2 border border-[color:var(--line)] bg-[color:var(--surface-2)] px-3.5 py-2.5">
                       <p className="num text-[11px] text-[color:var(--muted)]">{e.turn_id}</p>
@@ -76,10 +87,12 @@ export default function QuestionsDialog({ cluster, onClose }) {
                   ))}
                 </ul>
                 <p className="mt-3 text-[12.5px] leading-relaxed text-[color:var(--muted)]">
-                  Đây là <strong>{ex.length} câu ví dụ</strong> trong tổng số{" "}
-                  <b className="num">{fmt(c.turns)}</b> lượt của cụm, không phải toàn bộ —{" "}
-                  <code>data.js</code> cố ý không mang nguyên văn mọi lượt hỏi vào giao diện. Mã lượt
-                  hỏi ở trên lần ngược được về chatlog gốc.
+                  {partial
+                    ? <>Đây là <strong>{ex.length} câu ví dụ</strong> trong tổng số{" "}
+                        <b className="num">{fmt(c.turns)}</b> lượt của cụm, không phải toàn bộ.</>
+                    : <><strong>Toàn bộ {ex.length} lượt hỏi</strong> của cụm, đúng thứ tự trong log.</>}{" "}
+                  Chữ lấy từ chatlog đã qua bước che thông tin cá nhân. Mã lượt hỏi ở trên lần ngược
+                  được về chatlog gốc.
                 </p>
               </>
             )}

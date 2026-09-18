@@ -41,6 +41,31 @@ def histogram(values, edges):
     return out
 
 
+def attach_questions(s, index):
+    """Gắn ĐỦ câu hỏi gốc của từng cụm vào dữ liệu giao diện.
+
+    Trước đây mỗi cụm chỉ mang 3 câu ví dụ, nên cửa sổ "câu hỏi gốc" cũng chỉ
+    hiện được 3 câu trong khi cụm có tới 30 lượt — người đọc không có cách nào
+    xem hết. Giờ mang đủ, cửa sổ tự cuộn.
+
+    Chữ lấy từ chatlog đã qua loader.redact(), tức là bản đã che thông tin cá
+    nhân — không phải body thô.
+
+    Tốn thêm ~47 KB cho data.js (209 -> 256 KB). Đổi lại, mọi con số trên màn
+    hình lần ngược được về đúng từng câu học viên đã gõ, ngay tại chỗ.
+    """
+    n = 0
+    for c in (s.get("clusters") or []):
+        qs = []
+        for tid in (c.get("turn_ids") or []):
+            t = index.get(tid)
+            if t:
+                qs.append({"turn_id": tid, "q": t["q"]})
+        c["questions"] = qs
+        n += len(qs)
+    return n
+
+
 def withhold_examples(s):
     """Gỡ câu nguyên văn khỏi mọi cụm/nhóm dưới ngưỡng số học viên.
 
@@ -55,10 +80,14 @@ def withhold_examples(s):
     """
     n = 0
     for c in (s.get("clusters") or []):
-        if c.get("people", 0) < config.MIN_STUDENTS_FOR_EXAMPLES and (c.get("examples") or []):
-            n += len(c["examples"])
+        few = c.get("people", 0) < config.MIN_STUDENTS_FOR_EXAMPLES
+        if few:
+            # Xoá CẢ HAI. Gắn đủ câu hỏi mà quên chỗ này là rò to hơn hẳn lúc
+            # trước: không còn 3 câu mà là toàn bộ lượt hỏi của một học viên.
+            n += len(c.get("examples") or []) + len(c.get("questions") or [])
             c["examples"] = []
-        c["examples_withheld"] = c.get("people", 0) < config.MIN_STUDENTS_FOR_EXAMPLES
+            c["questions"] = []
+        c["examples_withheld"] = few
     sc = s.get("scatter") or {}
     # Nhóm rải rác: số học viên không có sẵn trong file, nên dùng chính cờ mà
     # cluster.py ghi. Thiếu cờ (file cũ) thì suy từ số lượt — một nhóm rải rác
@@ -81,6 +110,8 @@ def main():
         turns_all = loader.load_turns(config.DEFAULT_CHATLOG, cohort=None)
     except Exception as e:
         print("Không đọc được chatlog (%s) — bỏ qua phần phân bố." % e)
+
+    turn_index = {t["turn_id"]: t for t in (turns_all or [])}
 
     for path in sorted(glob.glob(os.path.join(HERE, "data", "session-*.json"))):
         with open(path, encoding="utf-8") as f:
@@ -136,6 +167,7 @@ def main():
                     ("7–10", 7, 10), ("11–20", 11, 20), ("trên 20", 21, None),
                 ]),
             }
+        attach_questions(s, turn_index)
         held = withhold_examples(s)
         sessions.append(s)
         print("nạp %-26s %d cụm · %d lượt thực%s"

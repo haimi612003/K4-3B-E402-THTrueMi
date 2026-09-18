@@ -177,6 +177,12 @@ Nó gom kết quả gom cụm + kết quả eval + nhật ký gọi model thành
 giao diện (`codebase/ui/data.js` và `codebase/web/public/data.js`). Cả hai đọc cùng một
 `window.CP_DATA` nên không có hai định dạng dữ liệu phải đồng bộ bằng tay.
 
+Nó cũng gắn **đủ câu hỏi gốc** của từng cụm vào `data.js` (trường `questions`), để cửa sổ “câu hỏi
+gốc” trong tab Tổng quan hiện được hết chứ không chỉ 3 câu ví dụ. Chữ lấy từ chatlog đã qua
+`loader.redact()`. Cụm dưới ngưỡng `MIN_STUDENTS_FOR_EXAMPLES` bị **gỡ sạch cả câu ví dụ lẫn câu
+đầy đủ** — câu hỏi của một hai học viên là thông tin nhận dạng được. Việc này làm `data.js` từ
+209 KB lên 272 KB.
+
 Nó cũng dựng **chuỗi theo ngày**: `per_day` cho từng buổi và `timeline` gộp cả lớp — nguồn cho
 biểu đồ đường và ba bộ lọc ở mục 4e. Một ngày có thể chứa câu hỏi của nhiều buổi (học viên hỏi về
 buổi cũ sau khi buổi mới đã dạy), nên `timeline` **cộng dồn** chứ không ghi đè, và ghi luôn danh
