@@ -85,7 +85,12 @@ export default function App() {
     // ?sample=... là deep-link demo cho tab Thử trực tiếp — phải mở đúng tab đó,
     // nếu không tab Live không bao giờ được mount và tham số rơi vào hư không.
     if (qs().get("sample")) return "live";
-    return lsGet("cp.tab", "home");
+    /* PHẢI kiểm giá trị lưu trong localStorage, không dùng thẳng. Bản 3 trang
+       từng ghi cp.tab="vao"/"xuly"/"ra" vào máy người dùng; quay về bản này mà
+       nhận thẳng thì tab không khớp cái nào — không trang nào được tô sáng và
+       hash trên thanh địa chỉ trỏ vào một tab không tồn tại. */
+    const saved = lsGet("cp.tab", "home");
+    return TABS.some((t) => t.k === saved) ? saved : "home";
   });
   /* Mặc định mở buổi gần nhất CÓ cụm, không phải phần tử đầu mảng: thứ tự mảng
      là thứ tự tên file, không phải thứ tự thời gian. */
