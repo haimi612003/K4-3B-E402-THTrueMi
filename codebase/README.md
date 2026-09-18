@@ -25,8 +25,25 @@ module chỉ dùng thư viện chuẩn của Python 3.8+.
 | `class_pulse/gemini.py` | **Lời gọi Gemini thật** + ghi vết + thử lại + rơi sang model dự phòng |
 | `class_pulse/cluster.py` | **Mắt xích quyết định trung tâm** — gom cụm |
 | `run_cluster.py` | CLI: chạy một buổi, in ra màn hình, ghi JSON |
+| `serve.py` | Máy chủ cục bộ cho tab "Thử trực tiếp" — giữ khoá API ở phía server |
 | `ui/build_data.py` | Gom kết quả + kết quả eval + nhật ký thành `ui/data.js` |
-| `ui/index.html` | Dashboard |
+| `ui/index.html` | Dashboard 5 tab |
+
+## Tab "Thử trực tiếp"
+
+`python codebase/serve.py` bật một máy chủ trên `127.0.0.1:8765` (chỉ máy bạn, không ra mạng ngoài)
+và mở dashboard. Ở tab đó người dùng nhập câu hỏi — chọn bộ mẫu lấy từ chatlog thật, nhờ AI sinh
+theo chủ đề, hoặc tự gõ — rồi bấm một nút để **gọi Gemini thật** và xem cụm trả về trong 1–3 giây.
+
+Vì sao phải có máy chủ chứ không gọi thẳng từ trình duyệt: khoá API sẽ nằm trong mã nguồn trang,
+ai mở DevTools cũng lấy được. Máy chủ giữ khoá, trình duyệt chỉ gửi câu hỏi và nhận cụm.
+
+| Đầu API | Việc |
+|---|---|
+| `GET /api/health` | có khoá chưa, model nào, đọc được chatlog không, các ngưỡng |
+| `GET /api/samples` | năm bộ câu hỏi thật, mỗi bộ lộ một hành vi (cụm lớn, tín hiệu lệch, injection, câu hành chính, SPARSE) |
+| `POST /api/generate` | nhờ model sinh bộ câu hỏi giả lập theo chủ đề — dùng khi máy không có data pack |
+| `POST /api/cluster` | gom cụm thật, trả cụm + cờ + số đo + phần đã phải sửa chữa |
 
 ## Bốn chủ đích thiết kế
 

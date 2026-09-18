@@ -21,6 +21,12 @@ PART_RE = re.compile(
     r'^\s*\((?:Đang học phần|Currently on the part)\s*[“"](.*?)[”"]\s*'
     r'(?:của buổi này|of this lesson)?\)\s*', re.S)
 
+# Dạng tiền tố thứ hai, chiếm 70% lượt của khoá K3 (K4 không có câu nào).
+# Không bóc nó thì cả đoạn slide được bôi đen lọt vào câu hỏi, và model sẽ gom cụm
+# theo chữ của slide chứ không theo chữ học viên viết.
+PAGE_RE = re.compile(
+    r'^\s*\(Trang\s*(\d+)(?:,\s*đoạn được chọn:.*?)?\)\s*', re.S)
+
 
 # Lưới an toàn ẩn danh. Data pack của khoá ĐÃ được ẩn danh sẵn (học viên -> S####,
 # tên người -> [HV], email/điện thoại/MSSV -> nhãn). Lớp này chỉ bắt phần sót lại,
@@ -45,10 +51,19 @@ def _truthy(v):
 
 
 def split_context(question):
-    """Tách (tên phần, thân câu hỏi). Không có tiền tố thì phần = None."""
+    """
+    Tách (ngữ cảnh, thân câu hỏi). Ngữ cảnh là tên phần bài, hoặc số trang.
+
+    Hai dạng tiền tố có thật trong pack:
+      (Đang học phần "...")             — 99,6% lượt của khoá K4
+      (Trang N, đoạn được chọn: "...")  — 70% lượt của khoá K3
+    """
     m = PART_RE.match(question)
     if m:
         return m.group(1).strip(), re.sub(r"\s+", " ", question[m.end():]).strip()
+    m = PAGE_RE.match(question)
+    if m:
+        return "tr. " + m.group(1), re.sub(r"\s+", " ", question[m.end():]).strip()
     return None, re.sub(r"\s+", " ", question).strip()
 
 

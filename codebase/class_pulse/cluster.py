@@ -166,7 +166,8 @@ def _resolve(raw_id, lookup):
     return lookup.get(s)
 
 
-def _sparse_result(turns, preset_count, reason, lecture_label, meta=None, by_model=False):
+def _sparse_result(turns, preset_count, reason, lecture_label, meta=None, by_model=False,
+                   repairs=None):
     return {
         "sparse": True,
         "sparse_reason": reason,
@@ -186,7 +187,8 @@ def _sparse_result(turns, preset_count, reason, lecture_label, meta=None, by_mod
             "examples": ([] if len({t["student"] for t in turns}) < config.MIN_STUDENTS_FOR_EXAMPLES
                          else [{"turn_id": t["turn_id"], "q": t["q"]} for t in turns[:8]]),
         },
-        "repairs": {"invented_ids": [], "duplicates": [], "unplaced_added_to_scatter": []},
+        "repairs": repairs or {"invented_ids": [], "duplicates": [],
+                               "unplaced_added_to_scatter": []},
         "ai_call": meta or {"called": False, "reason": "dưới ngưỡng SPARSE_MIN_TURNS"},
     }
 
@@ -233,7 +235,11 @@ def _finalize(name, why, members, evidence, index):
     counts = collections.Counter(m["student"] for m in members)
     top_n = counts.most_common(1)[0][1]
     ids = {m["turn_id"] for m in members}
-    ev = [t for t in evidence if t in ids] or [m["turn_id"] for m in members[:3]]
+    # Spec hứa "mỗi cụm kèm >= 2 câu nguyên văn có ID". Bù cho đủ thay vì phó thác
+    # model tự tuân thủ: model chỉ ra được mấy câu thì lấy, thiếu thì lấy thêm từ
+    # chính thành viên cụm.
+    ev = [t for t in evidence if t in ids]
+    ev += [m["turn_id"] for m in members if m["turn_id"] not in ev][:max(0, 3 - len(ev))]
     # people_key: chỉ số người TRONG NỘI BỘ cụm, song song với turn_ids.
     # Cho phép giao diện tính lại số người / cờ lệch sau khi Lab Coach kéo câu ra
     # khỏi cụm, mà KHÔNG lộ mã học viên — chỉ nói "hai câu này cùng một người".
@@ -338,10 +344,15 @@ def cluster_session(turns, preset_count=0, lecture_label="buổi này", call_id=
         if raw.get("sparse"):
             # Model tự nhận không tìm ra cụm. Một phần thưa không làm cả buổi thưa.
             if len(chunks) == 1:
+                # Vẫn bóc phản hồi thô để bắt mã bịa / xếp trùng. Bỏ qua bước này thì
+                # no_invented_ids thành phép đo rỗng ở mọi case báo SPARSE.
+                _collect(raw, index, lookup, set(), invented, duplicates)
                 return _sparse_result(
                     turns, preset_count,
                     raw.get("sparse_reason") or "Model không tìm được cụm vấn đề đáng tin trong chu kỳ này.",
-                    lecture_label, _ai_summary(metas, call_id, len(chunks)), by_model=True)
+                    lecture_label, _ai_summary(metas, call_id, len(chunks)), by_model=True,
+                    repairs={"invented_ids": invented, "duplicates": duplicates,
+                             "unplaced_added_to_scatter": []})
             for t in chunk:
                 if t["turn_id"] not in seen:
                     seen.add(t["turn_id"])
@@ -418,6 +429,8 @@ def _ai_summary(metas, call_id, n_chunks):
         # Trường này nói đúng điều đó thay vì chỉ lấy model của lời gọi đầu tiên.
         "model": used[0] if len(used) == 1 else ", ".join(used),
         "models_used": used,
+        # Mỗi lời gọi rơi sang model dự phòng một cách độc lập, nên phải ghi từng cái.
+        "model_per_call": [m["model"] for m in metas],
         "fell_back": any(m.get("fell_back") for m in metas),
         "n_calls": len(metas),
         "n_chunks": n_chunks,

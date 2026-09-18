@@ -89,8 +89,17 @@ def check(result, assertions, inputs):
     for pair in assertions.get("must_not_group_together", []):
         a, b = pair[0], pair[1]
         ia, ib = _cluster_of(result, a), _cluster_of(result, b)
-        ok = not (ia is not None and ia == ib)
-        add("must_not_group_together", ok, "%s->cụm %s, %s->cụm %s" % (a, ia, b, ib))
+        # "Tách" phải là tách thành hai cụm, KHÔNG phải vứt một đầu vào nhóm rải rác.
+        # Nếu chấp nhận vế rỗng thì một model vứt hết vào rải rác sẽ ăn trọn điểm
+        # của lớp ④ mà không gom gì cả.
+        ok = ia is not None and ib is not None and ia != ib
+        if ia is None or ib is None:
+            why = "%s->%s, %s->%s (một vế rơi khỏi mọi cụm nên không tính là tách)" % (
+                a, "rải rác" if ia is None else "cụm %d" % ia,
+                b, "rải rác" if ib is None else "cụm %d" % ib)
+        else:
+            why = "%s->cụm %s, %s->cụm %s" % (a, ia, b, ib)
+        add("must_not_group_together", ok, "" if ok else why)
 
     # Chấm trên phần MODEL TỰ KHAI là rải rác. Nếu model bỏ quên câu đó và code dọn hộ
     # vào nhóm rải rác thì KHÔNG tính là model làm đúng — nếu không, một model lười
@@ -193,6 +202,10 @@ def main():
     with open(a.golden, encoding="utf-8") as f:
         golden = json.load(f)
     cases = golden["cases"]
+    ids = [c["id"] for c in cases]
+    if len(set(ids)) != len(ids):
+        dup = sorted({i for i in ids if ids.count(i) > 1})
+        raise SystemExit("golden_set.json có mã case trùng: %s — mỗi case phải một mã." % dup)
     if a.only:
         cases = [c for c in cases if c["id"] in set(a.only)]
 
