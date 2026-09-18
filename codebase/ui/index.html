@@ -243,6 +243,53 @@ input[type=text]{font:inherit;font-size:13.5px;color:var(--ink);background:var(-
 @media (prefers-reduced-motion:reduce){.spin{animation-duration:2.4s}}
 .kbd{font-family:var(--mono);font-size:11.5px;background:var(--surface-2);border:1px solid var(--line);border-radius:5px;padding:1px 6px;white-space:nowrap}
 
+/* ── trang chủ ─────────────────────────────────────── */
+.land{max-width:960px;margin:0 auto;padding:44px 0 20px}
+.land .kicker{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--primary)}
+.land h1{font-size:clamp(32px,4.6vw,52px);line-height:1.08;letter-spacing:-.035em;margin-top:14px;max-width:16ch}
+.land .lede{font-size:17px;line-height:1.62;color:var(--ink-2);max-width:62ch;margin-top:18px}
+.land .cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
+.evid{display:grid;gap:1px;background:var(--line-2);border:1px solid var(--line);border-radius:12px;overflow:hidden;
+  grid-template-columns:repeat(auto-fit,minmax(210px,1fr));margin-top:38px}
+.evid div{background:var(--panel);padding:16px 18px}
+.evid b{display:block;font-size:26px;font-weight:600;letter-spacing:-.025em}
+.evid span{display:block;font-size:12.5px;color:var(--muted);margin-top:4px;line-height:1.45}
+.sec{max-width:960px;margin:0 auto;padding:46px 0 0}
+.sec > .kicker{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.sec > h2{font-size:26px;letter-spacing:-.025em;margin-top:10px}
+.sec > .sub{color:var(--ink-2);margin-top:8px;max-width:60ch}
+.steps3{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));margin-top:24px}
+.step3{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;box-shadow:var(--sh-1);
+  transition:box-shadow .26s var(--ease),transform .26s var(--ease)}
+.step3:hover{box-shadow:var(--sh-2);transform:translateY(-2px)}
+.step3 .no{width:27px;height:27px;border-radius:8px;background:color-mix(in srgb,var(--primary) 13%,transparent);
+  color:var(--primary);display:grid;place-items:center;font-size:13px;font-weight:700}
+.step3 h3{font-size:15.5px;margin-top:13px}
+.step3 p{font-size:13.5px;color:var(--ink-2);margin-top:7px;line-height:1.55}
+.prins{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));margin-top:24px}
+.prin{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;box-shadow:var(--sh-1);
+  border-left:3px solid var(--primary);transition:box-shadow .26s var(--ease),transform .26s var(--ease)}
+.prin:hover{box-shadow:var(--sh-2);transform:translateY(-2px)}
+.prin h3{font-size:15.5px;letter-spacing:-.01em}
+.prin p{font-size:13.5px;color:var(--ink-2);margin-top:8px;line-height:1.58}
+.landfoot{max-width:960px;margin:52px auto 0;padding-top:20px;border-top:1px solid var(--line);
+  display:flex;gap:14px;justify-content:space-between;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
+
+/* ── màn đăng nhập ─────────────────────────────────── */
+#gate{position:fixed;inset:0;z-index:200;display:grid;place-items:center;padding:20px;
+  background:radial-gradient(900px 480px at 50% -10%, color-mix(in srgb,var(--primary) 16%,var(--page)), var(--page))}
+#gate .box{width:100%;max-width:396px;background:var(--panel);border:1px solid var(--line);border-radius:14px;
+  padding:28px;box-shadow:var(--sh-3);animation:riseIn .42s var(--ease-out) both}
+#gate .logo{width:38px;height:38px;border-radius:11px;background:var(--topbar);color:#fff;display:grid;
+  place-items:center;font-size:18px}
+#gate h2{font-size:20px;margin-top:16px;letter-spacing:-.02em}
+#gate p{font-size:13.5px;color:var(--ink-2);margin-top:8px;line-height:1.55}
+#gate form{margin-top:18px;display:flex;flex-direction:column;gap:10px}
+#gate .err{font-size:13px;color:var(--critical-ink);background:color-mix(in srgb,var(--critical) 10%,transparent);
+  border:1px solid color-mix(in srgb,var(--critical) 30%,transparent);border-radius:8px;padding:9px 11px}
+#gate .fine{font-size:11.5px;color:var(--muted);margin-top:16px;padding-top:14px;border-top:1px solid var(--line-2);line-height:1.6}
+.land,.sec{animation:riseIn .5s var(--ease-out) both}
+
 /* ══════════════════════════════════════════════════════════════════
    LỚP CHUYỂN ĐỘNG & TINH CHỈNH
    Nguyên tắc: chuyển động để giải thích thứ tự và quan hệ, không để trang trí.
@@ -364,12 +411,13 @@ svg text{transition:opacity .4s var(--ease)}
 </head>
 <body>
 <div id="tip" role="status" aria-live="polite"></div>
+<div id="gate" hidden></div>
 
 <div class="app">
   <header class="topbar">
     <div class="brand"><span class="logo">◎</span> Class Pulse</div>
     <nav id="topnav" aria-label="Khu vực chính"></nav>
-    <div class="right"><button id="themebtn" type="button">Nền tối</button></div>
+    <div class="right"><button id="logoutbtn" type="button" hidden>Đăng xuất</button><button id="themebtn" type="button">Nền tối</button></div>
   </header>
 
   <main class="main" id="main">
@@ -379,7 +427,8 @@ svg text{transition:opacity .4s var(--ease)}
     <div class="status" id="status"></div>
     <div class="chips" id="chips" hidden></div>
     <div class="wrap">
-      <section id="p-tong" role="region" aria-label="Tổng quan"></section>
+      <section id="p-home" role="region" aria-label="Trang chủ"></section>
+      <section id="p-tong" role="region" aria-label="Tổng quan" hidden></section>
       <section id="p-cum" role="region" aria-label="Cụm vấn đề" hidden></section>
       <section id="p-eval" role="region" aria-label="Chất lượng" hidden></section>
       <section id="p-log" role="region" aria-label="Nhật ký AI" hidden></section>
@@ -400,6 +449,7 @@ var fmt = function(n){ return (n==null?"—":String(n).replace(/\B(?=(\d{3})+(?!
 var esc = function(s){ return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];}); };
 
 var TABS = [
+  {k:"home", label:"Trang chủ",     rail:"Trang chủ",  ic:'<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>'},
   {k:"tong", label:"Tổng quan",     rail:"Tổng quan",  ic:'<path d="M3 13h6V3H3zM13 21h6v-8h-6zM13 9h6V3h-6zM3 21h6v-6H3z"/>'},
   {k:"cum",  label:"Cụm vấn đề",    rail:"Cụm",        ic:'<circle cx="7" cy="7" r="3.2"/><circle cx="17" cy="9" r="2.4"/><circle cx="10" cy="17" r="2.8"/><path d="M9.6 8.4 14.8 9M8.6 9.8 9.4 14.4"/>'},
   {k:"eval", label:"Chất lượng",    rail:"Chất lượng", ic:'<path d="M20 6 9 17l-5-5"/>'},
@@ -640,6 +690,7 @@ function renderShell(){
       '><svg viewBox="0 0 24 24" aria-hidden="true">'+t.ic+"</svg>"+esc(t.label)+"</button>"; }).join("");
   var s=cur(), tab=TABS.filter(function(t){return t.k===active;})[0];
   var needsSess=(active==="tong"||active==="cum");
+  document.getElementById("crumbs").hidden = (active==="home");
   document.getElementById("crumbs").innerHTML =
     '<b>Khoá K4 · Lớp 3B</b><span class="sep">›</span><span>Bản đồ vấn đề</span><span class="sep">›</span><b>'+
     esc(tab.label)+'</b><span class="acts">'+
@@ -720,6 +771,125 @@ function emptyState(){
   return '<div class="banner warn"><span class="bi">TRỐNG</span><span>Chưa có dữ liệu buổi học. Chạy<br>'+
     '<span class="kbd">python codebase/run_cluster.py --course K4P1 --lecture D04 --out codebase/ui/data/session-K4P1-D04.json</span><br>'+
     'rồi <span class="kbd">python codebase/ui/build_data.py</span>. Hoặc sang tab <a href="#live">Thử trực tiếp</a> để gom cụm ngay.</span></div>';
+}
+
+/* ══════════ TRANG CHỦ ══════════ */
+var STEPS3=[
+  ["Nạp log một buổi",
+   "Câu mẫu bấm sẵn bị loại trước khi đếm bất cứ thứ gì. Để lẫn vào là ra cụm giả — buổi nào cũng có người bấm nút “giải thích đoạn này” hàng chục lần."],
+  ["Gom thành cụm vấn đề",
+   "Mỗi cụm kèm số lượt, số người, phần bài, và câu hỏi nguyên văn có mã trỏ ngược về dòng log. Không viết lại, không tóm tắt."],
+  ["Chọn chỗ để ôn",
+   "Tick cụm rồi để AI soạn vật liệu giảng lại, hoặc xuất một bản hỏi đáp cho học viên khoá sau tra cứu."]
+];
+var PRINS=[
+  ["Mọi con số đếm tay kiểm lại được.",
+   "Model chỉ quyết một việc: câu nào thuộc cụm nào. Số lượt, số người, cờ cụm yếu, cờ tín hiệu lệch đều do code tính lại từ chính danh sách thành viên cụm."],
+  ["Model không bao giờ thấy mã học viên.",
+   "Prompt gửi đi chỉ có số thứ tự và câu hỏi. “Không lộ danh tính” vì thế là bảo đảm bằng cấu trúc, không phải một lời dặn model có thể quên."],
+  ["Không chắc thì nói không chắc.",
+   "Dưới sáu lượt hỏi thật, hệ thống báo SPARSE và không gọi AI. Thà không trả lời còn hơn nặn ra một danh sách trông đáng tin."],
+  ["Thà tách nhỏ dư còn hơn gộp nhầm.",
+   "Hai chỗ kẹt dùng chung một từ khoá vẫn là hai vấn đề. Tách dư thì giảng viên nhìn phát biết; gộp nhầm thì cả lớp mất một buổi mà không ai phát hiện."],
+  ["Sửa chữa được ghi lại, không giấu.",
+   "Model bịa mã, bỏ quên câu, xếp một câu vào hai cụm — đều bị sửa và ghi vào báo cáo. Số case phải sửa là một cột trong bảng kết quả đo."],
+  ["Giảng viên quyết định cuối cùng.",
+   "Hệ thống đưa vật liệu, không khuyến nghị. Thứ duy nhất đi tới học viên phải qua ba cửa duyệt, và không có nút đăng thẳng."]
+];
+
+function renderHome(){
+  var host=document.getElementById("p-home");
+  var ev=D.eval&&D.eval.summary, ea=D.eval_answer&&D.eval_answer.summary;
+  var s=D.sessions&&D.sessions[0];
+  var h="";
+
+  h+='<div class="land"><p class="kicker">VLearn · Bản đồ vấn đề của lớp</p>'+
+     "<h1>Hàng trăm câu hỏi. Vài vấn đề.</h1>"+
+     '<p class="lede">Sau mỗi buổi học, câu hỏi của lớp nằm rải rác trong log — hàng trăm dòng, không nhóm, không đếm. '+
+     'Class Pulse gom chúng lại thành những <strong>cụm vấn đề có số lượng và câu nguyên văn</strong>, '+
+     'để giảng viên biết buổi sau nên ôn lại chỗ nào thay vì đoán.</p>'+
+     '<div class="cta"><button class="btn" type="button" data-tab="tong">Mở bảng điều khiển →</button>'+
+     '<button class="btn ghost" type="button" data-go="how">Xem cách hoạt động</button>'+
+     '<button class="btn ghost" type="button" data-tab="live">⚡ Thử ngay với AI thật</button></div>'+
+     '<div class="evid">'+
+     '<div><b>92,6%</b><span>câu hỏi thực của khoá K4 là chuỗi chỉ xuất hiện <strong>đúng một lần</strong> — gom bằng trùng khớp văn bản là vô dụng</span></div>'+
+     '<div><b>36/127</b><span>học viên của một buổi cùng kẹt ở một chỗ, hỏi bằng 50 cách diễn đạt khác nhau</span></div>'+
+     '<div><b>'+(s?fmt(s.real_turns):"511")+'</b><span>lượt hỏi thật một buổi, tương đương 20 trang A4 nếu đọc tay</span></div>'+
+     "</div></div>";
+
+  h+='<div class="sec" id="how"><p class="kicker">Cách hoạt động</p>'+
+     "<h2>Ba bước, từ log thô tới quyết định dạy.</h2>"+
+     '<div class="steps3">'+STEPS3.map(function(x,i){
+       return '<div class="step3"><div class="no">'+(i+1)+"</div><h3>"+esc(x[0])+"</h3><p>"+esc(x[1])+"</p></div>";
+     }).join("")+"</div></div>";
+
+  h+='<div class="sec"><p class="kicker">Nguyên tắc thiết kế</p>'+
+     "<h2>Sáu điều hệ thống này không đánh đổi.</h2>"+
+     '<p class="sub">Sản phẩm đọc câu hỏi của người học và đưa kết luận cho người dạy. Sai một lần là cả lớp mất một buổi, '+
+     "nên mỗi nguyên tắc dưới đây đều có một cơ chế trong code đỡ nó, không chỉ là lời hứa.</p>"+
+     '<div class="prins">'+PRINS.map(function(x){
+       return '<div class="prin"><h3>'+esc(x[0])+"</h3><p>"+esc(x[1])+"</p></div>";
+     }).join("")+"</div></div>";
+
+  if(ev||ea){
+    h+='<div class="sec"><p class="kicker">Đo được</p>'+
+       "<h2>Nói có sách.</h2>"+
+       '<p class="sub">Hai quyết định AI, hai bộ kiểm thử riêng, chấm bằng assertion máy kiểm được — '+
+       "hai người chạy lại đều ra cùng con số.</p>"+
+       '<div class="evid">'+
+       (ev?'<div><b>'+ev.n_pass+"/"+ev.n_cases+'</b><span>case đạt ở bộ đo <strong>gom cụm</strong> — lượt đo '+esc(ev.run)+"</span></div>":"")+
+       (ea?'<div><b>'+ea.n_pass+"/"+ea.n_cases+'</b><span>case đạt ở bộ đo <strong>soạn nội dung ôn</strong> — chỉ đo tính kỷ luật, không đo đúng-sai kiến thức</span></div>':"")+
+       '<div><b>11/11</b><span>ca kiểm ngược: output cố tình hỏng vẫn bị bộ đo bắt được</span></div>'+
+       '</div><div class="cta"><button class="btn ghost" type="button" data-tab="eval">Xem chi tiết kết quả đo →</button></div></div>';
+  }
+
+  h+='<div class="landfoot"><span>Nhóm THTrueMi · Lớp 3B · E402 · VinUni AI20k</span>'+
+     "<span>Số liệu trên trang này lấy từ chatlog VLearn khoá K4 đã ẩn danh.</span></div>";
+  host.innerHTML=h;
+
+  var g=host.querySelector("[data-go]");
+  if(g) g.addEventListener("click",function(){
+    var el2=document.getElementById("how");
+    if(el2) el2.scrollIntoView({behavior:MOTION_OK?"smooth":"auto",block:"start"});
+  });
+}
+
+/* ══════════ ĐĂNG NHẬP ══════════ */
+function showGate(err){
+  var g=document.getElementById("gate");
+  g.hidden=false;
+  document.querySelector(".app").style.display="none";
+  g.innerHTML='<div class="box"><div class="logo">◎</div>'+
+    "<h2>Class Pulse</h2>"+
+    "<p>Bảng điều khiển này đọc câu hỏi thật của học viên. Dùng mã nhóm đã cấp cho bạn.</p>"+
+    (err?'<div class="err" style="margin-top:14px">'+esc(err)+"</div>":"")+
+    '<form id="gform"><input type="password" id="gpass" placeholder="Mã truy cập" autocomplete="current-password" autofocus>'+
+    '<button class="btn" type="submit" id="gbtn">Đăng nhập</button></form>'+
+    '<p class="fine">Mã đặt ở <code>CLASS_PULSE_PASSCODE</code> trong file <code>.env</code> của máy chủ. '+
+    "Đăng nhập chặn người khác trên cùng máy hoặc cùng mạng mở cổng này; nó không thay được tài khoản thật "+
+    "khi đem sản phẩm lên máy chủ chung.</p></div>";
+  var f=document.getElementById("gform");
+  f.addEventListener("submit",function(e){
+    e.preventDefault();
+    var b=document.getElementById("gbtn"), v=document.getElementById("gpass").value;
+    b.disabled=true; b.innerHTML='<span class="spin"></span> Đang kiểm…';
+    fetch("/api/login",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({passcode:v})})
+      .then(function(r){ return r.json().then(function(j){ if(!r.ok) throw new Error(j.error||"Lỗi"); return j; }); })
+      .then(function(){ location.reload(); })
+      .catch(function(er){ showGate(String(er.message||er)); });
+  });
+}
+
+function bootAuth(){
+  // Mở bằng file:// thì không có máy chủ nên không có cổng đăng nhập —
+  // dữ liệu lúc đó nằm sẵn trên ổ đĩa của chính người mở.
+  return fetch("/api/session").then(function(r){ return r.json(); })
+    .then(function(j){
+      if(j.need_passcode && !j.authed){ showGate(null); return false; }
+      return true;
+    })
+    .catch(function(){ return true; });
 }
 
 /* ══════════ TỔNG QUAN ══════════ */
@@ -973,51 +1143,63 @@ function faqHtml(){
   });
 
   var n=faq.items.filter(function(x){return x.on;}).length;
-  h+='<div class="faqfoot"><button class="btn go" type="button" id="faqdl"'+(n?"":" disabled")+'>⭳ Tải file .md ('+n+' mục)</button>'+
+  h+='<div class="faqfoot"><button class="btn go" type="button" id="faqdl"'+(n?"":" disabled")+'>⭳ Tải file Word (.doc) — '+n+' mục</button>'+
      '<button class="btn ghost" type="button" id="faqclose">Đóng</button>'+
      '<span class="capt">File tải về máy bạn. Không có nút đăng thẳng lên VLearn — người đăng là bạn.</span></div>';
   return h+"</div>";
 }
 
-function faqMarkdown(){
+function faqDoc(){
+  // Word mở được HTML mang đuôi .doc — cách này giữ được tiêu đề, in đậm, danh sách
+  // mà không cần thư viện ngoài. Có BOM UTF-8 để Word đọc đúng tiếng Việt.
   var s=cur(), on=faq.items.filter(function(x){return x.on && x.d && x.d.publishable;});
   var off=faq.items.filter(function(x){return x.d && !x.d.publishable;});
-  var L=[];
-  L.push("# Hỏi đáp thường gặp — "+((s.lecture_title?s.lecture_title+" · ":"")+s.lecture));
-  L.push("");
-  L.push("> Tổng hợp từ câu hỏi thật của học viên khoá trước trong chính buổi học này.");
-  L.push("> Bản nháp do AI soạn từ "+fmt(s.real_turns)+" lượt hỏi của "+s.students+" học viên, "+
-         "**đã được Lab Coach đọc và duyệt** trước khi đăng.");
-  L.push("> Thấy chỗ nào chưa đúng, báo lại để sửa.");
-  L.push("");
-  on.forEach(function(it,i){
+  var title="Hỏi đáp thường gặp — "+((s.lecture_title?s.lecture_title+" · ":"")+s.lecture);
+  var b="";
+  b+='<h1>'+esc(title)+"</h1>";
+  b+='<p class="note">Tổng hợp từ câu hỏi thật của học viên khoá trước trong chính buổi học này. '+
+     "Bản nháp do AI soạn từ "+fmt(s.real_turns)+" lượt hỏi của "+s.students+" học viên, "+
+     "<b>đã được Lab Coach đọc và duyệt</b> trước khi đăng. Thấy chỗ nào chưa đúng, báo lại để sửa.</p>";
+  on.forEach(function(it,i2){
     var d=it.d;
-    L.push("## "+(i+1)+". "+d.question);
-    L.push("");
-    L.push(d.answer);
-    L.push("");
+    b+="<h2>"+(i2+1)+". "+esc(d.question)+"</h2>";
+    b+="<p>"+esc(d.answer)+"</p>";
     if((d.variants||[]).length){
-      L.push("*Câu này còn hay được hỏi theo kiểu:* "+d.variants.map(function(v){return "“"+v+"”";}).join(" · "));
-      L.push("");
+      b+='<p class="alt"><i>Câu này còn hay được hỏi theo kiểu:</i> '+
+         d.variants.map(function(v){ return "&ldquo;"+esc(v)+"&rdquo;"; }).join(" &middot; ")+"</p>";
     }
-    L.push("<sub>"+it.people+" học viên khoá trước đã hỏi chuyện này ("+it.turns+" lượt).</sub>");
-    L.push("");
-    L.push("---");
-    L.push("");
+    b+='<p class="meta">'+it.people+" học viên khoá trước đã hỏi chuyện này ("+it.turns+" lượt).</p>";
+    if(i2<on.length-1) b+="<hr>";
   });
   if(off.length){
-    L.push("<!-- Hệ thống đã tự loại "+off.length+" cụm khỏi bản hỏi đáp này:");
-    off.forEach(function(it){ L.push("     - "+it.name+" — "+(it.d.refuse_reason||"")); });
-    L.push("-->");
+    // nội dung này do model sinh ra: phải làm sạch trước khi đặt vào HTML comment,
+    // nếu không một dấu "--" hay ">" trong tên cụm sẽ làm vỡ comment và đẩy chữ ra file.
+    var safe=function(x){ return String(x==null?"":x).replace(/[<>]/g," ").replace(/-{2,}/g,"-"); };
+    b+="<!-- Hệ thống đã tự loại "+off.length+" cụm khỏi bản hỏi đáp này: "+
+       off.map(function(it){ return safe(it.name)+" — "+safe(it.d.refuse_reason); }).join(" | ")+" -->";
   }
-  return L.join("\n");
+  return "\ufeff<html xmlns:o='urn:schemas-microsoft-com:office:office' "+
+    "xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>"+
+    "<head><meta charset='utf-8'><title>"+esc(title)+"</title>"+
+    "<!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom>"+
+    "</w:WordDocument></xml><![endif]-->"+
+    "<style>@page{size:A4;margin:2.2cm}"+
+    "body{font-family:'Times New Roman',serif;font-size:12pt;line-height:1.5;color:#111}"+
+    "h1{font-family:Arial,sans-serif;font-size:19pt;margin:0 0 4pt}"+
+    "h2{font-family:Arial,sans-serif;font-size:14pt;margin:18pt 0 5pt}"+
+    "p{margin:0 0 9pt;text-align:justify}"+
+    "p.note{font-size:10.5pt;color:#444;border-left:3pt solid #2563eb;padding-left:9pt;margin-bottom:16pt}"+
+    "p.alt{font-size:11pt;color:#333}"+
+    "p.meta{font-size:9.5pt;color:#666}"+
+    "hr{border:0;border-top:1pt solid #ddd;margin:16pt 0}"+
+    "</style></head><body>"+b+"</body></html>";
 }
 
 function downloadFaq(){
   var s=cur();
-  var blob=new Blob([faqMarkdown()],{type:"text/markdown;charset=utf-8"});
+  var blob=new Blob([faqDoc()],{type:"application/msword;charset=utf-8"});
   var a=document.createElement("a");
-  a.href=URL.createObjectURL(blob); a.download="hoi-dap-"+s.key+".md"; a.click();
+  a.href=URL.createObjectURL(blob); a.download="hoi-dap-"+s.key+".doc"; a.click();
   setTimeout(function(){ URL.revokeObjectURL(a.href); },3000);
 }
 
@@ -1400,8 +1582,8 @@ function liveOutHtml(){
 }
 
 /* ─── điều hướng ─── */
-var panels={tong:"p-tong",cum:"p-cum",eval:"p-eval",log:"p-log",live:"p-live"};
-var renderers={tong:renderTong,cum:renderCum,eval:renderEval,log:renderLog,live:renderLive};
+var panels={home:"p-home",tong:"p-tong",cum:"p-cum",eval:"p-eval",log:"p-log",live:"p-live"};
+var renderers={home:renderHome,tong:renderTong,cum:renderCum,eval:renderEval,log:renderLog,live:renderLive};
 function show(name){
   if(!panels[name]) name="tong";
   active=name;
@@ -1499,8 +1681,21 @@ var savedSess=lsGet("cp.sess",0);
 if(savedSess>=0 && savedSess<D.sessions.length) state.sess=savedSess;
 var start=location.hash.slice(1);
 if(live.autorun) start="live";
-show(panels[start]?start:lsGet("cp.tab","tong"));
-addEventListener("hashchange",function(){ var n=location.hash.slice(1); if(panels[n]&&n!==active) show(n); });
+
+bootAuth().then(function(ok){
+  if(!ok) return;                       // đang ở màn đăng nhập
+  var lo=document.getElementById("logoutbtn");
+  fetch("/api/session").then(function(r){return r.json();}).then(function(j){
+    if(j.need_passcode && j.authed && lo){
+      lo.hidden=false;
+      lo.addEventListener("click",function(){
+        fetch("/api/logout",{method:"POST"}).then(function(){ location.reload(); });
+      });
+    }
+  }).catch(function(){});
+  show(panels[start]?start:lsGet("cp.tab","home"));
+  addEventListener("hashchange",function(){ var n=location.hash.slice(1); if(panels[n]&&n!==active) show(n); });
+});
 })();
 </script>
 </body>

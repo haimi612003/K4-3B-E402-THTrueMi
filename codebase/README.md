@@ -16,11 +16,14 @@ python codebase/ui/build_data.py                             # dựng dữ liệ
 Rồi bật dashboard:
 
 ```bash
-python codebase/serve.py          # mở http://127.0.0.1:8765, có đủ 5 tab
+python codebase/serve.py          # mở http://127.0.0.1:8765, có đủ 6 tab
 ```
 
-Hoặc mở thẳng `codebase/ui/index.html` bằng trình duyệt — bốn tab đầu chạy bình thường, riêng
-hai tính năng gọi AI (tab *Thử trực tiếp* và nút *Soạn nội dung ôn*) cần máy chủ.
+Đặt `CLASS_PULSE_PASSCODE` trong `.env` thì trang hỏi mã trước khi cho xem bất cứ dữ liệu nào —
+xem *Đăng nhập* bên dưới. Bỏ trống thì chạy mở.
+
+Hoặc mở thẳng `codebase/ui/index.html` bằng trình duyệt — năm tab đầu chạy bình thường, riêng
+ba tính năng gọi AI (tab *Thử trực tiếp*, nút *Soạn nội dung ôn*, nút *Xuất hỏi đáp*) cần máy chủ.
 Không cần `pip install` gì cả: module chỉ dùng thư viện chuẩn của Python 3.8+.
 
 ## Cấu trúc
@@ -34,7 +37,7 @@ Không cần `pip install` gì cả: module chỉ dùng thư viện chuẩn củ
 | `run_cluster.py` | CLI: chạy một buổi, in ra màn hình, ghi JSON |
 | `serve.py` | Máy chủ cục bộ cho tab "Thử trực tiếp" — giữ khoá API ở phía server |
 | `ui/build_data.py` | Gom kết quả + kết quả eval + nhật ký thành `ui/data.js` |
-| `ui/index.html` | Dashboard 5 tab |
+| `ui/index.html` | Dashboard 6 tab: Trang chủ · Tổng quan · Cụm vấn đề · Chất lượng · Nhật ký AI · Thử trực tiếp |
 
 ## Tab "Thử trực tiếp"
 
@@ -47,6 +50,8 @@ ai mở DevTools cũng lấy được. Máy chủ giữ khoá, trình duyệt ch
 
 | Đầu API | Việc |
 |---|---|
+| `GET /api/session` | có đặt mã không, phiên hiện tại đã đăng nhập chưa — đầu duy nhất trả lời khi chưa đăng nhập |
+| `POST /api/login` / `POST /api/logout` | mở và huỷ phiên |
 | `GET /api/health` | có khoá chưa, model nào, đọc được chatlog không, các ngưỡng |
 | `GET /api/samples` | năm bộ câu hỏi thật, mỗi bộ lộ một hành vi (cụm lớn, tín hiệu lệch, injection, câu hành chính, SPARSE) |
 | `POST /api/generate` | nhờ model sinh bộ câu hỏi giả lập theo chủ đề — dùng khi máy không có data pack |
@@ -57,6 +62,29 @@ ai mở DevTools cũng lấy được. Máy chủ giữ khoá, trình duyệt ch
 Nội dung ôn là **quyết định AI thứ hai** của sản phẩm, tách hẳn khỏi việc gom cụm. Nó chỉ chạy khi
 Lab Coach bấm, luôn được gắn nhãn *bản nháp*, và prompt buộc model đi một đường khác slide — vì học
 viên đã đọc slide rồi mà vẫn hỏi, nên nhắc lại cách cũ là vô ích.
+
+## Đăng nhập
+
+Máy chủ này phục vụ câu hỏi thật của học viên, nên nó không mở toang cho bất kỳ ai gõ trúng cổng.
+Đặt `CLASS_PULSE_PASSCODE` trong `.env` là bật cổng đăng nhập:
+
+- Chỉ `/`, `/index.html`, `/api/login`, `/api/session` đi qua khi chưa đăng nhập. **`data.js` và mọi
+  `/api/*` khác trả `401`** — chặn ở tầng máy chủ, không phải chỉ ẩn giao diện.
+- Phiên là token `secrets.token_urlsafe(32)` trong cookie `HttpOnly; SameSite=Strict`, giữ trong bộ nhớ
+  tiến trình nên tắt máy chủ là mất hết phiên.
+- So mã bằng `secrets.compare_digest`; sai 8 lần trong 5 phút thì IP đó bị khoá tạm.
+
+**Phạm vi bảo vệ, nói thẳng:** đủ chặn người khác trên cùng máy hoặc cùng LAN, đúng mức rủi ro của một
+công cụ chạy cục bộ. **Không** phải tài khoản thật, không phân quyền theo lớp, không nhật ký truy cập —
+mang lên máy chủ chung thì phải làm lại ba thứ đó chứ không nới cái mã dùng chung này ra.
+
+## Xuất hỏi đáp ra file Word
+
+`faqDoc()` trong `ui/index.html` dựng HTML mang namespace Word (`urn:schemas-microsoft-com:office:word`)
+kèm khối `<!--[if gte mso 9]>` và BOM UTF-8, rồi tải xuống với đuôi `.doc` và kiểu MIME
+`application/msword`. Word, Google Docs và WPS đều mở được, giữ tiêu đề, cỡ chữ, đường kẻ, khổ A4 —
+không cần thư viện ngoài nào. Chữ do model sinh ra đều đi qua `esc()` trước khi vào file, và phần
+ghi chú các cụm bị từ chối bị lọc `<`, `>`, `--` để không phá cấu trúc HTML comment.
 
 ## Bốn chủ đích thiết kế
 

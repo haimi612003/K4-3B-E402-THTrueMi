@@ -17,9 +17,10 @@ Các đầu API:
   POST /api/generate  — nhờ AI sinh bộ câu hỏi giả lập theo chủ đề (khi không có pack)
   POST /api/cluster   — gom cụm thật: nhận danh sách câu hỏi, trả cụm + số đo
 """
+import collections
 import json
 import os
-import random
+import secrets
 import sys
 import threading
 import time
@@ -35,6 +36,38 @@ from class_pulse import cluster, config, gemini, loader  # noqa: E402
 
 PORT = int(os.environ.get("CLASS_PULSE_PORT", "8765"))
 MAX_QUESTIONS = 60          # trần cho một lần thử, đủ để thấy hành vi mà không đốt token
+
+# ── Đăng nhập ────────────────────────────────────────────────────────────
+# Phạm vi bảo vệ, nói thẳng để không ai hiểu nhầm là đã có bảo mật thật:
+#   CÓ chặn: người khác trên cùng máy hoặc cùng mạng mở trình duyệt vào cổng này,
+#            và mọi API gọi model (tốn tiền) lẫn data.js (chứa câu hỏi học viên).
+#   KHÔNG chặn: ai có quyền đọc ổ đĩa. Mở thẳng file index.html bằng file:// thì
+#            không qua máy chủ nên không qua đăng nhập — đó là giới hạn của kiến
+#            trúc chạy cục bộ, không phải lỗ hổng giấu đi.
+# Khi đem lên máy chủ thật thì thay bằng tài khoản thật của VLearn.
+SESSION_COOKIE = "cp_session"
+SESSIONS = set()
+LOGIN_FAILS = collections.defaultdict(list)   # ip -> các mốc thời gian gõ sai
+LOCK_AFTER = 8                                # sai quá ngần này lần thì khoá
+LOCK_WINDOW = 300                             # trong ngần này giây
+
+
+def passcode():
+    config.load_env()
+    return os.environ.get("CLASS_PULSE_PASSCODE", "").strip()
+
+
+def new_session():
+    t = secrets.token_urlsafe(32)
+    SESSIONS.add(t)
+    return t
+
+
+def rate_limited(ip):
+    now = time.time()
+    hits = [t for t in LOGIN_FAILS[ip] if now - t < LOCK_WINDOW]
+    LOGIN_FAILS[ip] = hits
+    return len(hits) >= LOCK_AFTER
 
 _cache = {"turns": None, "err": None}
 _lock = threading.Lock()
@@ -260,8 +293,42 @@ class Handler(SimpleHTTPRequestHandler):
         n = int(self.headers.get("Content-Length") or 0)
         return json.loads(self.rfile.read(n) or b"{}")
 
+    # ── đăng nhập ────────────────────────────────────────────────────────
+    def _token(self):
+        for part in (self.headers.get("Cookie") or "").split(";"):
+            k, _, v = part.strip().partition("=")
+            if k == SESSION_COOKIE:
+                return v
+        return None
+
+    def _authed(self):
+        if not passcode():          # chưa đặt mã thì chạy mở, và nói rõ ở màn hình
+            return True
+        t = self._token()
+        return bool(t) and t in SESSIONS
+
+    def _deny(self):
+        self._send({"error": "Chưa đăng nhập.", "need_login": True}, 401)
+
+    def _needs_auth(self, path):
+        """Cho qua: trang đăng nhập và chính lời gọi đăng nhập. Còn lại phải có phiên."""
+        p = path.split("?")[0]
+        return p not in ("/", "/index.html", "/api/login", "/api/session")
+
     # ── GET ──────────────────────────────────────────────────────────────
     def do_GET(self):
+        if self.path.startswith("/api/session"):
+            return self._send({"need_passcode": bool(passcode()), "authed": self._authed()})
+
+        if self._needs_auth(self.path) and not self._authed():
+            if self.path.startswith("/api/"):
+                return self._deny()
+            self.send_response(401)
+            self.send_header("Content-Type", "text/plain; charset=utf-8")
+            self.end_headers()
+            self.wfile.write("Chua dang nhap.".encode("utf-8"))
+            return
+
         if self.path.startswith("/api/health"):
             try:
                 key_ok, key_hint = True, config.mask(config.api_key())
@@ -297,6 +364,39 @@ class Handler(SimpleHTTPRequestHandler):
     # ── POST ─────────────────────────────────────────────────────────────
     def do_POST(self):
         try:
+            if self.path.startswith("/api/login"):
+                ip = self.client_address[0]
+                if rate_limited(ip):
+                    return self._send({"error": "Gõ sai quá nhiều lần. Đợi 5 phút rồi thử lại."}, 429)
+                given = str((self._body() or {}).get("passcode", ""))
+                if not passcode():
+                    return self._send({"ok": True, "note": "Máy chủ chưa đặt mã, đang chạy mở."})
+                # so sánh theo thời gian hằng định để không lộ độ dài mã
+                if not secrets.compare_digest(given, passcode()):
+                    LOGIN_FAILS[ip].append(time.time())
+                    left = max(0, LOCK_AFTER - len(LOGIN_FAILS[ip]))
+                    return self._send({"error": "Mã không đúng. Còn %d lần thử." % left}, 403)
+                LOGIN_FAILS.pop(ip, None)
+                tok = new_session()
+                body = json.dumps({"ok": True}, ensure_ascii=False).encode("utf-8")
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Set-Cookie",
+                                 "%s=%s; Path=/; HttpOnly; SameSite=Strict" % (SESSION_COOKIE, tok))
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+                return
+
+            if self.path.startswith("/api/logout"):
+                t = self._token()
+                if t:
+                    SESSIONS.discard(t)
+                return self._send({"ok": True})
+
+            if self._needs_auth(self.path) and not self._authed():
+                return self._deny()
+
             if self.path.startswith("/api/generate"):
                 b = self._body()
                 topic = (b.get("topic") or "AI Agent và ReAct").strip()[:120]
@@ -392,11 +492,17 @@ def main():
 
     n = len(turns())
     log_line = ("chatlog K4: %d lượt" % n) if n else ("chatlog: KHÔNG đọc được (%s)" % _cache["err"])
+    if passcode():
+        auth_line = "đăng nhập: BẬT (mã lấy từ CLASS_PULSE_PASSCODE trong .env)"
+    else:
+        auth_line = ("đăng nhập: TẮT — đặt CLASS_PULSE_PASSCODE trong .env để bật.\n"
+                     "  Không có mã thì ai vào được cổng này cũng đọc được câu hỏi học viên.")
 
     url = "http://127.0.0.1:%d/" % PORT
     print("Class Pulse — máy chủ cục bộ")
     print("  %s" % key_line)
     print("  %s" % log_line)
+    print("  %s" % auth_line)
     print("  %s" % url)
     print("  Ctrl+C để dừng.\n")
 

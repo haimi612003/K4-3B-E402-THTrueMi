@@ -18,7 +18,11 @@ Mở `.env`, điền khoá lấy từ https://aistudio.google.com/apikey:
 ```
 GEMINI_API_KEY=<khoá của bạn>
 GEMINI_MODEL=gemini-3.5-flash-lite
+CLASS_PULSE_PASSCODE=<mã nhóm tự đặt>
 ```
+
+`CLASS_PULSE_PASSCODE` là mã đăng nhập vào dashboard — xem mục 4a.
+**Bỏ trống dòng này thì máy chủ chạy mở, không hỏi mã** (tiện khi làm một mình).
 
 `.env` đã nằm trong `.gitignore` — không bao giờ bị commit. Kiểm lại cho chắc:
 
@@ -143,28 +147,57 @@ python codebase/ui/build_data.py
 
 Nó gom kết quả gom cụm + kết quả eval + nhật ký gọi model thành `codebase/ui/data.js`.
 
-**Cách chạy được khuyên dùng — có đủ 5 tab, kể cả tab gọi AI thật:**
+**Cách chạy được khuyên dùng — có đủ 6 tab, kể cả tab gọi AI thật:**
 
 ```bash
 python codebase/serve.py
 ```
 
 Trang tự mở ở `http://127.0.0.1:8765`. Máy chủ chỉ lắng nghe trên máy bạn, không mở ra mạng ngoài.
+Nếu `.env` có `CLASS_PULSE_PASSCODE`, trang sẽ hỏi mã trước — xem mục 4a.
 
 **Cách nhẹ hơn, không cần máy chủ:** mở thẳng `codebase/ui/index.html` bằng trình duyệt
-(`start codebase/ui/index.html` trên Windows). Bốn tab đầu chạy bình thường; riêng tab
-**Thử trực tiếp** cần máy chủ vì nó gọi Gemini thật — khoá API phải ở phía server chứ không
-nhúng vào trang web.
+(`start codebase/ui/index.html` trên Windows). Năm tab đầu chạy bình thường; riêng tab
+**Thử trực tiếp**, nút **Soạn nội dung ôn** và nút **Xuất hỏi đáp** cần máy chủ vì chúng gọi
+Gemini thật — khoá API phải ở phía server chứ không nhúng vào trang web. Mở bằng `file://`
+thì không có cổng đăng nhập, vì lúc đó dữ liệu đã nằm sẵn trên ổ đĩa của chính người mở.
 
-Dashboard có 5 tab:
+Dashboard có 6 tab:
 
 | Tab | Nội dung |
 |---|---|
+| **Trang chủ** | Sản phẩm này là gì, **cách hoạt động** (ba bước: đọc log → gom cụm → soạn vật liệu) và **sáu nguyên tắc** hệ thống không đánh đổi. Đây là tab mở đầu — người lần đầu vào đọc ở đây trước khi xem số |
 | **Tổng quan** | Số dẫn đầu, dải chỉ số, biểu đồ cụm theo lượt/người, thành phần lượt hỏi, phân bố lượt/học viên. Hàng chip phía trên lọc nhanh: tất cả / đông nhất / cụm mạnh / cụm yếu / tín hiệu lệch |
 | **Cụm vấn đề** | Danh sách cụm, mở ra đọc câu nguyên văn có ID, tick chọn cụm, bấm "Không thuộc cụm" để sửa tay (lưu lại giữa các lần mở trang), và **"✨ Soạn nội dung ôn"** để AI soạn vật liệu giảng lại — xem mục 4c |
 | **Chất lượng** | Kết quả bộ kiểm thử: tỉ lệ đạt, đạt theo từng lớp chỗ khó, nhóm lỗi, từng case |
 | **Nhật ký AI** | Bằng chứng AI chạy thật: model, số lời gọi, token, độ trễ, số lần model bịa mã / bỏ sót câu |
 | **Thử trực tiếp** | **Gọi AI thật ngay trên trang.** Xem mục 4b |
+
+### 4a · Đăng nhập
+
+Dashboard đọc **câu hỏi thật của học viên có mã định danh**, nên nó không nên mở toang cho bất kỳ ai
+gõ trúng cổng 8765. Đặt mã trong `.env`:
+
+```
+CLASS_PULSE_PASSCODE=<một chuỗi dài, khó đoán, chỉ nhóm bạn biết>
+```
+
+Đừng chép nguyên một mã từ tài liệu nào — kể cả tài liệu này.
+
+Khởi động lại `serve.py`. Từ lúc đó:
+
+- Vào `http://127.0.0.1:8765` sẽ gặp màn hình nhập mã trước khi thấy bất cứ dữ liệu nào.
+- **`data.js` và toàn bộ `/api/*` trả 401 nếu chưa đăng nhập** — không phải chỉ giấu giao diện.
+- Gõ sai 8 lần trong 5 phút thì IP đó bị khoá tạm; màn hình đếm ngược số lần còn lại.
+- Phiên nằm trong cookie `HttpOnly; SameSite=Strict`, mất khi tắt máy chủ. Nút **Thoát** ở góc phải
+  huỷ phiên ngay.
+
+**Đây bảo vệ được gì và không bảo vệ được gì.** Nó chặn người khác trên cùng máy hoặc cùng mạng LAN
+mở cổng này — đúng phạm vi rủi ro của một công cụ chạy cục bộ. Nó **không** thay được tài khoản thật,
+phân quyền theo lớp, hay nhật ký truy cập; những thứ đó chỉ cần khi đem sản phẩm lên máy chủ chung,
+và lúc đó phải làm lại đàng hoàng chứ không nới cái mã này ra.
+
+Bỏ trống `CLASS_PULSE_PASSCODE` thì máy chủ chạy mở và màn hình nói rõ là đang chạy mở.
 
 ### 4b · Tab "Thử trực tiếp" — thao tác thật với model
 
@@ -216,7 +249,10 @@ Demo nhanh: `http://127.0.0.1:8765/?answer=1#cum` — soạn luôn cho cụm đ�
 ### 4d · Xuất hỏi đáp để đăng lên VLearn
 
 Tick vài cụm → thanh dưới hiện nút **📄 Xuất hỏi đáp cho VLearn** → AI soạn mỗi cụm thành một mục
-hỏi đáp cho **học viên khoá sau** đọc, rồi tải về file `.md` dán thẳng lên trang học.
+hỏi đáp cho **học viên khoá sau** đọc, rồi tải về **file Word (`.doc`)** để đăng lên trang học.
+
+File mở được bằng Word, Google Docs hay WPS: có tiêu đề, cỡ chữ, đường kẻ phân mục, khổ A4 — Lab Coach
+sửa vài chữ rồi đăng luôn, không phải qua khâu chuyển định dạng nào. Tiếng Việt có dấu đúng nhờ BOM UTF-8.
 
 Đây là thứ **duy nhất** trong sản phẩm đi tới học viên, nên nó qua ba cửa:
 
@@ -287,6 +323,9 @@ Khi nộp form CP3 nhớ kèm: đường dẫn video, **con số đo được** 
 | `503 Service Unavailable` | Model đang quá tải. Code tự thử lại 3 lần rồi rơi sang model dự phòng — cứ đợi. Nếu vẫn hỏng, đổi `GEMINI_MODEL` trong `.env`. |
 | `Gemini trả 404 … no longer available` | Model trong `.env` đã bị gỡ. Xem danh sách model còn dùng được:<br>`curl -H "x-goog-api-key: $KEY" https://generativelanguage.googleapis.com/v1beta/models` |
 | Dashboard trắng trơn | Chưa chạy `build_data.py`, hoặc `data.js` chưa có. Mở Console trình duyệt xem lỗi. |
+| Trang hỏi mã mà không biết mã | Mã nằm ở `CLASS_PULSE_PASSCODE` trong `.env` của máy chủ. Xoá dòng đó rồi khởi động lại là chạy mở. |
+| `Thử sai quá nhiều. Đợi N giây.` | Gõ sai 8 lần trong 5 phút. Đợi hết 5 phút, hoặc khởi động lại `serve.py`. |
+| Đăng nhập xong vẫn trắng trơn | Trình duyệt đang chặn cookie cho `127.0.0.1`. Mở tab thường (không ẩn danh), hoặc bật lại cookie. |
 | Tab Thử trực tiếp báo OFFLINE | Đang mở bằng `file://`. Chạy `python codebase/serve.py` rồi mở `http://127.0.0.1:8765`. |
 | `Address already in use` khi chạy serve | Còn một tiến trình cũ giữ cổng. Đổi cổng: `CLASS_PULSE_PORT=8800 python codebase/serve.py` |
 | `FileNotFoundError: tutor_turns.csv` | Chưa chép data pack vào `data/`. Xem mục 1.2. |
@@ -300,7 +339,9 @@ Khi nộp form CP3 nhớ kèm: đường dẫn video, **con số đo được** 
 |---|---|
 | Nội dung ôn gồm những mục gì | `codebase/serve.py` — `ANSWER_SCHEMA` và `ANSWER_PROMPT` |
 | Luật từ chối khi xuất hỏi đáp | `codebase/serve.py` — `FAQ_PROMPT` luật 1 |
-| Định dạng file .md xuất ra | `codebase/ui/index.html` — hàm `faqMarkdown()` |
+| Định dạng file Word xuất ra | `codebase/ui/index.html` — hàm `faqDoc()` |
+| Chữ trên trang chủ, ba bước, sáu nguyên tắc | `codebase/ui/index.html` — `STEPS3` và `PRINS` trong `renderHome()` |
+| Mã đăng nhập, ngưỡng khoá IP | `.env` (`CLASS_PULSE_PASSCODE`) và `codebase/serve.py` — `LOCK_AFTER`, `LOCK_WINDOW` |
 | Ngưỡng SPARSE, kích thước phần, ngưỡng cụm yếu / tín hiệu lệch | `codebase/class_pulse/config.py` |
 | Luật gom cụm (cái model được dặn) | `codebase/class_pulse/cluster.py` — biến `PROMPT` và `MERGE_PROMPT` |
 | Model và chuỗi dự phòng | `.env` và `codebase/class_pulse/gemini.py` — `FALLBACK_MODELS` |
