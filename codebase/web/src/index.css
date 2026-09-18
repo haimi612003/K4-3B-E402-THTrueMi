@@ -14,6 +14,11 @@
   --good:#0ca30c; --warn:#fab219; --critical:#d03b3b;
   --good-ink:#0a7a0a; --warn-ink:#7a5605; --critical-ink:#a32020;
   --grid:#e1e0d9; --baseline:#c3c2b7;
+  /* token TRANG TRÍ — giữ nguyên giá trị của bản UI cũ để không phải kiểm
+     lại tương phản. Chúng chỉ dùng cho lớp nền, không chạm vào dữ liệu. */
+  --dot:rgba(11,11,11,.055);
+  --glow-1:rgba(37,99,235,.07); --glow-2:rgba(27,175,122,.05);
+  --spec:rgba(11,11,11,.185);
 }
 :root[data-theme="dark"]{
   color-scheme:dark;
@@ -24,6 +29,9 @@
   --s1:#3987e5; --s2:#d95926; --s3:#199e70;
   --good-ink:#37c437; --warn-ink:#d8b155; --critical-ink:#ff8f8f;
   --grid:#2c2c2a; --baseline:#383835;
+  --dot:rgba(255,255,255,.045);
+  --glow-1:rgba(57,135,229,.10); --glow-2:rgba(25,158,112,.07);
+  --spec:rgba(255,255,255,.19);
 }
 html,body,#root{height:100%}
 body{margin:0;background:var(--page);color:var(--ink);
@@ -70,4 +78,128 @@ body{margin:0;background:var(--page);color:var(--ink);
 @media (prefers-reduced-motion:reduce){
   .reveal{animation:none!important;opacity:1!important;transform:none!important}
   *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+
+/* ══════════ NỀN ĐỘNG — ba lớp, không dùng ảnh ══════════
+   Bản React đầu tiên chỉ còn nền gradient TĨNH; ba lớp dưới đây là bản chuyển
+   nguyên vẹn từ giao diện cũ, giữ đúng từng hằng số đã cân.
+
+   Nguyên tắc không đổi: mỗi khung hình chỉ ghi transform và opacity — hai thuộc
+   tính chạy trên compositor, không paint lại, không layout lại. KHÔNG làm mượt
+   (không lerp, không quán tính): vị trí là hàm thuần tuý của scrollTop, nên cuộn
+   ngược là nền tua lại đúng đường cũ trong cùng khung hình đó.                */
+#bgfx{
+  position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;
+  contain:strict;
+}
+#bgfx i{position:absolute;display:block;left:0;right:0}
+
+/* Lớp 1 ─ THỊ SAI. Lưới điểm ở hai lề, trôi lên chậm hơn nội dung (9:100) nên
+   mắt đọc ra là "ở xa hơn", không phải "có vật đang chạy".
+   Bề rộng dải CO GIÃN theo màn: trên 1366px nó tự teo gần hết chứ không bao giờ
+   lấn vào cột chữ. top/bottom âm để dịch lên vẫn không hở mép. */
+#bgfx .l1{
+  top:-160px;bottom:-160px;
+  --gut:max(0px, (100vw - 1280px)/2 - 18px);
+  background-image:radial-gradient(circle at 1px 1px, var(--dot) 1px, transparent 1.6px);
+  background-size:24px 24px;
+  -webkit-mask-image:linear-gradient(90deg,#000 0,#000 calc(var(--gut) * .55),
+                     transparent var(--gut),transparent calc(100% - var(--gut)),
+                     #000 calc(100% - var(--gut) * .55),#000 100%);
+          mask-image:linear-gradient(90deg,#000 0,#000 calc(var(--gut) * .55),
+                     transparent var(--gut),transparent calc(100% - var(--gut)),
+                     #000 calc(100% - var(--gut) * .55),#000 100%);
+  will-change:transform;
+}
+
+/* Lớp 2 ─ ĐỔI THEO ĐỘ SÂU. Lớp ánh sáng phủ cả màn, KHÔNG có thị sai — một
+   trường lớn trượt theo cuộn chính là công thức gây chóng mặt. JS chỉ đổi
+   opacity theo % trang đã đọc.
+   Lồng hai lớp vì một phần tử không thể vừa chạy @keyframes transform vừa nhận
+   transform từ JS — keyframe sẽ đè mất. */
+#bgfx .l2{top:0;bottom:0;will-change:opacity}
+#bgfx .l2 > b{
+  position:absolute;inset:-14%;display:block;
+  background-image:
+    radial-gradient(760px 540px at 16% 4%,  var(--glow-1), transparent 62%),
+    radial-gradient(660px 480px at 90% 28%, var(--glow-2), transparent 60%);
+  animation:ambDrift 74s cubic-bezier(.45,0,.55,1) infinite,
+            ambBreathe 113s ease-in-out infinite;
+  will-change:transform,opacity;
+}
+/* Biên độ ≈38px đi hết trong 37s ≈ 1px/giây — dưới ngưỡng thị giác ngoại vi báo
+   "có gì vừa động". Hai animation chạm hai thuộc tính khác nhau nên chu kỳ cộng
+   dồn: 74 × 113 ≈ 2h20 mới lặp lại đúng trạng thái. */
+@keyframes ambDrift{
+  0%,100%{transform:translate3d(-1.2%,.8%,0) scale(1)}
+  50%    {transform:translate3d(1.4%,-1.1%,0) scale(1.055)}
+}
+@keyframes ambBreathe{
+  0%,100%{opacity:.62}
+  50%    {opacity:.92}
+}
+
+/* Lớp 3 ─ TỤ CỤM. 48 chấm rời dồn thành 4 cụm khi cuộn — CHỈ trang chủ.
+   Hình nói đúng câu tiêu đề "Hàng trăm câu hỏi. Vài vấn đề.": đầu trang là một
+   đám lộn xộn, cuộn xuống thì nó được xếp xong. Ba chấm CỐ Ý không vào cụm nào
+   và mờ đi — đó là nhóm "rải rác" có thật trong sản phẩm.
+
+   Khác bản cũ MỘT chỗ: lớp này nằm TRONG hero chứ không phải trong #bgfx.
+   #bgfx là lớp fixed nằm dưới toàn bộ nội dung, mà hero có nền gradient đục
+   (.sky) nên đặt ở đó thì chấm bị hero che kín — đúng vùng nó cần hiện.
+
+   JS mỗi khung hình ghi ĐÚNG MỘT custom property --t lên phần tử cha; 48 con tự
+   nội suy trong calc(). Ghi 48 inline transform thì vẫn tốn 48 lần tính lại
+   style, cộng 48 lần dựng chuỗi. */
+@property --t{syntax:"<number>";inherits:true;initial-value:0}
+.cpdots{
+  /* FIXED, không phải absolute. Đặt absolute trong hero thì lớp chấm cuộn đi
+     mất trước khi tụ xong — người xem không bao giờ thấy hết chuyển động, tức
+     mất đúng cái nó sinh ra để nói. Fixed nên nó đứng yên trong khung nhìn và
+     chỉ có hình bên trong đổi, y như bản cũ.
+     top = 56px thanh trên + 96px thở. */
+  position:fixed;top:152px;right:16px;
+  left:max(50% + 150px, 100% - 640px);
+  height:min(42vh,340px);
+  pointer-events:none;
+  /* Bản cũ để lớp này DƯỚI nội dung nên không cần mờ đi. Ở đây hero có nền
+     gradient đục nên lớp chấm phải nằm TRÊN hero; đổi lại, nó phải tự mờ hẳn
+     khi hero rời khung hình, nếu không sẽ lơ lửng đè lên thẻ ở dưới. */
+  opacity:var(--fade,1);
+}
+.cpdots span{
+  position:absolute;top:0;left:0;
+  width:var(--dd,4px);height:var(--dd,4px);
+  margin:calc(var(--dd,4px) / -2) 0 0 calc(var(--dd,4px) / -2);   /* tâm chấm = điểm dịch */
+  border-radius:50%;
+  background:var(--spec);
+  /* CHỈ translate. Cố ý KHÔNG có scale(): đổi hệ số scale trên một layer đã
+     promote là điều kiện kích hoạt raster lại. Độ nở ghi thẳng vào --dd lúc
+     dựng, nên transform chỉ còn tịnh tiến — raster đúng một lần.
+     BẮT BUỘC có dấu cách quanh dấu +: var(--x0)+var(--dx) sẽ ra "124px+-278px",
+     sai cú pháp, cả 48 chấm rơi về transform:none. */
+  transform:translate3d(calc(var(--x0,0px) + (var(--dx,0px) * var(--t,0))),
+                        calc(var(--y0,0px) + (var(--dy,0px) * var(--t,0))),0);
+  opacity:calc(var(--a0,0) + (var(--ad,0) * var(--t,0)));
+  will-change:transform,opacity;
+}
+/* Dưới 900px hero chiếm hết bề ngang, không còn ô trống. Thà biến mất hẳn còn
+   hơn chen vào chữ. */
+@media (max-width:900px){ .cpdots{display:none} }
+
+/* Nền trang trí không đi vào bản PDF nộp giám khảo. */
+@media print{ #bgfx,.cpdots{display:none} body{background:#fff} }
+
+@media (prefers-reduced-motion:reduce){
+  /* GIỮ hoạ tiết, bỏ chuyển động, khoá về đúng trạng thái NGHỈ. Không khai gì
+     thì luật *::before/after{animation-duration:.01ms} ở trên sẽ ném các lớp
+     này tới keyframe cuối, tức đứng im ở scale(1.055) lệch tâm. */
+  #bgfx .l1{transform:none!important;will-change:auto!important}
+  #bgfx .l2{opacity:1!important;transform:none!important;will-change:auto!important}
+  #bgfx .l2 > b{animation:none!important;transform:none!important;opacity:.7!important;will-change:auto!important}
+  /* ghim ở trạng thái ĐÃ TỤ: vẫn giữ nghĩa "vài cụm, không đều", không còn một
+     pixel nào bám cuộn. !important trong stylesheet thắng inline style
+     không-important nên JS ghi gì cũng không đổi được. */
+  .cpdots{--t:1!important}
+  .cpdots span{will-change:auto!important}
 }

@@ -7,6 +7,7 @@ import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
 import { D, TH, fmt, dmy, sessionsByDate, latestSession, biggestSession, scatterCount } from "../lib/data";
 import { useReveal, Kicker, Card, Chip } from "../ui/Bits";
 import { TableView } from "../ui/Charts";
+import { HeroDots } from "../ui/BgFx";
 
 /* ══════════ CHỮ NGHĨA BÊ NGUYÊN TỪ BẢN CŨ ══════════
    STEPS3 và PRINS chép đúng từng chữ từ codebase/ui/index.html. Đây là phần đã
@@ -217,8 +218,12 @@ export default function Home({ sess, setSess, goTab }) {
   return (
     <div ref={root}>
       {/* ══════════ HERO — trên nền trời ══════════ */}
-      <div className="sky">
-        <div className="mx-auto max-w-[1080px] px-5 sm:px-8 pt-16 sm:pt-24 pb-10">
+      <div className="sky relative">
+        {/* 48 chấm tụ thành 4 cụm khi cuộn — hình minh hoạ đúng câu tiêu đề.
+            Nằm trong hero chứ không trong #bgfx: #bgfx ở dưới nội dung, mà hero
+            có nền gradient đục nên đặt ở đó là chấm bị che kín. */}
+        <HeroDots />
+        <div className="relative mx-auto max-w-[1080px] px-5 sm:px-8 pt-16 sm:pt-24 pb-10">
           <div className="reveal max-w-[820px]">
             <Kicker>VLearn · Bản đồ vấn đề của lớp</Kicker>
             <h1 className="text-[clamp(38px,7vw,74px)] font-semibold tracking-tight leading-[1.02]">

@@ -6,6 +6,7 @@ import TextField from "@mui/material/TextField";
 import CircularProgress from "@mui/material/CircularProgress";
 import { makeTheme } from "./theme";
 import { api } from "./lib/api";
+import BgFx from "./ui/BgFx";
 import { D, TH, sessionsByDate } from "./lib/data";
 
 import Home from "./tabs/Home.jsx";
@@ -153,7 +154,11 @@ export default function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <div className="h-full grid" style={{ gridTemplateRows: "56px 1fr" }}>
+      {/* Lớp nền động nằm DƯỚI nội dung. Khối dưới phải relative + z-10: #bgfx
+          là position:fixed nên nó vẽ sau mọi phần tử không định vị — không nâng
+          nội dung lên thì lớp trang trí phủ kín cả trang. */}
+      <BgFx page={tab} />
+      <div className="relative z-10 h-full grid" style={{ gridTemplateRows: "56px 1fr" }}>
         <header className="flex items-center gap-1 px-4 border-b border-[color:var(--line)] bg-[color:var(--panel)] z-10">
           <div className="flex items-center gap-2 pr-4 mr-2 font-bold tracking-tight border-r border-[color:var(--line)] shrink-0">
             <span className="w-6 h-6 rounded-lg bg-[color:var(--primary)] text-white grid place-items-center text-[13px]">◎</span>

@@ -367,6 +367,28 @@ sẽ là con số bịa.
 | `?sample=<id>&run=1` | Chạy sẵn một kịch bản ở tab Thử trực tiếp |
 | `?answer=1` · `?faq=N` | Soạn nội dung ôn / xuất hỏi đáp cho cụm đông nhất |
 
+### 4f · Nền động — ba lớp
+
+Mã ở [`codebase/web/src/ui/BgFx.jsx`](codebase/web/src/ui/BgFx.jsx) và phần cuối `src/index.css`.
+
+| Lớp | Nó làm gì | Dẫn động bằng |
+|---|---|---|
+| **Thị sai** | Lưới điểm ở hai lề trôi lên chậm hơn nội dung, tỉ lệ 9:100 — mắt đọc ra là “ở xa hơn”, không phải “có vật đang chạy” | `transform` theo `scrollTop` |
+| **Độ sâu** | Lớp ánh sáng phủ màn, đậm dần theo % trang đã đọc. **Không** có thị sai — một trường lớn trượt theo cuộn là công thức gây chóng mặt | `opacity` theo `scrollTop`, cộng hai `@keyframes` rất chậm |
+| **Tụ cụm** | 48 chấm rời dồn thành 4 cụm khi cuộn — **chỉ trang chủ**. Hình nói đúng câu tiêu đề “Hàng trăm câu hỏi. Vài vấn đề.” Ba chấm **cố ý** không vào cụm nào và mờ đi — đó là nhóm *rải rác* có thật | một custom property `--t`; 48 chấm tự nội suy trong `calc()` |
+
+Bốn cụm cố ý **không đều** (18/12/9/6): bốn cụm bằng nhau đọc ra là trang trí, lệch nhau đọc ra là
+dữ liệu. Vị trí từng chấm sinh bằng bộ ngẫu nhiên **có gieo hạt cố định**, nên ảnh chụp nộp giám khảo
+tái lập được y hệt trên mọi máy.
+
+Mỗi khung hình chỉ ghi `transform` và `opacity` — hai thuộc tính chạy trên compositor, không paint
+lại, không layout lại. **Không làm mượt** (không lerp, không quán tính): vị trí là hàm thuần tuý của
+`scrollTop`, nên cuộn ngược là nền tua lại đúng đường cũ từng pixel trong cùng khung hình đó.
+
+`prefers-reduced-motion: reduce` thì **giữ hoạ tiết, bỏ chuyển động**, và ghim lớp chấm ở trạng thái
+**đã tụ** — vẫn giữ được nghĩa “vài cụm, không đều”, không còn một pixel nào bám cuộn. Dưới 900px
+lớp chấm ẩn hẳn thay vì chen vào chữ. Bản in không có lớp nào trong ba lớp này.
+
 **Giao diện mặc định ưu tiên Lab Coach, không ưu tiên người chấm.** Các bảng dài,
 biểu đồ đuôi và toàn bộ phần phương pháp đo nằm sau một cửa gập — **không bị xoá, chỉ
 đổi chỗ đứng**. Con số bất lợi (cụm yếu, tín hiệu lệch, lượt chưa quy được, số lần
