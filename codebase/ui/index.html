@@ -524,30 +524,64 @@ body{
   background-size:100% 360px;
 }
 
-/* 4 ─ Hai lớp trang trí, cùng nằm dưới .app */
-body::before,body::after{
-  content:"";position:fixed;z-index:0;pointer-events:none;
-  background-repeat:no-repeat;
+/* 4 ─ Lớp trang trí, nằm dưới .app. contain:strict hứa với trình duyệt là
+       không có gì trong này ảnh hưởng ra ngoài, nên nó không phải kiểm lại
+       layout của trang mỗi lần ta đổi transform. */
+#bgfx{
+  position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;
+  contain:strict;
+  transition:opacity .45s var(--ease-out);
 }
+#bgfx i{position:absolute;display:block;left:0;right:0}
 
-/* 4a ─ Lưới điểm TĨNH (giấy kẻ ô phòng lab). Mặt nạ MỘT trục, đối xứng hai mép:
-        không dùng mask-composite (Chrome 120+/Safari 15.4+) vì trên trình duyệt cũ
-        hai mặt nạ HỢP lại và hoạ tiết tràn vào giữa cột chữ. */
-body::before{
-  inset:0;
+/* 4a ─ THỊ SAI. Lưới điểm ở hai lề, trôi LÊN chậm hơn nội dung khi cuộn xuống —
+        nội dung đi 1000px thì lớp này đi 90px, tỉ lệ 11:1 nên mắt đọc ra là "ở
+        xa hơn" chứ không đọc ra là "có vật đang chạy".
+
+        Bề rộng dải CO GIÃN: --gut = nửa phần thừa của màn hình sau khi trừ cột
+        nội dung 1280px, trừ tiếp 18px cho chắc. Trên màn 1920 được 302px; trên
+        laptop trường 1366×768 chỉ còn 25px nên hoạ tiết tự teo về gần hết chứ
+        KHÔNG BAO GIỜ lấn vào chữ. Đây là chốt chặn vòng soi hiệu năng nêu ra:
+        dải 190px cố định sẽ ăn 147px vào trong cột chữ ở 1366px.
+
+        top/bottom âm 1 chu kỳ hoạ tiết (24px) × biên độ tối đa, để khi dịch lên
+        vẫn không hở mép. */
+#bgfx .l1{
+  top:-160px;bottom:-160px;
+  --gut:max(0px, (100vw - 1280px)/2 - 18px);
   background-image:radial-gradient(circle at 1px 1px, var(--dot) 1px, transparent 1.6px);
   background-size:24px 24px;
-  -webkit-mask-image:linear-gradient(90deg,#000 0,transparent 190px,
-                                     transparent calc(100% - 190px),#000 100%);
-          mask-image:linear-gradient(90deg,#000 0,transparent 190px,
-                                     transparent calc(100% - 190px),#000 100%);
+  -webkit-mask-image:linear-gradient(90deg,#000 0,#000 calc(var(--gut) * .55),
+                     transparent var(--gut),transparent calc(100% - var(--gut)),
+                     #000 calc(100% - var(--gut) * .55),#000 100%);
+          mask-image:linear-gradient(90deg,#000 0,#000 calc(var(--gut) * .55),
+                     transparent var(--gut),transparent calc(100% - var(--gut)),
+                     #000 calc(100% - var(--gut) * .55),#000 100%);
+  will-change:transform;
 }
 
-/* 4b ─ Vệt sáng CHUYỂN ĐỘNG. Biên độ 2,6% trên lớp rộng ~1,28×viewport ≈ 38px,
-        đi hết trong 37s ≈ 1px/giây — dưới ngưỡng thị giác ngoại vi báo "có gì vừa
-        động", nên không bao giờ cướp mắt khỏi biểu đồ. 0% và 100% giống hệt nhau
-        → vòng lặp khép kín. Hai animation chạm hai thuộc tính KHÁC nhau nên cộng
-        chu kỳ: 74 × 113 = 8362s ≈ 2h20 mới lặp lại đúng trạng thái. */
+/* 4b ─ ĐỔI THEO ĐỘ SÂU. Lớp ánh sáng phủ cả màn hình. Nó KHÔNG có thị sai —
+        trường lớn nhất mà trượt theo cuộn chính là công thức gây chóng mặt.
+        Thay vào đó JS chỉ đổi opacity theo % trang đã đọc, nên cảm giác là
+        "đang đi sâu vào trang", không phải "có vật trôi qua".
+
+        Lồng hai lớp: .l2 nhận transform từ JS, <b> bên trong giữ animation theo
+        thời gian. Một phần tử không thể vừa chạy @keyframes transform vừa nhận
+        transform từ JS — keyframe sẽ đè mất. */
+#bgfx .l2{top:0;bottom:0;will-change:opacity}
+#bgfx .l2 > b{
+  position:absolute;inset:-14%;display:block;
+  background-image:
+    radial-gradient(760px 540px at 16% 4%,  var(--glow-1), transparent 62%),
+    radial-gradient(660px 480px at 90% 28%, var(--glow-2), transparent 60%);
+  animation:ambDrift 74s cubic-bezier(.45,0,.55,1) infinite,
+            ambBreathe 113s ease-in-out infinite;
+  will-change:transform,opacity;
+}
+/* Biên độ 2,6% trên lớp rộng ~1,28×viewport ≈ 38px, đi hết trong 37s ≈ 1px/giây
+   — dưới ngưỡng thị giác ngoại vi báo "có gì vừa động". 0% và 100% giống hệt
+   nhau nên vòng lặp khép kín. Hai animation chạm hai thuộc tính khác nhau nên
+   cộng chu kỳ: 74 × 113 = 8362s ≈ 2h20 mới lặp lại đúng trạng thái. */
 @keyframes ambDrift{
   0%,100%{transform:translate3d(-1.2%,.8%,0) scale(1)}
   50%    {transform:translate3d(1.4%,-1.1%,0) scale(1.055)}
@@ -555,15 +589,6 @@ body::before{
 @keyframes ambBreathe{
   0%,100%{opacity:.62}
   50%    {opacity:.92}
-}
-body::after{
-  inset:-14%;
-  background-image:
-    radial-gradient(760px 540px at 16% 4%,  var(--glow-1), transparent 62%),
-    radial-gradient(660px 480px at 90% 28%, var(--glow-2), transparent 60%);
-  animation:ambDrift 74s cubic-bezier(.45,0,.55,1) infinite,
-            ambBreathe 113s ease-in-out infinite;
-  will-change:transform,opacity;   /* ĐÚNG MỘT lần, chỉ ở lớp này */
 }
 
 /* 5 ─ RÀO CHẮN. Hoạ tiết SỐNG Ở TẦNG DƯỚI .app; thẻ luôn đục.
@@ -583,7 +608,7 @@ body::after{
 .landfoot{color:var(--ink-2)}
 
 /* 7 ─ In: nền trang trí không đi vào bản PDF nộp giám khảo */
-@media print{ body::before,body::after{display:none} body{background:#fff} }
+@media print{ #bgfx{display:none} body{background:#fff} }
 
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;
@@ -595,12 +620,14 @@ body::after{
   /* nền: GIỮ hoạ tiết, bỏ chuyển động, khoá về đúng trạng thái nghỉ.
      Không khai gì thì luật *::after{animation-duration:.01ms} ở trên sẽ ném lớp
      này tới keyframe cuối, tức đứng im ở scale(1.055) lệch tâm. */
-  body::before{animation:none!important}
-  body::after{
-    animation:none!important;
-    transform:none!important;
-    opacity:.7!important;
-    will-change:auto!important;   /* không giữ texture ~8MB nếu chẳng animate gì */
+  /* giữ hoạ tiết, bỏ hết chuyển động, khoá về đúng trạng thái nghỉ. Không khai
+     gì thì luật *::before/after{animation-duration:.01ms} ở trên sẽ ném lớp này
+     tới keyframe cuối, tức đứng im ở scale(1.055) lệch tâm. */
+  #bgfx .l1{transform:none!important;will-change:auto!important}
+  #bgfx .l2{opacity:1!important;transform:none!important;will-change:auto!important}
+  #bgfx .l2 > b{
+    animation:none!important;transform:none!important;
+    opacity:.7!important;will-change:auto!important;
   }
   /* spinner: giành lại khỏi luật * ở trên (.spin có specificity 0,1,0 > 0,0,0).
      Đây là tín hiệu "đang gọi AI thật" ở tab Thử trực tiếp — tắt nó đi là người
@@ -621,6 +648,11 @@ body::after{
 </style>
 </head>
 <body>
+<!-- Lớp trang trí. Là phần tử THẬT chứ không phải pseudo-element, vì JS phải ghi
+     transform thẳng vào từng lớp mỗi khung hình cuộn. Ghi qua custom property
+     trên :root thì mỗi khung hình sẽ bắt trình duyệt tính lại style cho cả tài
+     liệu — 19 thẻ cụm kèm SVG và bảng 40 dòng — đắt hơn nhiều. -->
+<div id="bgfx" aria-hidden="true"><i class="l1"></i><i class="l2"><b></b></i></div>
 <div id="tip" role="status" aria-live="polite"></div>
 <div id="gate" hidden></div>
 
@@ -795,6 +827,63 @@ function sparkBars(vals,color){
    Chỉ chạy khi NỘI DUNG THAY ĐỔI THẬT (đổi tab, đổi buổi, đổi bộ lọc),
    không chạy lại mỗi lần bấm một nút nhỏ — nếu không trang sẽ nhấp nháy liên tục.  */
 var MOTION_OK = !matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ══════════ NỀN BÁM THEO CUỘN ══════════
+   Cái bẫy lớn nhất ở trang này: `window` KHÔNG cuộn. `.app` khoá
+   height:100vh;overflow:hidden và hộp cuộn thật là `.main` (id="main").
+   Bắt scroll trên window thì không bao giờ nổ.
+
+   Ba luật, vi phạm cái nào cũng làm cuộn giật trên laptop yếu:
+   1. Listener {passive:true} — không thì trình duyệt phải đợi xem handler có
+      gọi preventDefault() không rồi mới được cuộn.
+   2. Gộp vào ĐÚNG MỘT requestAnimationFrame mỗi khung hình. Sự kiện scroll bắn
+      dày hơn khung hình rất nhiều.
+   3. ĐỌC hết layout trước, GHI style sau. Đọc-ghi xen kẽ buộc trình duyệt tính
+      lại layout đồng bộ ngay giữa khung hình.
+
+   Mỗi khung hình ghi đúng 2 thuộc tính, cả hai đều chạy trên compositor
+   (transform, opacity) nên không có paint lại, không có layout lại.
+
+   CỐ Ý không làm mượt (không lerp, không quán tính): ánh xạ là hàm thuần tuý
+   của scrollTop, nên cuộn ngược lên là nền đổi chiều ngay trong cùng khung
+   hình đó, không trượt quá, không nảy. Giật khi đổi chiều là triệu chứng của
+   làm mượt chứ không phải của đổi chiều. */
+var bgScroll = (function(){
+  var box=null, l1=null, l2=null, host=null, tick=false;
+  var RATE=0.09;        // lưới điểm đi 90px khi nội dung đi 1000px
+  var DEPTH_MIN=0.55;   // độ mờ lớp sáng ở đỉnh trang
+  var DEPTH_MAX=1.00;   // ở đáy trang
+
+  function frame(){
+    tick=false;
+    if(!host) return;
+    // đọc — cả hai lần đọc nằm liền nhau, trước mọi lần ghi
+    var y=host.scrollTop, span=host.scrollHeight-host.clientHeight;
+    // ghi
+    l1.style.transform="translate3d(0,"+(-y*RATE).toFixed(1)+"px,0)";
+    var p=span>0 ? Math.min(1,y/span) : 0;
+    l2.style.opacity=(DEPTH_MIN+(DEPTH_MAX-DEPTH_MIN)*p).toFixed(3);
+  }
+  function onScroll(){ if(tick) return; tick=true; requestAnimationFrame(frame); }
+
+  return {
+    attach:function(){
+      box=document.getElementById("bgfx");
+      if(!box) return;
+      l1=box.querySelector(".l1"); l2=box.querySelector(".l2");
+      if(!MOTION_OK) return;          // giảm chuyển động: không gắn listener nào
+      host=document.getElementById("main");
+      if(!host) return;
+      host.addEventListener("scroll", onScroll, {passive:true});
+      addEventListener("resize", onScroll, {passive:true});
+      frame();
+    },
+    /* Đổi tab thì show() đã đặt scrollTop=0, nhưng nếu tab trước cũng đang ở
+       đỉnh thì KHÔNG có sự kiện scroll nào bắn ra — nền sẽ giữ độ sâu của
+       trang cũ. Phải đo lại tường minh. */
+    resync:function(){ if(host) onScroll(); }
+  };
+})();
 function playEnter(host){
   if(!MOTION_OK || !host) return;
   host.classList.remove("enter");
@@ -2186,6 +2275,7 @@ function show(name){
   lsSet("cp.tab",name);
   if(location.hash.slice(1)!==name) history.replaceState(null,"","#"+name);
   document.getElementById("main").scrollTop=0;
+  bgScroll.resync();
   animate();
 }
 function animate(){
@@ -2320,6 +2410,7 @@ bootAuth().then(function(ok){
       });
     }
   }).catch(function(){});
+  bgScroll.attach();
   show(panels[start]?start:lsGet("cp.tab","home"));
   addEventListener("hashchange",function(){ var n=location.hash.slice(1); if(panels[n]&&n!==active) show(n); });
 });
