@@ -9,19 +9,26 @@ import { api } from "./lib/api";
 import BgFx from "./ui/BgFx";
 import { D, TH, sessionsByDate } from "./lib/data";
 
-import Home from "./tabs/Home.jsx";
-import Overview from "./tabs/Overview.jsx";
-import Clusters from "./tabs/Clusters.jsx";
-import Quality from "./tabs/Quality.jsx";
-import Live from "./tabs/Live.jsx";
+import InputPage from "./tabs/InputPage.jsx";
+import ProcessPage from "./tabs/ProcessPage.jsx";
+import OutputPage from "./tabs/OutputPage.jsx";
 
+/* Ba trang, đúng một mạch đọc: nhận cái gì → làm gì với nó → ra cái gì.
+   Năm tab cũ (Trang chủ/Tổng quan/Cụm vấn đề/Chất lượng/Thử trực tiếp) vẫn còn
+   nguyên trong src/tabs — Chất lượng, Nhật ký AI và Thử trực tiếp được trang Xử
+   lý dùng lại, phần còn lại giữ để quay về được. Mốc quay về đầy đủ:
+   git checkout truoc-tai-cau-truc-3-trang */
 const TABS = [
-  { k: "home", label: "Trang chủ" },
-  { k: "tong", label: "Tổng quan" },
-  { k: "cum", label: "Cụm vấn đề" },
-  { k: "eval", label: "Chất lượng" },
-  { k: "live", label: "Thử trực tiếp" },
+  { k: "vao", label: "Đầu vào" },
+  { k: "xuly", label: "Xử lý" },
+  { k: "ra", label: "Đầu ra" },
 ];
+
+/* Dấu trang và localStorage của bản 5 tab vẫn còn trên máy người dùng. Không ánh
+   xạ thì #cum rơi vào "không khớp tab nào" và họ thấy một trang không phải thứ
+   họ lưu. */
+const OLD_TABS = { home: "vao", tong: "vao", cum: "vao", eval: "xuly", log: "xuly", live: "xuly" };
+const toTab = (k) => (TABS.some((t) => t.k === k) ? k : OLD_TABS[k] || null);
 
 const qs = () => new URLSearchParams(location.search);
 const lsGet = (k, d) => { try { return localStorage.getItem(k) ?? d; } catch { return d; } };
@@ -80,13 +87,26 @@ export default function App() {
     return lsGet("cp.theme", matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
   });
   const [tab, setTab] = useState(() => {
-    const h = location.hash.slice(1);
-    if (TABS.some((t) => t.k === h)) return h;
-    // ?sample=... là deep-link demo cho tab Thử trực tiếp — phải mở đúng tab đó,
-    // nếu không tab Live không bao giờ được mount và tham số rơi vào hư không.
-    if (qs().get("sample")) return "live";
-    return lsGet("cp.tab", "home");
+    const h = toTab(location.hash.slice(1));
+    if (h) return h;
+    // ?sample=... là deep-link demo cho phần Thử trực tiếp — nó nằm trong trang
+    // Xử lý, phải mở đúng trang đó nếu không tham số rơi vào hư không.
+    if (qs().get("sample")) return "xuly";
+    return toTab(lsGet("cp.tab", "vao")) || "vao";
   });
+  /* Cụm đã chọn nằm ở App chứ không ở trong trang: trang Đầu vào ghi, trang Đầu
+     ra đọc. Để trong trang thì chuyển tab là mất sạch lựa chọn.
+     Giữ luôn qua lần tải lại: người dùng chọn xong, lỡ F5 hay máy chủ khởi động
+     lại thì phải chọn lại từ đầu — và chọn cụm là bước tốn công nhất của họ. */
+  /* lsGet/lsSet ở trên chỉ làm việc với CHUỖI — đưa object vào là lưu ra
+     "[object Object]". Lựa chọn cụm phải qua JSON. */
+  const [sel, setSel] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("cp.sel") || "{}") || {}; }
+    catch { return {}; }
+  });
+  useEffect(() => {
+    try { localStorage.setItem("cp.sel", JSON.stringify(sel)); } catch { /* chế độ riêng tư */ }
+  }, [sel]);
   /* Mặc định mở buổi gần nhất CÓ cụm, không phải phần tử đầu mảng: thứ tự mảng
      là thứ tự tên file, không phải thứ tự thời gian. */
   const [sess, setSess] = useState(() => {
@@ -128,8 +148,8 @@ export default function App() {
 
   useEffect(() => {
     const onHash = () => {
-      const h = location.hash.slice(1);
-      if (TABS.some((t) => t.k === h)) setTab(h);
+      const h = toTab(location.hash.slice(1));
+      if (h) setTab(h);
     };
     addEventListener("hashchange", onHash);
     return () => removeEventListener("hashchange", onHash);
@@ -145,11 +165,11 @@ export default function App() {
     );
   }
 
-  const shared = { sess, setSess, goTab: setTab };
+  const shared = { sess, setSess, sel, setSel, goTab: setTab };
   // Tab "log" (Nhật ký AI) đã bỏ khỏi thanh điều hướng. Người dùng cũ có thể còn
   // localStorage cp.tab="log" hoặc một dấu trang #log — nó rơi về Home chứ không
   // để trang trắng.
-  const Panel = { home: Home, tong: Overview, cum: Clusters, eval: Quality, live: Live }[tab] || Home;
+  const Panel = { vao: InputPage, xuly: ProcessPage, ra: OutputPage }[tab] || InputPage;
 
   return (
     <ThemeProvider theme={theme}>

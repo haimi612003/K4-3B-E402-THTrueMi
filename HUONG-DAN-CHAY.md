@@ -199,15 +199,26 @@ Nếu `.env` có `CLASS_PULSE_PASSCODE`, trang sẽ hỏi mã trước — xem m
 Gemini thật — khoá API phải ở phía server chứ không nhúng vào trang web. Mở bằng `file://`
 thì không có cổng đăng nhập, vì lúc đó dữ liệu đã nằm sẵn trên ổ đĩa của chính người mở.
 
-Dashboard có 5 tab:
+Dashboard có **3 trang**, đi theo đúng một mạch: nhận cái gì → làm gì với nó → ra cái gì.
 
-| Tab | Nội dung |
+| Trang | Nội dung |
 |---|---|
-| **Trang chủ** | **Buổi gần nhất và ba cụm đông nhất của lớp**, rồi mới tới sản phẩm này là gì, **cách hoạt động** (ba bước: đọc log → gom cụm → soạn vật liệu) và **sáu nguyên tắc** hệ thống không đánh đổi. Đây là tab mở đầu — người lần đầu vào đọc ở đây trước khi xem số |
-| **Tổng quan** | Số dẫn đầu, một dòng tin cậy, **ba cụm mạnh đông nhất**, biểu đồ sáu cụm lớn nhất (đuôi gập lại, cùng thang), thành phần lượt hỏi. Số kỹ thuật và phân bố lượt/học viên nằm sau cửa “Vì sao tin được mấy con số trên”. Cuối tab là **dòng thời gian** — xem mục 4e |
-| **Cụm vấn đề** | Danh sách cụm **chia ba băng theo số người** (ngưỡng in thẳng trên màn hình), mở ra đọc câu nguyên văn có ID, tick chọn cụm, bấm "Không thuộc cụm" để sửa tay (lưu lại giữa các lần mở trang), và **"✨ Soạn nội dung ôn"** để AI soạn vật liệu giảng lại — xem mục 4c |
-| **Chất lượng** | Tỉ lệ đạt + **một câu kết luận nói thẳng chỗ sản phẩm còn sai**. Toàn bộ phương pháp đo (lịch sử các lượt, đạt theo lớp chỗ khó, nhóm lỗi, từng trường hợp) nằm sau một cửa gập |
-| **Thử trực tiếp** | **Gọi AI thật ngay trên trang.** Xem mục 4b |
+| **Đầu vào** | Hero mở đầu · **bộ lọc buổi + khoảng ngày (từ ngày → đến ngày)** · bốn số tổng · **biểu đồ đường** thời gian × số câu hỏi (rê chuột ra số của đúng ngày đó) · **bảng dữ liệu** đầy đủ, một hàng là một ngày của một buổi · **biểu đồ mức độ quan trọng của từng cụm** · và chỗ **chọn cụm** bằng thanh kéo “trả lời N cụm quan trọng nhất” |
+| **Xử lý** | Bốn bước hệ thống đã làm · **bảng ngưỡng đang chạy thật** lấy từ máy chủ · **từ đầu vào tới đầu ra** (năm thanh cùng một thang) · một dòng kết luận về bộ đo. Ba tầng kiểm chứng nằm sau cửa gập: **Chất lượng**, **Nhật ký AI**, **Thử trực tiếp** |
+| **Đầu ra** | Những cụm đã chọn ở trang Đầu vào → **soạn nội dung ôn** từng cụm · **xuất hỏi đáp `.doc`** cho VLearn. Không có bộ lọc, không sắp xếp — đó là việc của đầu vào |
+
+Lựa chọn cụm **đi theo bạn qua các trang và qua cả lần tải lại** (giữ trong `localStorage`), vì chọn
+cụm là bước tốn công nhất.
+
+**Bản 5 tab cũ** (Trang chủ · Tổng quan · Cụm vấn đề · Chất lượng · Thử trực tiếp) vẫn còn nguyên
+trong `codebase/web/src/tabs/`. Quay về đầy đủ:
+
+```bash
+git checkout truoc-tai-cau-truc-3-trang     # hoặc: git reset --hard truoc-tai-cau-truc-3-trang
+```
+
+Dấu trang cũ không hỏng: `#home`, `#tong`, `#cum` rơi về **Đầu vào**; `#eval`, `#log`, `#live` rơi
+về **Xử lý**.
 
 ### 4a · Đăng nhập
 
@@ -248,7 +259,9 @@ chính gói đó — không bao giờ hiện, người dùng chỉ thấy trang 
 trong khi máy chủ vẫn trả 200 cho `/` và log không có gì bất thường. Lỗi này đã xảy ra thật khi
 chuyển giao diện từ một file HTML sang bản React có gói rời.
 
-### 4b · Tab "Thử trực tiếp" — thao tác thật với model
+### 4b · "Thử trực tiếp" — thao tác thật với model
+
+_Nằm trong cửa gập cuối trang **Xử lý**._
 
 Ba cách lấy dữ liệu vào, chọn một:
 
@@ -274,6 +287,8 @@ http://127.0.0.1:8765/?sample=skew&run=1#live
 
 ### 4c · "Soạn nội dung ôn" — AI trả lời hộ, Lab Coach khỏi phải nhớ
 
+_Nằm ở trang **Đầu ra**, chạy cho những cụm đã chọn ở trang Đầu vào._
+
 Mỗi cụm có nút **✨ Soạn nội dung ôn**. Bấm là AI đọc **toàn bộ câu hỏi trong cụm** (không phải chỉ
 2–3 ví dụ đang hiện) rồi soạn ra năm phần:
 
@@ -296,6 +311,8 @@ mở bằng `file://` thì nút sẽ nói rõ lý do.
 Demo nhanh: `http://127.0.0.1:8765/?answer=1#cum` — soạn luôn cho cụm đông nhất.
 
 ### 4d · Xuất hỏi đáp để đăng lên VLearn
+
+_Nằm ở nửa dưới trang **Đầu ra**._
 
 Tick vài cụm → thanh dưới hiện nút **📄 Xuất hỏi đáp cho VLearn** → AI soạn mỗi cụm thành một mục
 hỏi đáp cho **học viên khoá sau** đọc, rồi tải về **file Word (`.doc`)** để đăng lên trang học.
@@ -320,52 +337,39 @@ Lab Coach cần kiểm.
 
 Demo nhanh: `http://127.0.0.1:8765/?filter=top&faq=1#cum`
 
-### 4e · Dòng thời gian — ba bộ lọc và biểu đồ đường
+### 4e · Lọc theo ngày, bảng dữ liệu, biểu đồ đường
 
-Cuối tab **Tổng quan**. Nó trả lời một câu khác với phần trên: không phải *"buổi này lớp kẹt ở đâu"*
-mà **"câu hỏi tới vào những ngày nào"**.
+Tất cả nằm ở trang **Đầu vào**. Mã: [`src/tabs/InputPage.jsx`](codebase/web/src/tabs/InputPage.jsx).
 
-**Ba bộ lọc trên một hàng, ngay trên biểu đồ:**
+**Ba ô lọc trên một hàng, ngay trên dữ liệu:**
 
-| Bộ lọc | Làm gì |
+| Ô | Làm gì |
 |---|---|
-| **Buổi học** | `Tất cả các buổi` hoặc một buổi. Ô này **dùng chung** với thanh chọn buổi ở đầu tab — đổi một chỗ thì chỗ kia đổi theo, nên trang chỉ có một khái niệm "buổi đang xem" |
-| **Tháng** | Lọc theo tháng của ngày hỏi |
-| **Ngày** | Một ngày cụ thể. Danh sách ngày đổi theo hai bộ lọc trên |
+| **Buổi học** | `Tất cả các buổi` hoặc một buổi. Chọn một buổi thì phần gom cụm bên dưới đổi theo |
+| **Từ ngày** | Mốc đầu khoảng. Bỏ trống = ngày đầu tiên có dữ liệu |
+| **Đến ngày** | Mốc cuối khoảng. Bỏ trống = ngày cuối cùng |
 
-Nút **Bỏ lọc** đưa dòng thời gian về `Tất cả các buổi` (thanh chọn buổi ở đầu tab giữ nguyên, vì phần
-trên luôn cần đúng một buổi).
+Chọn **cùng một ngày** cho cả hai ô thì ra dữ liệu đúng một ngày; chọn khoảng rộng thì ra nhiều
+ngày. Hai ô tự giữ khoảng luôn hợp lệ — đặt “từ” muộn hơn “đến” thì ô kia nhảy theo chứ không để
+người dùng cầm một khoảng rỗng. Danh sách chỉ liệt kê **những ngày thật sự có dữ liệu**, nên không
+có chuyện chọn trúng một ngày trống.
 
-**Hai biểu đồ đường, không phải một biểu đồ hai trục:**
+**Bảng dữ liệu** — một hàng là **một ngày của một buổi**, bảy cột: ngày · buổi · tên buổi · lượt
+thực · học viên · câu mẫu đã loại · TB lượt/HV, kèm hàng tổng. Cùng một ngày xuất hiện nhiều lần là
+đúng: học viên vẫn hỏi về buổi cũ sau khi buổi mới đã dạy, gộp lại là mất đúng thông tin đó.
 
-1. **Đầu vào theo ngày** — ba chuỗi cùng đơn vị: lượt hỏi thực · học viên đã hỏi · câu bấm nút có sẵn
-   (đã loại). Câu bấm nút vẽ chung được vì cùng thang, và **phải** vẽ để thấy phần hệ thống bỏ đi,
-   chứ không chỉ phần còn lại.
-2. **Trung bình lượt hỏi trên mỗi học viên** — tách thành biểu đồ **riêng** vì khác thang đo. Nhét nó
-   làm trục y thứ hai của biểu đồ trên là lỗi biểu đồ phổ biến nhất, nên không làm.
+**Biểu đồ đường** — ba chuỗi cùng đơn vị theo ngày. Rê chuột có **đường dóng + bảng nhỏ** đọc thẳng
+số của ngày đó; nhãn số chỉ in ở điểm cuối mỗi đường; có **“Xem dạng bảng”** cho người đọc bằng
+trình đọc màn hình. Lọc còn đúng một ngày thì không vẽ đường nữa — một điểm không thành đường, số
+đã nằm ở bốn ô tổng bên trên.
 
-Rê chuột vào biểu đồ có **đường dóng + bảng nhỏ** đọc thẳng số của ngày đó. Mỗi biểu đồ có
-**"Xem dạng bảng"** — đó là chỗ duy nhất còn đủ mọi điểm, dành cho người đọc bằng trình đọc màn hình
-hoặc người muốn copy số.
+**Mức độ quan trọng của cụm** — biểu đồ hai thanh (số lượt · số học viên khác nhau), xếp theo **số
+người** chứ không theo số lượt. Đây **không phải điểm số tự nghĩ ra**: thứ tự và hai cờ *cụm yếu* /
+*tín hiệu lệch* đều là kết quả ngưỡng trong `config.py`, in nguyên ở trang Xử lý.
 
-**Lọc còn đúng một ngày thì không vẽ đường nữa** — một điểm không thành đường. Chỗ đó đổi sang bốn ô
-số đọc thẳng.
-
-**"Từ đầu vào tới đầu ra"** chỉ dựng được khi đã chọn **một buổi cụ thể**: tổng lượt trong log →
-câu bấm nút bị loại → lượt hỏi thực → vào được cụm → rải rác, tất cả trên **cùng một thang** nên đọc
-được ngay tỉ lệ. Chọn `Tất cả các buổi` thì chỗ này nói thẳng là **không dựng** — việc gom cụm chạy
-trên trọn một buổi, nên "cụm theo ngày" là khái niệm không tồn tại và một phép chia theo ngày ở đây
-sẽ là con số bịa.
-
-**Deep-link khi demo:**
-
-| Tham số | Tác dụng |
-|---|---|
-| `?filter=all\|strong\|weak\|skew` | Mở sẵn một bộ lọc cụm |
-| `?judge=1` | **Mở sẵn mọi tầng sâu** — phương pháp đo, bảng từng trường hợp, đuôi biểu đồ, băng cụm yếu. Dùng khi nộp bài hoặc khi người chấm muốn kiểm chứng mà không phải đi bấm từng cửa |
-| `?theme=dark\|light` | Chọn nền |
-| `?sample=<id>&run=1` | Chạy sẵn một kịch bản ở tab Thử trực tiếp |
-| `?answer=1` · `?faq=N` | Soạn nội dung ôn / xuất hỏi đáp cho cụm đông nhất |
+**Chọn cụm** — thanh kéo *“trả lời N cụm quan trọng nhất”* tự tick N cụm đầu; vẫn bỏ tick tay được
+từng cụm, và khi đó thanh kéo thôi mô tả lựa chọn chứ không ghi đè nó. Chọn trúng cụm bị đánh cờ
+thì có cảnh báo kèm ngưỡng thật, không chặn.
 
 ### 4f · Nền động — ba lớp
 
