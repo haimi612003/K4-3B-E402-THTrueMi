@@ -4,7 +4,8 @@ Hướng: [x] A — VLearn (đề **A2** · tính năng mới cho giảng viên)
 Loại: [ ] Tối ưu tính năng có sẵn [x] Tính năng mới
 
 > Prototype: [Claude Artifact](https://claude.ai/artifact/BHZpGwAdpKiAvULpymV8Xb) — link cũng nằm ở `codebase/Prototype design`.
-> Bằng chứng, ba nguồn tách bạch: **§1** → `python evidence/mine_k4.py` (kết quả lưu ở
+> Bằng chứng, bốn nguồn tách bạch: **§1 đường B** → `python evidence/mine_k4.py` · **§1 đường A** →
+> `python evidence/survey-lab-coach.py` (n=6, đã ẩn danh) · (kết quả lưu ở
 > `evidence/mining-log.md`) · **§7** → `eval/results-run*.json` · **số trên giao diện** →
 > `codebase/ui/data.js`. Con số nào không nằm trong ba nguồn đó thì tài liệu ghi rõ là chưa đo.
 > Kết quả đã lưu: `evidence/mining-log.md`. Data pack không commit vào repo (luật `data/README.md` §4).
@@ -70,20 +71,66 @@ Loại: [ ] Tối ưu tính năng có sẵn [x] Tính năng mới
   hỏi bằng 36 cách khác nhau, nằm rải rác trong 511 dòng. Không có phép đếm cơ học nào nhóm được
   chúng lại, và Lab Coach đọc tay 511 dòng thì con số 36 **không bao giờ hiện ra**.
 
-- **Tự khai — đường A (phỏng vấn/khảo sát Lab Coach) CHƯA có trong tài liệu này**
+- **Evidence — đường A (khảo sát Lab Coach). Chạy lại được: `python evidence/survey-lab-coach.py`**
 
-  Nhóm có 5 Lab Coach nhận lời tham gia (danh sách ở §8) và đã thu dữ liệu phỏng vấn, nhưng bảng
-  kết quả nằm trong một Google Sheet **chưa mở quyền xem**, nên tại thời điểm chốt CP4 **không có
-  quote nào của Lab Coach** trong tài liệu. Nói thẳng ra đây thay vì viết vài câu phỏng vấn nghe
-  hợp lý mà không kiểm chứng được.
+  **n = 6 Lab Coach**, 33 câu. Kết quả đã ẩn danh: `evidence/survey-lab-coach.md`.
+  Bản thô **không commit** — form đã hứa với người trả lời rằng thông tin chỉ dùng nội bộ, nên
+  cột họ tên và cột liên hệ bị loại khỏi mọi thứ lên repo (`.gitignore`).
+  Người trả lời chỉ còn mã `LC-01`..`LC-06`.
 
-  Hệ quả phải thừa nhận: toàn bộ §1 đang đứng trên **một chân** — bằng chứng hành vi từ log. Nó
-  chứng minh được **thông tin nằm rải rác và không đếm nổi**, nhưng **chưa chứng minh được** Lab
-  Coach thật sự thấy đây là việc đáng làm, hay họ đang giải quyết nó bằng cách nào khác. Đó là
-  rủi ro lớn nhất còn lại của cả sản phẩm, không phải rủi ro kỹ thuật.
+  **Phát hiện mạnh nhất — câu 17 hỏi “khó khăn nào ảnh hưởng LỚN NHẤT”.** Sáu người chọn ba đáp
+  án, và **cả ba đều trỏ thẳng vào ba cơ chế lõi của sản phẩm**:
 
-  Kế hoạch bù: mở quyền sheet → trích ≥5 quote nguyên văn kèm mã người trả lời → cập nhật vào đây
-  và ghi vào §9. Quality bar ở §7 **không** phụ thuộc vào việc này nên không bị ảnh hưởng.
+  | Khó khăn lớn nhất (chọn 1) | Số người | Cơ chế tương ứng trong sản phẩm |
+  |---|---|---|
+  | “Khó **nhóm các câu hỏi có cách diễn đạt khác nhau** nhưng cùng một vấn đề” | **2/6** | Chính là việc gom cụm — và là lý do `GROUP BY` không giải được (92,6% chuỗi duy nhất) |
+  | “Khó xác định **vấn đề nào thực sự có nhiều học viên** gặp phải” | **2/6** | Cột *số người* tính trong code, tách khỏi cột *số lượt* |
+  | “Khó **phân biệt nhiều học viên cùng gặp một vấn đề** với **một học viên hỏi nhiều lần**” | **2/6** | Đúng định nghĩa của cờ **tín hiệu lệch** (`SKEW_RATIO = 0,5`) |
+
+  Nhóm **không** đưa ba cơ chế này vào bảng chọn để dẫn dắt — chúng là ba đáp án trong danh sách
+  khó khăn chung, và cả sáu người phân đều vào đúng ba cái đó, không ai chọn các đáp án còn lại.
+
+  **Những thứ khác khảo sát xác nhận**
+
+  | Con số | Nó xác nhận điều gì trong §1 |
+  |---|---|
+  | **5/6** xác định chỗ lớp vướng bằng “những câu hỏi **tôi nhớ được** trong buổi học” | Workflow bước 2–4: hôm nay việc này làm bằng **trí nhớ** |
+  | **4/6** đã từng **đến buổi sau mới biết** có nội dung rất nhiều học viên không hiểu | Hậu quả nêu ở bước 5 là có thật, không phải suy đoán |
+  | Khi hỏi cả lớp “có ai chưa hiểu không”: **2/6** nhận được 1–2 người trả lời, **2/6** không dùng cách này | Câu “lớp im lặng; người kẹt nhất thường là người không giơ tay” — có cơ sở |
+  | Chỉ **1/6** “rất tự tin” đã tìm đúng vấn đề đông người vướng | Bước 4 của workflow đang chạy trên phán đoán không chắc |
+  | **6/6** đồng ý xem prototype và cho phản hồi | §8 có đủ willing users, không phải tên ghi cho đủ |
+  | **4/6** cần **cả nội dung ôn soạn sẵn**, không chỉ danh sách cụm | Quyết định AI thứ hai (§4) có nhu cầu thật, không phải nhóm tự nghĩ ra |
+  | **4/4** người trả lời câu 28 chọn “khái niệm được giải thích lại **theo cách KHÁC với slide**” | Đúng trường `different` — mục được tô riêng trong prototype. Người dùng tự nêu, không phải nhóm áp đặt |
+
+  **≥5 quote nguyên văn, không sửa chữ** (mã trỏ về `evidence/survey-lab-coach.md`):
+
+  1. **LC-06** — *“Hầu như không xem kỹ vì log quá dài hoặc không đủ thời gian.”*
+  2. **LC-05** — *“có quá nhiều câu hỏi nằm ở nhiều vị trí khác nhau trong lớp”*
+  3. **LC-01 / LC-06** — *“Nhiều câu hỏi trùng nhau nhưng các bạn diễn giải khó hiểu, đi qua các vấn đề khác.”*
+  4. **LC-04** — *“Vì câu hỏi nằm rải rác ở nhiều nơi nên em khó xác định vấn đề nào đang khiến nhiều học viên thực sự chưa hiểu để ưu tiên.”*
+  5. **LC-04** — *“em đọc lại các câu hỏi trong phần chat, bỏ qua những câu hỏi vui hoặc không liên quan, sau đó nhóm các câu hỏi có nội dung tương tự”* — đây là **quy trình thủ công mà sản phẩm đang tự động hoá**, do chính người dùng mô tả.
+  6. **LC-05** — *“Tôi nhớ được câu hỏi trên lớp rồi, không cần xem lại”* (người duy nhất không dùng log).
+
+- **⚠️ Ba chỗ khảo sát PHẢN BÁC hoặc làm yếu luận điểm của nhóm — không giấu**
+
+  1. **Lab Coach không thấy log lớn như dữ liệu cho thấy.** Hỏi “log buổi gần nhất có khoảng bao
+     nhiêu câu hỏi”, **3/6 trả lời “dưới 20 câu”**, 2/6 “không để ý số lượng”. Trong khi chatlog K4
+     cho **453–589 lượt thực mỗi buổi**. Hai con số này chênh hơn **20 lần**.
+     Nhóm **chưa biết chắc vì sao**. Giả thuyết chưa kiểm: người trả lời đang nghĩ tới **chat trong
+     lớp** chứ không phải **log hỏi trợ giảng AI trên VLearn**; hoặc lớp họ phụ trách nhỏ hơn lớp
+     trong pack. Đây là câu hỏi đầu tiên phải làm rõ ở vòng validation (§8) — **nếu người dùng
+     không cảm thấy khối lượng lớn, thì lập luận “đọc tay là bất khả thi” của §1 mất một chân.**
+  2. **Mức độ khó chỉ ở “trung bình”.** Câu 18: **5/6 chấm 3/5**, 1 người chấm 4/5. Không ai chấm
+     5/5. Đây là vấn đề **có thật nhưng chưa phải cháy nhà** — và tài liệu này không nên viết như
+     thể nó là cháy nhà.
+  3. **Việc “ôn nhầm chỗ” ít xảy ra hơn nhóm nghĩ.** Câu 20: **4/6 chưa bao giờ** dành thời gian ôn
+     lại một nội dung rồi phát hiện phần lớn lớp đã hiểu. Chiều ngược lại (câu 21, bỏ sót vấn đề
+     lớn) thì phổ biến hơn — 4/6 đã từng. Nghĩa là **rủi ro thật nằm ở BỎ SÓT, không phải ôn thừa**,
+     và §6 nên nhấn vào chiều đó.
+
+  **Một giới hạn nữa của chính mẫu khảo sát:** 5/6 người làm Lab Coach **dưới 3 tháng**. Đây là
+  nhóm mới vào nghề, nên kết quả có thể không đại diện cho Lab Coach kỳ cựu — người có thể đã tự
+  có cách giải quyết mà khảo sát này không chạm tới.
 
 ## §2. Impact & quyết định chọn
 
@@ -583,5 +630,6 @@ Ba con số, kiểm lại được:
 | **CP4** | **Bịt rò rỉ đáp án trong cả hai bộ đo; đo lại thành lượt 4** | `run_eval.py` truyền `case["title"]` làm nhãn buổi, và prompt nhét nhãn đó vào — model đọc được đáp án ở **cả 22 lời gọi**. Sau khi bịt: **95,8% → 91,7%** và **100% → 87,5%**. §7 |
 | **CP4** | Sửa **“69/127”** thành **“36/127”** ở §2 | Tính lại: **67/127** là số học viên khớp **từ khoá**, còn cụm AI gom được là **36/127**. Hai phép đếm khác nhau, không được dùng thay nhau. §1 mục 4 |
 | **CP4** | Sửa **“22,7% `is_preset`”** thành **17,5%** | 22,7% là tỉ lệ của **cả file** (K3+K4); riêng K4 là 17,5%. `evidence/mining-log.md` mục 1 |
+| **CP4** | **Thêm evidence đường A**: khảo sát 6 Lab Coach, ẩn danh, script tái lập được | Sheet được mở quyền xem lúc ~19:00 ngày 18/09. Câu 17 cho kết quả mạnh nhất: cả 6 người chọn đúng ba khó khăn khớp ba cơ chế lõi của sản phẩm. Đồng thời khảo sát **phản bác** ba chỗ — ghi hết ở §1 |
 | **CP4** | Tạo `evidence/mine_k4.py` + `evidence/mining-log.md` | Đầu spec từ CP2 đã trỏ tới hai file này nhưng **chúng chưa tồn tại** — tham chiếu gãy. Giờ mọi con số trong tài liệu chạy lại được bằng một lệnh |
 | **CP4** | **Đóng băng quality bar** ở §7 **và tự khai rằng bar không được đặt trước khi biết kết quả** | Lịch sử git: kết quả lượt 1-2 commit lúc 12:59 (`d5309bf`), con số 85% mới vào spec lúc 14:01 (`b621cbb`). Bar ≥75% của bộ thứ hai đặt đúng bằng sàn hai lượt đầu. Giữ nguyên con số, ghi lại sự thật. §7 |

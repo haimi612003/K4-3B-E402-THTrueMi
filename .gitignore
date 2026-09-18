@@ -24,3 +24,8 @@ node_modules/
 codebase/web/dist/
 codebase/web/public/data.js
 .vite/
+
+# Khảo sát Lab Coach — bản thô CHỨA TÊN THẬT.
+# Người trả lời được hứa "chỉ dùng nội bộ trong nhóm".
+# Chỉ bản đã ẩn danh (survey-lab-coach.md) được commit.
+evidence/_survey_raw.csv
