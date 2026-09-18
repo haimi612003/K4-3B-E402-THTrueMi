@@ -59,6 +59,18 @@ def main():
             per_student = collections.Counter(t["student"] for t in real)
             vals = sorted(per_student.values(), reverse=True)
             s["lecture_title"] = real[0]["lecture_title"] if real else key
+            # Ngày thật của buổi, lấy từ cột asked_at_vn của chatlog.
+            # Trước đây giao diện đoán "buổi gần nhất" bằng phần tử đầu mảng, nên
+            # nói DAY03 là buổi gần nhất trong khi thực tế là Day06.
+            # DÙNG first_day CHỨ KHÔNG DÙNG last_day: học viên vẫn hỏi về buổi cũ sau
+            # khi buổi mới đã dạy, nên câu hỏi CUỐI không phản ánh thứ tự dạy
+            # (D04 và D08 cùng có câu hỏi tới 15/09). Câu hỏi ĐẦU tiên mới là
+            # lúc buổi đó diễn ra: 11/09 → 13/09 → 14/09, khớp thứ tự DAY03/DAY04/Day06.
+            days = sorted({t["at"][:10] for t in real if t.get("at")})
+            if days:
+                s["days"] = days
+                s["first_day"] = days[0]    # ngày buổi được DẠY — dùng để sắp thứ tự buổi
+                s["last_day"] = days[-1]    # câu hỏi cuối cùng về buổi này
             s["per_student"] = {
                 "median": vals[len(vals) // 2] if vals else 0,
                 "max": vals[0] if vals else 0,

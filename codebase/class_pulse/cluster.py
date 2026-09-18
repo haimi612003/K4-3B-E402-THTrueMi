@@ -172,6 +172,8 @@ def _sparse_result(turns, preset_count, reason, lecture_label, meta=None, by_mod
         "sparse": True,
         "sparse_reason": reason,
         "lecture": lecture_label,
+        "days": sorted({t["at"][:10] for t in turns if t.get("at")}),
+
         "total_turns": len(turns) + preset_count,
         "real_turns": len(turns),
         "preset_removed": preset_count,
@@ -395,6 +397,7 @@ def cluster_session(turns, preset_count=0, lecture_label="buổi này", call_id=
         "sparse": False,
         "sparse_reason": "",
         "lecture": lecture_label,
+        "days": sorted({t["at"][:10] for t in turns if t.get("at")}),
         "total_turns": len(turns) + preset_count,
         "real_turns": len(turns),
         "preset_removed": preset_count,

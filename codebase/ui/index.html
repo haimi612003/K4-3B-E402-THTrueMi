@@ -920,9 +920,15 @@ function renderShell(){
       '<button type="button" id="s-people" aria-pressed="'+(state.sort==="people")+'">Số người hỏi</button></span></span>'+
       '<button class="btn ghost" type="button" id="exp">⭳ Xuất JSON</button>';
     var sel=document.getElementById("sess");
-    D.sessions.forEach(function(x,i){
+    /* Hiện theo thứ tự buổi, gần nhất lên đầu — nhưng value vẫn là CHỈ SỐ TRONG
+       MẢNG GỐC, vì state.sess dùng để tra D.sessions[state.sess]. Đổi thứ tự hiển
+       thị mà quên chỗ này là chọn một buổi ra một buổi khác. */
+    sessionsByDate().forEach(function(x){
+      var i=D.sessions.indexOf(x);
       var o=document.createElement("option"); o.value=i; o.selected=(i===state.sess);
-      o.textContent=(x.lecture_title?x.lecture_title+" · ":"")+x.lecture+" — "+fmt(x.real_turns)+" lượt thực"+(x.sparse?" — quá ít câu để gom":"");
+      o.textContent=(x.lecture_title?x.lecture_title+" · ":"")+x.lecture+
+        (x.first_day?" · "+dmy(x.first_day):"")+
+        " — "+fmt(x.real_turns)+" lượt thực"+(x.sparse?" — quá ít câu để gom":"");
       sel.appendChild(o); });
     sel.addEventListener("change",function(){ state.sess=+sel.value; lsSet("cp.sess",state.sess); renderAllAnimated(); });
     document.getElementById("s-turns").addEventListener("click",function(){ setSort("turns"); });
@@ -1032,10 +1038,35 @@ var PRINS=[
    "Hệ thống đưa vật liệu, không khuyến nghị. Thứ duy nhất đi tới học viên phải qua ba cửa duyệt, và không có nút đăng thẳng."]
 ];
 
+/* Thứ tự buổi bám vào NGÀY THẬT (cột asked_at_vn của chatlog, build_data.py ghi
+   vào `last_day`), không bám vào thứ tự file hay mã buổi. Buổi thiếu ngày rơi
+   xuống cuối chứ không được đoán bừa là mới nhất. */
+function sessionsByDate(){
+  /* Sắp theo first_day — ngày câu hỏi ĐẦU TIÊN về buổi đó, tức lúc buổi diễn ra.
+     KHÔNG dùng last_day: học viên vẫn hỏi về buổi cũ sau khi buổi mới đã dạy,
+     nên D04 (DAY03) và D08 (DAY04) đều có câu hỏi tới 15/09 trong khi D10 (Day06)
+     dừng ở 14/09 — sắp theo câu hỏi cuối sẽ nói DAY03 mới hơn Day06. */
+  return (D.sessions||[]).slice().sort(function(a,b){
+    var da=a.first_day||"", db=b.first_day||"";
+    if(da&&db&&da!==db) return db.localeCompare(da);
+    if(da&&!db) return -1;
+    if(db&&!da) return 1;
+    return String(b.lecture||"").localeCompare(String(a.lecture||""), undefined, {numeric:true});
+  });
+}
+function latestSession(){ return sessionsByDate()[0]||null; }
+function dmy(iso){
+  if(!iso) return "";
+  var p=String(iso).split("-");
+  return p.length===3 ? p[2]+"/"+p[1]+"/"+p[0] : iso;
+}
+
 function renderHome(){
   var host=document.getElementById("p-home");
   var ev=D.eval&&D.eval.summary, ea=D.eval_answer&&D.eval_answer.summary;
-  var s=D.sessions&&D.sessions[0];
+  var all=D.sessions||[];
+  var s=all.slice().sort(function(a,b){return (b.real_turns||0)-(a.real_turns||0);})[0];
+  var latest=latestSession();
   /* Cụm đông NGƯỜI nhất — khác cụm nhiều LƯỢT nhất mà tab Tổng quan dẫn đầu.
      Nói rõ đang tính gì thay vì để hai con số chọi nhau. */
   var peak=null;
@@ -1047,7 +1078,9 @@ function renderHome(){
      '<p class="lede">Sau mỗi buổi học, câu hỏi của lớp nằm rải rác trong log — hàng trăm dòng, không nhóm, không đếm. '+
      'Class Pulse gom chúng lại thành những <strong>cụm vấn đề có số lượng và câu nguyên văn</strong>, '+
      'để giảng viên biết buổi sau nên ôn lại chỗ nào thay vì đoán.</p>'+
-     '<div class="cta"><button class="btn" type="button" data-tab="cum">Xem lớp tôi kẹt ở đâu →</button>'+
+     '<div class="cta"><button class="btn" type="button" data-sess="'+
+       D.sessions.indexOf(sessionsByDate().filter(function(x){return !x.sparse&&x.clusters&&x.clusters.length;})[0]||s)+
+       '">Xem lớp tôi kẹt ở đâu →</button>'+
      '<button class="btn ghost" type="button" data-go="how">Cách hoạt động</button>'+
      '<button class="btn ghost" type="button" data-tab="live">⚡ Thử với AI thật</button></div>'+
      '<div class="evid">'+
@@ -1063,18 +1096,40 @@ function renderHome(){
 
   /* Lab Coach mở máy lúc 9 giờ tối muốn thấy LỚP MÌNH, không phải một trang
      giới thiệu. Ba cụm đông nhất của buổi gần nhất, bấm một cái là vào đọc. */
-  if(s && !s.sparse && s.clusters && s.clusters.length){
-    var t3=s.clusters.slice().sort(function(a,b){return b.turns-a.turns;})
-             .filter(function(c){return !c.weak;}).slice(0,3);
-    h+='<div class="sec"><p class="kicker">Buổi gần nhất</p>'+
-       "<h2>"+esc((s.lecture_title?s.lecture_title+" · ":"")+s.lecture)+"</h2>"+
-       '<p class="sub">'+fmt(s.real_turns)+' lượt hỏi của '+s.students+' học viên, gom thành '+
-       s.clusters.length+' cụm vấn đề. Ba cụm đông nhất:</p><ol class="todo">'+
-      t3.map(function(c,i){
-        return '<li><span class="rk num">'+(i+1)+'</span><div class="tdbody"><div class="tt">'+esc(c.name)+'</div>'+
-          '<div class="mt"><b class="num">'+c.people+'</b>/'+s.students+' học viên · <b class="num">'+c.turns+'</b> lượt'+
-          (c.skew?' <span class="chip skew">tín hiệu lệch</span>':'')+'</div></div></li>'; }).join("")+
-      '</ol><button class="btn" type="button" data-tab="cum">Mở danh sách đầy đủ →</button></div>';
+  if(latest){ var s=latest;
+    var dt=s.first_day?" · "+dmy(s.first_day):"";
+    var title=esc((s.lecture_title?s.lecture_title+" · ":"")+s.lecture)+dt;
+    if(s.sparse || !s.clusters || !s.clusters.length){
+      /* Buổi gần nhất thật có thể là buổi quá ít câu để kết luận. Nói thẳng —
+         đây chính là hành vi sản phẩm muốn khoe, không phải chuyện cần giấu.
+         Rồi chỉ sang buổi gần nhất CÓ cụm, gọi đúng tên nó. */
+      var withCls=sessionsByDate().filter(function(x){
+        return !x.sparse && x.clusters && x.clusters.length; })[0];
+      h+='<div class="sec"><p class="kicker">Buổi gần nhất</p><h2>'+title+"</h2>"+
+         '<p class="sub">Buổi này chỉ có <b class="num">'+fmt(s.real_turns)+'</b> lượt hỏi thật của '+
+         s.students+' học viên — dưới ngưỡng '+(TH.sparse_min_turns||6)+
+         ' lượt, nên hệ thống <strong>không gọi AI và không gom cụm</strong>. '+
+         'Thà không trả lời còn hơn nặn ra một danh sách trông đáng tin.</p>';
+      if(withCls){
+        h+='<p class="sub">Buổi gần nhất có đủ dữ liệu để gom là <strong>'+
+           esc((withCls.lecture_title?withCls.lecture_title+" · ":"")+withCls.lecture)+
+           (withCls.first_day?" · "+dmy(withCls.first_day):"")+'</strong> — '+
+           fmt(withCls.real_turns)+' lượt, '+withCls.clusters.length+' cụm.</p>'+
+           '<button class="btn" type="button" data-sess="'+D.sessions.indexOf(withCls)+'">Mở buổi đó →</button>';
+      }
+      h+="</div>";
+    } else {
+      var t3=s.clusters.slice().sort(function(a,b){return b.turns-a.turns;})
+               .filter(function(c){return !c.weak;}).slice(0,3);
+      h+='<div class="sec"><p class="kicker">Buổi gần nhất</p><h2>'+title+"</h2>"+
+         '<p class="sub">'+fmt(s.real_turns)+' lượt hỏi của '+s.students+' học viên, gom thành '+
+         s.clusters.length+' cụm vấn đề. Ba cụm đông nhất:</p><ol class="todo">'+
+        t3.map(function(c,i){
+          return '<li><span class="rk num">'+(i+1)+'</span><div class="tdbody"><div class="tt">'+esc(c.name)+'</div>'+
+            '<div class="mt"><b class="num">'+c.people+'</b>/'+s.students+' học viên · <b class="num">'+c.turns+'</b> lượt'+
+            (c.skew?' <span class="chip skew">tín hiệu lệch</span>':'')+'</div></div></li>'; }).join("")+
+        '</ol><button class="btn" type="button" data-sess="'+D.sessions.indexOf(s)+'">Mở danh sách đầy đủ →</button></div>';
+    }
   }
 
   h+='<div class="sec" id="how"><p class="kicker">Cách hoạt động</p>'+
@@ -2164,10 +2219,13 @@ function renderAllQuiet(){ renderAll(); growBars(document.getElementById(panels[
 function setSort(v){ state.sort=v; lsSet("cp.sort",v); renderAllAnimated(); }
 
 document.addEventListener("click",function(e){
-  var t=e.target.closest ? e.target.closest("[data-tab],[data-open],[data-move],[data-filter],[data-answer],[data-lanswer],[data-evalkind],[data-goto],[data-opendet],[data-logkind]") : null;
+  var t=e.target.closest ? e.target.closest("[data-tab],[data-open],[data-move],[data-filter],[data-answer],[data-lanswer],[data-evalkind],[data-goto],[data-opendet],[data-logkind],[data-sess]") : null;
   if(!t) return;
   if(t.dataset.tab){ show(t.dataset.tab); return; }
   if(t.dataset.goto!=null){ state.open[t.dataset.goto]=1; show("cum"); return; }
+  if(t.dataset.sess!=null){ var si=+t.dataset.sess;
+    if(D.sessions[si]){ state.sess=si; lsSet("cp.sess",si); }
+    show("cum"); return; }
   if(t.dataset.opendet){ var dd=document.querySelector('[data-det="'+t.dataset.opendet+'"]');
     if(dd){ dd.open=true; state.det[t.dataset.opendet]=1; dd.scrollIntoView({block:"start"}); } return; }
   if(t.dataset.filter){ state.filter=t.dataset.filter; lsSet("cp.filter",state.filter); renderAllQuiet(); return; }
