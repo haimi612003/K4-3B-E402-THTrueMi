@@ -163,6 +163,59 @@ YÊU CẦU — dữ liệu phải GIỐNG LOG THẬT, không phải bộ câu h�
 Đừng đánh số, đừng thêm dấu đầu dòng. Mỗi phần tử trong mảng là một câu hỏi thô như học viên gõ."""
 
 
+FAQ_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "publishable": {"type": "boolean",
+                        "description": "false nếu cụm này không phải câu hỏi kiến thức của bài học"},
+        "refuse_reason": {"type": "string", "description": "nếu publishable=false thì vì sao"},
+        "question": {"type": "string", "description": "Câu hỏi chuẩn hoá, viết như học viên sẽ gõ vào ô tìm"},
+        "answer": {"type": "string", "description": "Câu trả lời cho HỌC VIÊN đọc một mình, không có giảng viên bên cạnh"},
+        "variants": {"type": "array", "items": {"type": "string"},
+                     "description": "Các cách hỏi khác của chính học viên, để tìm kiếm khớp được"},
+        "needs_review": {"type": "string", "description": "Chỗ Lab Coach phải kiểm trước khi đăng"},
+        "confidence": {"type": "string", "description": "cao | vừa | thấp"},
+    },
+    "required": ["publishable", "question", "answer", "variants", "needs_review", "confidence"],
+}
+
+FAQ_PROMPT = """Bạn soạn một mục HỎI ĐÁP để đăng lên trang học, cho HỌC VIÊN KHOÁ SAU đọc.
+
+Đây là người đọc khác hẳn với giảng viên: họ đọc MỘT MÌNH, không có ai giảng bên cạnh, và họ tới đây
+vì vừa gõ một câu hỏi vào ô tìm kiếm. Câu trả lời phải tự đứng được.
+
+BUỔI HỌC: {lecture}
+CỤM VẤN ĐỀ: {name}
+{n} CÂU HỎI NGUYÊN VĂN, {people} học viên khoá trước đã hỏi:
+{questions}
+
+LUẬT BẮT BUỘC:
+
+1. TỪ CHỐI KHI KHÔNG PHẢI CÂU HỎI KIẾN THỨC. Nếu cụm này là câu hành chính (hạn nộp, điểm danh,
+   lịch học, quy chế), câu hỏi về chính con bot, câu chào hỏi, hay câu quá cụt để biết người ta hỏi gì
+   — đặt publishable = false, ghi lý do vào refuse_reason, và ĐỪNG soạn câu trả lời. Đăng một mục hỏi đáp
+   về hạn nộp bài lên trang học là sai chỗ, và hạn nộp thì mỗi khoá một khác nên nó còn thành sai thông tin.
+
+2. CÂU HỎI PHẢI VIẾT NHƯ HỌC VIÊN GÕ, không phải như mục lục sách. Lấy đúng cách nói của họ trong các
+   câu nguyên văn phía trên. "Chatbot và Agent khác nhau chỗ nào?" chứ không phải "Phân tích sự khác biệt
+   giữa kiến trúc hội thoại và kiến trúc tác tử".
+
+3. CÂU TRẢ LỜI PHẢI TỰ ĐỨNG ĐƯỢC. Không viết "hỏi giảng viên", "xem lại slide", "tham khảo tài liệu" —
+   người đọc đang ở đây chính vì slide chưa giúp được họ. Trả lời thẳng, có ví dụ cụ thể, dài vừa phải
+   để đọc hết trong một phút.
+
+4. CHỈ NÓI ĐIỀU BẠN CHẮC. Không bịa con số, không bịa tên tài liệu, không bịa quy định của khoá.
+   Chỗ nào cần giảng viên xác nhận thì ghi vào needs_review chứ đừng viết bừa vào câu trả lời.
+
+5. VARIANTS LẤY TỪ CHÍNH CÂU HỌC VIÊN ĐÃ HỎI. Đây là để học viên khoá sau gõ kiểu gì cũng tìm ra mục này —
+   kể cả khi họ gõ tắt, sai chính tả, hay trộn tiếng Anh. Giữ nguyên cách họ viết, đừng sửa lại cho đẹp.
+
+6. KHÔNG NHẮC TỚI HỌC VIÊN CỤ THỂ NÀO, không nhắc tới lớp nào, không nhắc tới buổi nào cụ thể —
+   mục này sẽ sống lâu hơn khoá học hiện tại.
+
+Trả JSON đúng schema. Viết tiếng Việt."""
+
+
 def _q_records(items):
     """Chuẩn hoá đầu vào thành 'lượt hỏi' cho module gom cụm."""
     out = []
@@ -255,6 +308,30 @@ class Handler(SimpleHTTPRequestHandler):
                 return self._send({"questions": qs, "topic": topic, "ai": {
                     "model": meta["model"], "latency_ms": meta["latency_ms"],
                     "tokens_in": meta["tokens_in"], "tokens_out": meta["tokens_out"]}})
+
+            if self.path.startswith("/api/faq"):
+                b = self._body()
+                qs, ids = [], b.get("turn_ids") or []
+                if ids:
+                    idx = {t["turn_id"]: t for t in turns()}
+                    qs = [idx[i]["q"] for i in ids if i in idx][:24]
+                if not qs:
+                    qs = [loader.redact(str(q).strip()) for q in (b.get("questions") or []) if str(q).strip()][:24]
+                if not qs:
+                    return self._send({"error": "Cụm này không có câu hỏi nào."}, 400)
+                raw, meta = gemini.generate_json(
+                    FAQ_PROMPT.format(
+                        lecture=(b.get("lecture") or "buổi này")[:120],
+                        name=(b.get("name") or "").strip()[:200],
+                        n=len(qs), people=b.get("people") or "?",
+                        questions="\n".join("- " + q[:300] for q in qs)),
+                    FAQ_SCHEMA, call_id="live:faq", temperature=0.3)
+                raw["ai"] = {"model": meta["model"], "latency_ms": meta["latency_ms"],
+                             "tokens_in": meta["tokens_in"], "tokens_out": meta["tokens_out"]}
+                raw["cluster"] = b.get("name")
+                raw["people"] = b.get("people")
+                raw["turns"] = len(qs)
+                return self._send(raw)
 
             if self.path.startswith("/api/answer"):
                 b = self._body()

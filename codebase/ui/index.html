@@ -199,6 +199,18 @@ tbody tr:last-child td{border-bottom:0}
 .ansf dd.capt{margin-top:2px;font-style:italic}
 .ansf.hi{background:color-mix(in srgb,var(--primary) 7%,transparent);margin:0 -14px;padding:9px 14px}
 .ansf.warn dt{color:var(--warn-ink)}
+.faqbox{margin-top:14px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;box-shadow:var(--sh-2);animation:riseIn .34s var(--ease-out) both}
+.faqbox > h3{font-size:14px}
+.faqitem{border-top:1px solid var(--line-2);padding:13px 0}
+.faqitem:first-of-type{border-top:0}
+.faqitem.off{opacity:.55}
+.faqhd{display:flex;gap:10px;align-items:flex-start}
+.faqhd input{width:17px;height:17px;accent-color:var(--primary);margin-top:3px;flex:none}
+.faqhd .qq{font-weight:600;font-size:14px;flex:1;min-width:0}
+.faqans{margin:7px 0 0 27px;color:var(--ink-2);font-size:13.5px}
+.faqmeta{margin:7px 0 0 27px;font-size:12px;color:var(--muted)}
+.faqmeta b{color:var(--ink-2);font-weight:500}
+.faqfoot{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px;padding-top:13px;border-top:1px solid var(--line-2)}
 .scatter{margin-top:10px;border:1px dashed var(--baseline);border-radius:10px;padding:13px 15px;background:var(--panel)}
 
 .meter{height:10px;border-radius:99px;background:color-mix(in srgb,var(--primary) 14%,var(--surface-2));overflow:hidden;margin-top:12px}
@@ -847,11 +859,22 @@ function renderCum(){
   cls.forEach(function(c){ if(state.sel[s.key+"#"+c._i]){ nsel++; tsel+=c.turns; psel=Math.max(psel,c.people); } });
   if(nsel) h+='<div class="selbar"><span><b class="num">'+nsel+"</b> cụm đã chọn · "+tsel+
     " lượt hỏi · cụm đông nhất chạm "+psel+"/"+s.students+' học viên</span>'+
-    '<button class="btn ghost" type="button" id="clearsel">Bỏ chọn</button></div>';
+    '<span style="display:flex;gap:8px;flex-wrap:wrap">'+
+    '<button class="btn go" type="button" id="mkfaq"'+(faq.running?" disabled":"")+'>'+
+    (faq.running?'<span class="spin"></span> Đang soạn…':"📄 Xuất hỏi đáp cho VLearn")+"</button>"+
+    '<button class="btn ghost" type="button" id="clearsel">Bỏ chọn</button></span></div>';
+
+  h+=faqHtml();
 
   host.innerHTML=h;
   var cs=document.getElementById("clearsel");
-  if(cs) cs.addEventListener("click",function(){ state.sel={}; renderAll(); });
+  if(cs) cs.addEventListener("click",function(){ state.sel={}; faq.items=null; renderAll(); });
+  var mk=document.getElementById("mkfaq");
+  if(mk) mk.addEventListener("click",startFaq);
+  var dl=document.getElementById("faqdl");
+  if(dl) dl.addEventListener("click",downloadFaq);
+  var cl=document.getElementById("faqclose");
+  if(cl) cl.addEventListener("click",function(){ faq.items=null; faq.err=null; renderAll(); });
 }
 
 /* ══════════ NỘI DUNG ÔN DO AI SOẠN ══════════ */
@@ -890,6 +913,112 @@ function requestAnswer(id, payload){
   answers[id]={loading:true}; renderAll();
   api("/api/answer",payload).then(function(d){ answers[id]={data:d}; renderAll(); })
     .catch(function(e){ answers[id]={err:String(e.message||e)}; renderAll(); });
+}
+
+/* ══════════ XUẤT HỎI ĐÁP CHO VLEARN ══════════
+   Đây là thứ DUY NHẤT trong sản phẩm đi tới HỌC VIÊN. Vì thế nó là thứ duy nhất
+   bắt buộc đi qua ba cửa: Lab Coach chọn cụm → hệ thống tự từ chối cụm không phải
+   câu hỏi kiến thức → Lab Coach bỏ tick từng mục không muốn đăng. Không có nút
+   "đăng thẳng lên VLearn": file tải về, người đăng là người.  */
+var faq = { running:false, items:null, err:null };
+
+function startFaq(){
+  var s=cur(); if(!s) return;
+  if(serverUp===false){ faq.err="Cần máy chủ cục bộ. Chạy: python codebase/serve.py"; renderAll(); return; }
+  var picked=filtered().filter(function(c){ return state.sel[s.key+"#"+c._i] && c.turns>0; });
+  if(!picked.length) return;
+  var mv=movedSet();
+  faq.running=true; faq.err=null;
+  faq.items=picked.map(function(c){ return {name:c.name, people:c.people, turns:c.turns, state:"cho"}; });
+  renderAll();
+  var jobs=picked.map(function(c,i){
+    return api("/api/faq",{lecture:(s.lecture_title?s.lecture_title+" · ":"")+s.lecture,
+        name:c.name, people:c.people,
+        turn_ids:c.turn_ids.filter(function(t){ return !mv[t]; })})
+      .then(function(d){ faq.items[i].state="xong"; faq.items[i].d=d; faq.items[i].on=!!d.publishable; })
+      .catch(function(e){ faq.items[i].state="loi"; faq.items[i].err=String(e.message||e); });
+  });
+  Promise.all(jobs).then(function(){ faq.running=false; renderAll(); });
+}
+
+function faqHtml(){
+  if(faq.err) return '<div class="banner bad"><span class="bi">LỖI</span><span>'+esc(faq.err)+"</span></div>";
+  if(!faq.items) return "";
+  var done=faq.items.filter(function(x){return x.state!=="cho";}).length;
+  var h='<div class="faqbox"><h3>Hỏi đáp để đăng lên VLearn</h3>'+
+    '<p class="capt">Học viên khoá sau sẽ đọc thứ này một mình, không có giảng viên bên cạnh. '+
+    'Bỏ tick mục nào bạn chưa muốn đăng — file chỉ chứa mục còn tick.</p>';
+  if(faq.running) h+='<p class="capt" style="margin-top:10px"><span class="spin"></span> Đang soạn '+
+    done+"/"+faq.items.length+" mục…</p>";
+
+  faq.items.forEach(function(it,i){
+    if(it.state==="cho"){ h+='<div class="faqitem"><div class="skel w70"></div><div class="skel w90"></div></div>'; return; }
+    if(it.state==="loi"){
+      h+='<div class="faqitem off"><div class="faqhd"><span class="qq">'+esc(it.name)+"</span></div>"+
+         '<p class="faqmeta">Không soạn được: '+esc(it.err)+"</p></div>"; return;
+    }
+    var d=it.d, ok=!!d.publishable;
+    h+='<div class="faqitem'+(it.on?"":" off")+'"><div class="faqhd">'+
+       '<input type="checkbox" data-faq="'+i+'"'+(it.on?" checked":"")+(ok?"":" disabled")+
+       ' aria-label="Đăng mục này"><span class="qq">'+esc(ok?d.question:it.name)+"</span></div>";
+    if(ok){
+      h+='<p class="faqans">'+esc(d.answer)+"</p>"+
+         '<p class="faqmeta"><b>'+it.people+" học viên</b> đã hỏi chuyện này · "+it.turns+" lượt · "+
+         (d.variants||[]).length+" cách hỏi khác · tin cậy <b>"+esc(d.confidence||"?")+"</b></p>";
+      if(d.needs_review) h+='<p class="faqmeta">Cần bạn kiểm: '+esc(d.needs_review)+"</p>";
+    } else {
+      h+='<p class="faqmeta">Hệ thống từ chối đăng: '+esc(d.refuse_reason||"không phải câu hỏi kiến thức")+"</p>";
+    }
+    h+="</div>";
+  });
+
+  var n=faq.items.filter(function(x){return x.on;}).length;
+  h+='<div class="faqfoot"><button class="btn go" type="button" id="faqdl"'+(n?"":" disabled")+'>⭳ Tải file .md ('+n+' mục)</button>'+
+     '<button class="btn ghost" type="button" id="faqclose">Đóng</button>'+
+     '<span class="capt">File tải về máy bạn. Không có nút đăng thẳng lên VLearn — người đăng là bạn.</span></div>';
+  return h+"</div>";
+}
+
+function faqMarkdown(){
+  var s=cur(), on=faq.items.filter(function(x){return x.on && x.d && x.d.publishable;});
+  var off=faq.items.filter(function(x){return x.d && !x.d.publishable;});
+  var L=[];
+  L.push("# Hỏi đáp thường gặp — "+((s.lecture_title?s.lecture_title+" · ":"")+s.lecture));
+  L.push("");
+  L.push("> Tổng hợp từ câu hỏi thật của học viên khoá trước trong chính buổi học này.");
+  L.push("> Bản nháp do AI soạn từ "+fmt(s.real_turns)+" lượt hỏi của "+s.students+" học viên, "+
+         "**đã được Lab Coach đọc và duyệt** trước khi đăng.");
+  L.push("> Thấy chỗ nào chưa đúng, báo lại để sửa.");
+  L.push("");
+  on.forEach(function(it,i){
+    var d=it.d;
+    L.push("## "+(i+1)+". "+d.question);
+    L.push("");
+    L.push(d.answer);
+    L.push("");
+    if((d.variants||[]).length){
+      L.push("*Câu này còn hay được hỏi theo kiểu:* "+d.variants.map(function(v){return "“"+v+"”";}).join(" · "));
+      L.push("");
+    }
+    L.push("<sub>"+it.people+" học viên khoá trước đã hỏi chuyện này ("+it.turns+" lượt).</sub>");
+    L.push("");
+    L.push("---");
+    L.push("");
+  });
+  if(off.length){
+    L.push("<!-- Hệ thống đã tự loại "+off.length+" cụm khỏi bản hỏi đáp này:");
+    off.forEach(function(it){ L.push("     - "+it.name+" — "+(it.d.refuse_reason||"")); });
+    L.push("-->");
+  }
+  return L.join("\n");
+}
+
+function downloadFaq(){
+  var s=cur();
+  var blob=new Blob([faqMarkdown()],{type:"text/markdown;charset=utf-8"});
+  var a=document.createElement("a");
+  a.href=URL.createObjectURL(blob); a.download="hoi-dap-"+s.key+".md"; a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); },3000);
 }
 
 /* ══════════ CHẤT LƯỢNG ══════════ */
@@ -1326,7 +1455,9 @@ document.addEventListener("change",function(e){
   var t=e.target;
   if(t.dataset && t.dataset.sel!=null){
     if(t.checked) state.sel[t.dataset.sel]=1; else delete state.sel[t.dataset.sel];
-    renderAll(); }
+    renderAll(); return; }
+  if(t.dataset && t.dataset.faq!=null && faq.items){
+    faq.items[+t.dataset.faq].on = t.checked; renderAll(); }
 });
 
 var tb=document.getElementById("themebtn");
@@ -1350,13 +1481,22 @@ api("/api/health").then(function(h){ serverUp=true; if(h.thresholds) Object.assi
 state.sort=lsGet("cp.sort","turns");
 state.filter=lsGet("cp.filter","all");
 state.evalKind=lsGet("cp.evalkind","cluster");
-var savedSess=lsGet("cp.sess",0);
-if(savedSess>=0 && savedSess<D.sessions.length) state.sess=savedSess;
 var qs=new URLSearchParams(location.search);
+// ?filter=top|strong|weak|skew|all — mở thẳng một bộ lọc, tiện khi demo deep-link.
+if(["all","top","strong","weak","skew"].indexOf(qs.get("filter"))>=0) state.filter=qs.get("filter");
 if(qs.get("sample")) live.autorun={sample:qs.get("sample"), run:qs.get("run")==="1"};
 // ?answer=1 — soạn luôn nội dung ôn cho cụm đông nhất, tiện khi demo.
 if(qs.get("answer")==="1") setTimeout(function(){
   var b=document.querySelector("[data-answer]"); if(b) b.click(); },900);
+// ?faq=N — tick N cụm đầu rồi soạn luôn bản hỏi đáp, tiện khi demo.
+if(qs.get("faq")) setTimeout(function(){
+  var n=Math.max(1,Math.min(+qs.get("faq")||2,6)), s2=cur();
+  if(!s2) return;
+  filtered().slice(0,n).forEach(function(c){ state.sel[s2.key+"#"+c._i]=1; });
+  renderAll(); startFaq();
+},900);
+var savedSess=lsGet("cp.sess",0);
+if(savedSess>=0 && savedSess<D.sessions.length) state.sess=savedSess;
 var start=location.hash.slice(1);
 if(live.autorun) start="live";
 show(panels[start]?start:lsGet("cp.tab","tong"));

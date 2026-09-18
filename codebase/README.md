@@ -52,6 +52,7 @@ ai mở DevTools cũng lấy được. Máy chủ giữ khoá, trình duyệt ch
 | `POST /api/generate` | nhờ model sinh bộ câu hỏi giả lập theo chủ đề — dùng khi máy không có data pack |
 | `POST /api/cluster` | gom cụm thật, trả cụm + cờ + số đo + phần đã phải sửa chữa |
 | `POST /api/answer` | soạn nội dung ôn cho một cụm: nhận `turn_ids` rồi tra ngược cả cụm trong chatlog, không chỉ dựa vào vài ví dụ |
+| `POST /api/faq` | soạn một mục hỏi đáp cho **học viên khoá sau**, hoặc **từ chối** nếu cụm không phải câu hỏi kiến thức (`publishable: false` kèm lý do) |
 
 Nội dung ôn là **quyết định AI thứ hai** của sản phẩm, tách hẳn khỏi việc gom cụm. Nó chỉ chạy khi
 Lab Coach bấm, luôn được gắn nhãn *bản nháp*, và prompt buộc model đi một đường khác slide — vì học

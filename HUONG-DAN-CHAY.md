@@ -213,6 +213,30 @@ mở bằng `file://` thì nút sẽ nói rõ lý do.
 
 Demo nhanh: `http://127.0.0.1:8765/?answer=1#cum` — soạn luôn cho cụm đông nhất.
 
+### 4d · Xuất hỏi đáp để đăng lên VLearn
+
+Tick vài cụm → thanh dưới hiện nút **📄 Xuất hỏi đáp cho VLearn** → AI soạn mỗi cụm thành một mục
+hỏi đáp cho **học viên khoá sau** đọc, rồi tải về file `.md` dán thẳng lên trang học.
+
+Đây là thứ **duy nhất** trong sản phẩm đi tới học viên, nên nó qua ba cửa:
+
+1. **Lab Coach chọn cụm** — không có chuyện tự xuất cả buổi.
+2. **Hệ thống tự từ chối** cụm không phải câu hỏi kiến thức. Thử trên buổi `K4P1/D04`: hai cụm
+   *"Yêu cầu tóm tắt bài học"* và *"Yêu cầu trích xuất nội dung"* bị loại vì đó là yêu cầu thao tác,
+   không phải chỗ kẹt; cụm câu hành chính cũng bị loại vì *"thông tin này thay đổi theo từng khoá"*.
+3. **Lab Coach bỏ tick từng mục** trong bảng duyệt trước khi tải.
+
+**Không có nút đăng thẳng lên VLearn.** File tải về máy, người đăng là người.
+
+Mỗi mục gồm: câu hỏi viết theo cách học viên gõ · câu trả lời tự đứng được (không có "hỏi giảng viên",
+"xem lại slide" — người đọc tới đây chính vì slide chưa giúp được họ) · **các cách hỏi khác lấy nguyên
+văn từ học viên** để khoá sau gõ kiểu gì cũng tìm ra, kể cả gõ sai chính tả · số người đã hỏi · chỗ
+Lab Coach cần kiểm.
+
+Demo nhanh: `http://127.0.0.1:8765/?filter=top&faq=1#cum`
+
+**Deep-link khi demo:** `?filter=` nhận `all` · `top` · `strong` · `weak` · `skew`.
+
 ---
 
 ## 5. Chạy lại toàn bộ từ đầu
@@ -275,6 +299,8 @@ Khi nộp form CP3 nhớ kèm: đường dẫn video, **con số đo được** 
 | Muốn đổi | Sửa file |
 |---|---|
 | Nội dung ôn gồm những mục gì | `codebase/serve.py` — `ANSWER_SCHEMA` và `ANSWER_PROMPT` |
+| Luật từ chối khi xuất hỏi đáp | `codebase/serve.py` — `FAQ_PROMPT` luật 1 |
+| Định dạng file .md xuất ra | `codebase/ui/index.html` — hàm `faqMarkdown()` |
 | Ngưỡng SPARSE, kích thước phần, ngưỡng cụm yếu / tín hiệu lệch | `codebase/class_pulse/config.py` |
 | Luật gom cụm (cái model được dặn) | `codebase/class_pulse/cluster.py` — biến `PROMPT` và `MERGE_PROMPT` |
 | Model và chuỗi dự phòng | `.env` và `codebase/class_pulse/gemini.py` — `FALLBACK_MODELS` |
