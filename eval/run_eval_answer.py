@@ -266,7 +266,9 @@ def main():
 
         try:
             d = post("/api/answer", {
-                "lecture": "bộ kiểm thử", "name": c["title"],
+                # name = tên cụm, KHÔNG phải tiêu đề ca kiểm thử: tiêu đề mô tả kỳ vọng
+                # ("phải tự nhận tín hiệu mỏng") nên truyền nó vào là mách đáp án.
+                "lecture": "K4P1/D04", "name": c.get("cluster_name") or c["title"],
                 "people": len({idx[t]["student"] for t in c["turn_ids"]}),
                 "turn_ids": c["turn_ids"]})
         except Exception as e:

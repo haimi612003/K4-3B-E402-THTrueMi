@@ -1,6 +1,6 @@
 {
  "version": "answer-run1",
- "note": "Golden set cho QUYẾT ĐỊNH AI THỨ HAI: soạn nội dung ôn cho một cụm. Bộ này CỐ Ý KHÔNG đo đúng-sai kiến thức sư phạm — đó là thứ nhóm 4 người không đủ thẩm quyền chấm, và cũng là lý do nhóm loại đề A1 ở §2. Bộ này chỉ đo TÍNH KỶ LUẬT của output: chẩn đoán có bám vào chữ học viên viết không, có im lặng đúng lúc không, có giữ mức lớp không, có tự nhận không chắc không. Phần đúng-sai kiến thức do Lab Coach chấm khi đọc bản nháp — đã ghi trong spec §7. Từ lượt đo 3: assertion caveat chuyển từ danh sách từ khoá viết riêng cho từng case sang ngân hàng từ khoá dùng chung theo LOẠI cảnh báo — lượt 1-2 chấm trượt oan vì model dùng chữ khác chữ người viết case đoán trước.",
+ "note": "Golden set cho QUYẾT ĐỊNH AI THỨ HAI: soạn nội dung ôn cho một cụm. Bộ này CỐ Ý KHÔNG đo đúng-sai kiến thức sư phạm — đó là thứ nhóm 4 người không đủ thẩm quyền chấm, và cũng là lý do nhóm loại đề A1 ở §2. Bộ này chỉ đo TÍNH KỶ LUẬT của output: chẩn đoán có bám vào chữ học viên viết không, có im lặng đúng lúc không, có giữ mức lớp không, có tự nhận không chắc không. Phần đúng-sai kiến thức do Lab Coach chấm khi đọc bản nháp — đã ghi trong spec §7. Từ lượt đo 3: assertion caveat chuyển từ danh sách từ khoá viết riêng cho từng case sang ngân hàng từ khoá dùng chung theo LOẠI cảnh báo — lượt 1-2 chấm trượt oan vì model dùng chữ khác chữ người viết case đoán trước. Từ lượt đo 4: thêm trường `cluster_name` cho mỗi ca. Lượt 1-3 truyền `title` của ca làm tên cụm, mà title mô tả KỲ VỌNG của phép kiểm (\"phải tự nhận tín hiệu mỏng\") nên model đọc được đáp án. `cluster_name` là tên suy từ chính nội dung các câu hỏi, đúng thứ bước gom cụm sinh ra khi chạy thật.",
  "cases": [
   {
    "id": "A-01",
@@ -30,7 +30,8 @@
     "confidence_not": [
      "thấp"
     ]
-   }
+   },
+   "cluster_name": "Phân biệt Agent, Chatbot và LLM"
   },
   {
    "id": "A-02",
@@ -49,7 +50,8 @@
     "caveat_flags": [
      "tin_hieu_mong"
     ]
-   }
+   },
+   "cluster_name": "Giải thích đoạn code và slide trong bài lab"
   },
   {
    "id": "A-03",
@@ -80,7 +82,8 @@
      "tôi là một mô hình",
      "tôi được huấn luyện"
     ]
-   }
+   },
+   "cluster_name": "Phân biệt Agent và Chatbot"
   },
   {
    "id": "A-04",
@@ -101,7 +104,8 @@
     "caveat_flags": [
      "khong_phai_kien_thuc"
     ]
-   }
+   },
+   "cluster_name": "Lịch học, điểm danh, nghỉ phép và hạn nộp bài"
   },
   {
    "id": "A-05",
@@ -133,7 +137,8 @@
      "cross-validation",
      "hồi quy tuyến tính"
     ]
-   }
+   },
+   "cluster_name": "MCP, tool calling và function calling"
   },
   {
    "id": "A-06",
@@ -157,7 +162,8 @@
       "mô hình"
      ]
     }
-   }
+   },
+   "cluster_name": "Khái niệm LLM"
   },
   {
    "id": "A-07",
@@ -182,7 +188,8 @@
      "tin_hieu_mong",
      "thieu_ngu_canh"
     ]
-   }
+   },
+   "cluster_name": "Yêu cầu giải thích nội dung slide"
   },
   {
    "id": "A-08",
@@ -205,7 +212,8 @@
      "tin_hieu_mong",
      "khong_phai_kien_thuc"
     ]
-   }
+   },
+   "cluster_name": "Câu chào hỏi và câu cụt"
   }
  ]
 }

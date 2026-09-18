@@ -190,6 +190,10 @@ def build_inputs(case, by_id):
     return inputs, missing
 
 
+# Nhãn buổi dùng cho mọi ca kiểm thử — trung tính, đúng dạng sản phẩm thật dùng.
+LECTURE_LABEL = "K4P1/D04"
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--golden", default=os.path.join(HERE, "golden_set.json"))
@@ -239,7 +243,12 @@ def main():
             # Truyền số đếm ở đây nữa là đếm hai lần.
             res = cluster.cluster_session(
                 inputs, preset_count=0,
-                lecture_label=case["title"], call_id="eval%s:%s" % (a.run, case["id"]))
+                # KHÔNG truyền case["title"] vào đây: PROMPT nhét nhãn buổi vào dòng
+                # 'câu hỏi học viên đã hỏi trong buổi "{lecture}"', nên tiêu đề ca kiểm thử
+                # (vốn là đáp án, ví dụ "Câu rác phải rơi vào rải rác") sẽ tới thẳng model.
+                # Lượt đo 1-3 dính lỗi này ở cả 22 lời gọi. Dùng đúng nhãn mà sản phẩm
+                # thật dùng, không mang thông tin gì về kỳ vọng của phép kiểm.
+                lecture_label=LECTURE_LABEL, call_id="eval%s:%s" % (a.run, case["id"]))
         except Exception as e:
             row.update({"status": "LOI_KY_THUAT", "passed": False,
                         "note": "%s: %s" % (type(e).__name__, str(e)[:200]), "checks": []})
