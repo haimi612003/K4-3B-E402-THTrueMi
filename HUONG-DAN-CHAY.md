@@ -409,6 +409,8 @@ Khi nộp form CP3 nhớ kèm: đường dẫn video, **con số đo được** 
 | `503 Service Unavailable` | Model đang quá tải. Code tự thử lại 3 lần rồi rơi sang model dự phòng — cứ đợi. Nếu vẫn hỏng, đổi `GEMINI_MODEL` trong `.env`. |
 | `Gemini trả 404 … no longer available` | Model trong `.env` đã bị gỡ. Xem danh sách model còn dùng được:<br>`curl -H "x-goog-api-key: $KEY" https://generativelanguage.googleapis.com/v1beta/models` |
 | Dashboard trắng trơn | Chưa chạy `build_data.py`, hoặc `data.js` chưa có. Mở Console trình duyệt xem lỗi. |
+| **Trình duyệt báo không kết nối được `127.0.0.1:8765`** | Xem lại cửa sổ đã chạy `serve.py`: nếu ở đó là `UnicodeEncodeError: 'charmap' codec can't encode character` thì **máy chủ đã chết trước khi mở cổng** — console Windows không in được chữ có dấu. Đã sửa trong mã (`class_pulse/console.py`), `git pull` rồi chạy lại. Cách chữa tạm không cần sửa mã: `set PYTHONUTF8=1` (cmd) hoặc `$env:PYTHONUTF8=1` (PowerShell) trước khi chạy. |
+| Vào được nhưng chỉ thấy ô nhập mã | Đúng như thiết kế — xem mục 4a. Mã nằm ở `CLASS_PULSE_PASSCODE` trong `.env`. |
 | Trang hỏi mã mà không biết mã | Mã nằm ở `CLASS_PULSE_PASSCODE` trong `.env` của máy chủ. Xoá dòng đó rồi khởi động lại là chạy mở. |
 | `Thử sai quá nhiều. Đợi N giây.` | Gõ sai 8 lần trong 5 phút. Đợi hết 5 phút, hoặc khởi động lại `serve.py`. |
 | Đăng nhập xong vẫn trắng trơn | Trình duyệt đang chặn cookie cho `127.0.0.1`. Mở tab thường (không ẩn danh), hoặc bật lại cookie. |

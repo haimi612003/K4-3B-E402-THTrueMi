@@ -13,8 +13,13 @@ import collections
 import glob
 import json
 import os
+import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.join(os.path.dirname(HERE), "codebase"))
+from class_pulse.console import use_utf8  # noqa: E402
+
+use_utf8()
 
 CLS = {
     "lop1": "① Nguồn sự thật",

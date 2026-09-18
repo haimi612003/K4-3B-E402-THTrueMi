@@ -37,6 +37,9 @@ UI = _DIST if os.path.isfile(os.path.join(_DIST, "index.html")) else os.path.joi
 sys.path.insert(0, HERE)
 
 from class_pulse import cluster, config, gemini, loader  # noqa: E402
+from class_pulse.console import use_utf8  # noqa: E402
+
+use_utf8()
 
 PORT = int(os.environ.get("CLASS_PULSE_PORT", "8765"))
 MAX_QUESTIONS = 60          # trần cho một lần thử, đủ để thấy hành vi mà không đốt token

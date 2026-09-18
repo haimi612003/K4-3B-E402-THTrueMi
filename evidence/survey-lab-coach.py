@@ -16,6 +16,10 @@ import os
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.join(os.path.dirname(HERE), "codebase"))
+from class_pulse.console import use_utf8  # noqa: E402
+
+use_utf8()
 RAW = os.path.join(HERE, "_survey_raw.csv")
 
 # Cột chứa thông tin nhận dạng — KHÔNG BAO GIỜ in ra
@@ -82,7 +86,6 @@ def main():
             A("- **LC-%02d:** “%s”" % (k, v))
         A("")
 
-    sys.stdout.reconfigure(encoding="utf-8")
     print("\n".join(out))
     return 0
 
