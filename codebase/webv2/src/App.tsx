@@ -3,6 +3,7 @@ import { HttpAgent } from "@ag-ui/client";
 import { AssistantRuntimeProvider } from "@assistant-ui/react";
 import { useAgUiRuntime } from "@assistant-ui/react-ag-ui";
 import { MoonIcon, SunIcon } from "@heroicons/react/20/solid";
+import { Link } from "react-router";
 import classPulseLogo from "./assets/class-pulse-logo.svg";
 import { ChatThread, type StateSnapshot } from "./components/ChatThread";
 import { SamplePanel, type Sample } from "./components/SamplePanel";
@@ -212,11 +213,11 @@ function App() {
         <main className="flex h-dvh min-h-0 flex-col overflow-hidden bg-background text-foreground transition-colors">
           <header className="shrink-0 bg-background/80 px-5 py-4 backdrop-blur md:px-8">
             <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4">
-              <img
+              <Link to="/" aria-label="Class Pulse — Trang chủ"><img
                 src={classPulseLogo}
                 alt="Class Pulse"
                 className="h-8 w-auto dark:invert"
-              />
+              /></Link>
 
               <button
                 type="button"

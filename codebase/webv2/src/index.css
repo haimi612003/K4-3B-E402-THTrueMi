@@ -1,9 +1,40 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "tw-shimmer";
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/figtree";
 
 @custom-variant dark (&:is(.dark *));
+
+.hero-meteor {
+  animation: hero-meteor 8s linear infinite;
+}
+
+@keyframes hero-meteor {
+  0% {
+    transform: rotate(var(--meteor-angle)) translateX(0);
+    opacity: 0;
+  }
+  10%, 65% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: rotate(var(--meteor-angle)) translateX(-900px);
+    opacity: 0;
+  }
+}
+
+@keyframes welcome-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(1.5rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
 :root {
   --background: oklch(1 0 0);
