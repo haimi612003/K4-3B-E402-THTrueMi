@@ -54,7 +54,7 @@ function AssistantMessage({ result, hidden }: { result?: unknown; hidden?: boole
 function Welcome() {
   return (
     <div className="mx-auto max-w-xl py-16 text-center">
-      <h2 className="text-2xl font-semibold leading-relaxed text-foreground">
+      <h2 className="text-2xl font-semibold leading-relaxed text-foreground motion-safe:animate-[welcome-slide-up_1s_cubic-bezier(0.22,1,0.36,1)_both]">
         Nhanh chóng quyết định điểm cần ôn lại cho lớp của bạn chỉ với ‘@’
       </h2>
     </div>
